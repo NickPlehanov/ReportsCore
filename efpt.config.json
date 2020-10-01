@@ -1,0 +1,41 @@
+﻿{
+   "ContextClassName": "Vityaz_MSCRMContext",
+   "ContextNamespace": null,
+   "DefaultDacpacSchema": null,
+   "FilterSchemas": false,
+   "IncludeConnectionString": true,
+   "ModelNamespace": null,
+   "OutputContextPath": "Context",
+   "OutputPath": "Models",
+   "ProjectRootNamespace": "ReportsCore",
+   "Schemas": null,
+   "SelectedHandlebarsLanguage": 0,
+   "SelectedToBeGenerated": 0,
+   "Tables": [
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_guard_object_History]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_guard_objectBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_guard_objectExtensionBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[SystemUserBase]"
+      }
+   ],
+   "UseDatabaseNames": false,
+   "UseDbContextSplitting": false,
+   "UseFluentApiOnly": false,
+   "UseHandleBars": false,
+   "UseInflector": false,
+   "UseLegacyPluralizer": false,
+   "UseNodaTime": false,
+   "UseSpatial": false,
+   "UseStoredProcedures": false
+}

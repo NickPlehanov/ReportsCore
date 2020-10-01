@@ -1,0 +1,79 @@
+﻿<mah:MetroWindow  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="ReportsCore.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReportsCore" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:vm="clr-namespace:ReportsCore.ViewModels"
+                  mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" >
+    <mah:MetroWindow.LeftWindowCommands>
+        <mah:WindowCommands>
+            <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding MenuOpen}">
+                <iconPacks:PackIconMaterialDesign Kind="Menu"/>
+            </Button>
+        </mah:WindowCommands>
+    </mah:MetroWindow.LeftWindowCommands>
+    <mah:MetroWindow.DataContext>
+        <vm:MainWindowViewModel/>
+    </mah:MetroWindow.DataContext>
+    <Grid>
+        <mah:Flyout Position="Left" Header="Список отчётов" Width="250" AnimateOpacity="True" Panel.ZIndex="2" IsOpen="{Binding FlyoutMenuState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
+            <StackPanel>
+                <DataGrid Margin="5" ItemsSource="{Binding ReportList}" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Название" Binding="{Binding ReportName}" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <Expander FontWeight="UltraLight">
+                    <Expander.Header>
+                        <TextBlock Text="Настройки отчёта"/>
+                    </Expander.Header>
+                    <StackPanel>
+                        <Button Content="Изменить список столбцов" Margin="5" FontWeight="UltraLight" Command="{Binding MenuSettingColumnsOpen}"/>
+                        <Button Content="Изменить условия фильтра" Margin="5" FontWeight="UltraLight" Command="{Binding MenuSettingsOpen}"/>
+                    </StackPanel>
+                </Expander>
+            </StackPanel>
+        </mah:Flyout>
+        <mah:Flyout Position="Top" IsModal="True" AnimateOpacity="True" Panel.ZIndex="3" IsOpen="{Binding FlyoutSettingVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <mah:DateTimePicker Margin="5" Culture="en-In" SelectedDateTime="{Binding DateStart, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                    <mah:DateTimePicker Margin="5" Culture="en-In" SelectedDateTime="{Binding DateEnd, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                    <!--<mah:DropDownButton ItemsSource="{Binding DatePatterns}" DisplayMemberPath="Name" Command="{Binding SelectDatePattern}">
+                        <mah:DropDownButton.ItemContainerStyle>
+                            <Style TargetType="MenuItem">
+                                <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:DropDownButton}},Path=DatePatterns.Name}"/>
+                                <Setter Property="CommandParameter" Value="{Binding Name}"/>
+                            </Style>
+                        </mah:DropDownButton.ItemContainerStyle>
+                    </mah:DropDownButton>-->                    
+                </StackPanel>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Button Content="Обновить" Command="{Binding GetData}"/>
+                </StackPanel>
+            </Grid>
+        </mah:Flyout>
+        <mah:Flyout Position="Right" IsModal="True" AnimateOpacity="True" Panel.ZIndex="3" IsOpen="{Binding FlyoutSettingColumnsVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
+            <DataGrid ItemsSource="{Binding Columns}"/>
+        </mah:Flyout>
+        <DataGrid ItemsSource="{Binding Report}" AutoGenerateColumns="False" CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Номер объекта" Binding="{Binding ObjectNumber}" Visibility="{Binding ObjectNumberVisibility}"/>
+                <DataGridTextColumn Header="Название объекта" Binding="{Binding ObjectName}" Visibility="{Binding ObjectNameVisibility}"/>
+                <DataGridTextColumn Header="Адрес объекта" Binding="{Binding ObjectAddress}" Visibility="{Binding ObjectAddressrVisibility}"/>
+                <DataGridTextColumn Header="Кем изменено" Binding="{Binding WhoChanged}" Visibility="{Binding WhoChangedVisibility}"/>
+                <DataGridTextColumn Header="Дата" Binding="{Binding DateChanged}" Visibility="{Binding DateChangedVisibility}"/>
+                <DataGridTextColumn Header="Было" Binding="{Binding Before}" Visibility="{Binding BeforeVisibility}"/>
+                <DataGridTextColumn Header="Стало" Binding="{Binding After}" Visibility="{Binding AfterVisibility}"/>
+                <DataGridTextColumn Header="Дата подключения" Binding="{Binding DateStart}" Visibility="{Binding DateStartVisibility}"/>
+                <DataGridTextColumn Header="Куратор" Binding="{Binding Curator}" Visibility="{Binding CuratorVisibility}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+
+</mah:MetroWindow>
