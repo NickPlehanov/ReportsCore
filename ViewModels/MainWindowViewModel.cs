@@ -114,8 +114,10 @@ namespace ReportsCore.ViewModels {
 		}
 		private RelayCommand _GetData;
 		public RelayCommand GetData {
-			get => _GetData ??= new RelayCommand(async obj => {
-				using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
+			get => _GetData ??= new RelayCommand(async obj =>
+			{
+				using (Vityaz_MSCRMContext context = new Vityaz_MSCRMContext())
+				{
 					//TODO: Перенести в get
 					NewGuardObjectHistory before = null;
 					NewGuardObjectHistory after = null;
@@ -123,26 +125,29 @@ namespace ReportsCore.ViewModels {
 					DateTime end = DateTime.Parse(DateEnd.ToShortDateString());
 					List<NewGuardObjectHistory> history = await context.NewGuardObjectHistory.Where(x => x.ModifiedOn >= start && x.ModifiedOn <= end/* && x.NewObjectNumber == 7640*/).ToListAsync<NewGuardObjectHistory>();
 					var r = history.GroupBy(a => new { a.NewGuardObjectId, a.ModifiedBy, DateTime = DateTime.Parse(a.ModifiedOn.ToString()) }).ToList();
-					foreach(var item in r) {
-						foreach(var i in item)
-							if(i.HistoryState == "Старый")
+					foreach (var item in r)
+					{
+						foreach (var i in item)
+							if (i.HistoryState == "Старый")
 								before = i;
 							else
 								after = i;
 						List<Comparator> t = CompareObject(before, after);
-						if(t.Any()) {
+						if (t.Any())
+						{
 							string WhoChanged = context.SystemUserBase.FirstOrDefault(x => x.ModifiedBy == after.ModifiedBy).FullName;
 							Guid? CuratorId = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId).NewCurator;
-							if(CuratorId.HasValue) {
+							if (CuratorId.HasValue)
+							{
 								Guid _id = Guid.Empty;
-								if(Guid.TryParse(CuratorId.Value.ToString()), out _id) { }
-				}
-	}
-}
-
+								if (Guid.TryParse(CuratorId.Value.ToString(), out _id)) { }
+							}
+						}
+					}
 				}
 			});
 		}
+		
 		private List<Comparator> CompareObject(NewGuardObjectHistory _old, NewGuardObjectHistory _new) {
 	List<Comparator> comparator = new List<Comparator>();
 	if(_old == null && _new == null)
