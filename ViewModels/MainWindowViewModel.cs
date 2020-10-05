@@ -114,10 +114,8 @@ namespace ReportsCore.ViewModels {
 		}
 		private RelayCommand _GetData;
 		public RelayCommand GetData {
-			get => _GetData ??= new RelayCommand(async obj =>
-			{
-				using (Vityaz_MSCRMContext context = new Vityaz_MSCRMContext())
-				{
+			get => _GetData ??= new RelayCommand(async obj => {
+				using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 					//TODO: Перенести в get
 					NewGuardObjectHistory before = null;
 					NewGuardObjectHistory after = null;
@@ -125,103 +123,103 @@ namespace ReportsCore.ViewModels {
 					DateTime end = DateTime.Parse(DateEnd.ToShortDateString());
 					List<NewGuardObjectHistory> history = await context.NewGuardObjectHistory.Where(x => x.ModifiedOn >= start && x.ModifiedOn <= end/* && x.NewObjectNumber == 7640*/).ToListAsync<NewGuardObjectHistory>();
 					var r = history.GroupBy(a => new { a.NewGuardObjectId, a.ModifiedBy, DateTime = DateTime.Parse(a.ModifiedOn.ToString()) }).ToList();
-					foreach (var item in r)
-					{
-						foreach (var i in item)
-							if (i.HistoryState == "Старый")
+					foreach(var item in r) {
+						foreach(var i in item)
+							if(i.HistoryState == "Старый")
 								before = i;
 							else
 								after = i;
 						List<Comparator> t = CompareObject(before, after);
-						if (t.Any())
-						{
+						if(t.Any()) {
 							string WhoChanged = context.SystemUserBase.FirstOrDefault(x => x.ModifiedBy == after.ModifiedBy).FullName;
 							Guid? CuratorId = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId).NewCurator;
-							if (CuratorId.HasValue)
-							{
+							string curatorName = null;
+							if(CuratorId.HasValue) {
 								Guid _id = Guid.Empty;
-								if (Guid.TryParse(CuratorId.Value.ToString(), out _id)) { }
+								if(Guid.TryParse(CuratorId.Value.ToString(), out _id)) {
+									curatorName = context.SystemUserBase.FirstOrDefault(x => x.SystemUserId == CuratorId).FullName;
+								}
 							}
 						}
 					}
 				}
 			});
 		}
-		
+
 		private List<Comparator> CompareObject(NewGuardObjectHistory _old, NewGuardObjectHistory _new) {
-	List<Comparator> comparator = new List<Comparator>();
-	if(_old == null && _new == null)
-		return null;
-	else {
-		foreach(var item in _old.GetType().GetProperties()) {
-			object oldValue = _old.GetType().GetProperty(item.Name).GetValue(_old);
-			object newValue = _new.GetType().GetProperty(item.Name).GetValue(_new);
-			if(oldValue != null)
-				if(oldValue.Equals(newValue))
-					continue;
-				else
-				//	if(item.Name.ToString().Equals("ModifiedOn") || item.Name.ToString().Equals("HistoryState"))
-				//		continue;
-				//else
-				//	comparator.Add(new Comparator() {
-				//		FieldName = item.Name,
-				//		//OldValue = (string)_old.GetType().GetProperty(item.Name).GetValue(_old).ToString(),
-				//		//NewValue = (string)_new.GetType().GetProperty(item.Name).GetValue(_new).ToString()
-				//		OldValue = _old.GetType().GetProperty(item.Name).GetValue(_old) == null ? null : _old.GetType().GetProperty(item.Name).GetValue(_old).ToString(),
-				//		NewValue = _new.GetType().GetProperty(item.Name).GetValue(_new) == null ? null : _new.GetType().GetProperty(item.Name).GetValue(_new).ToString()
-				//	});
-				if(item.Name.ToString().Equals("NewMonthlypay"))
-					comparator.Add(new Comparator() {
-						FieldName = item.Name,
-						OldValue = _old.GetType().GetProperty(item.Name).GetValue(_old) == null ? null : _old.GetType().GetProperty(item.Name).GetValue(_old).ToString(),
-						NewValue = _new.GetType().GetProperty(item.Name).GetValue(_new) == null ? null : _new.GetType().GetProperty(item.Name).GetValue(_new).ToString()
-					});
-				else
-					continue;
+			List<Comparator> comparator = new List<Comparator>();
+			if(_old == null && _new == null)
+				return null;
+			else {
+				foreach(var item in _old.GetType().GetProperties()) {
+					object oldValue = _old.GetType().GetProperty(item.Name).GetValue(_old);
+					object newValue = _new.GetType().GetProperty(item.Name).GetValue(_new);
+					if(oldValue != null)
+						if(oldValue.Equals(newValue))
+							continue;
+						else
+						//	if(item.Name.ToString().Equals("ModifiedOn") || item.Name.ToString().Equals("HistoryState"))
+						//		continue;
+						//else
+						//	comparator.Add(new Comparator() {
+						//		FieldName = item.Name,
+						//		//OldValue = (string)_old.GetType().GetProperty(item.Name).GetValue(_old).ToString(),
+						//		//NewValue = (string)_new.GetType().GetProperty(item.Name).GetValue(_new).ToString()
+						//		OldValue = _old.GetType().GetProperty(item.Name).GetValue(_old) == null ? null : _old.GetType().GetProperty(item.Name).GetValue(_old).ToString(),
+						//		NewValue = _new.GetType().GetProperty(item.Name).GetValue(_new) == null ? null : _new.GetType().GetProperty(item.Name).GetValue(_new).ToString()
+						//	});
+						if(item.Name.ToString().Equals("NewMonthlypay"))
+							comparator.Add(new Comparator() {
+								FieldName = item.Name,
+								OldValue = _old.GetType().GetProperty(item.Name).GetValue(_old) == null ? null : _old.GetType().GetProperty(item.Name).GetValue(_old).ToString(),
+								NewValue = _new.GetType().GetProperty(item.Name).GetValue(_new) == null ? null : _new.GetType().GetProperty(item.Name).GetValue(_new).ToString()
+							});
+						else
+							continue;
+				}
+				return comparator;
+			}
 		}
-		return comparator;
-	}
-}
 
 
-private ObservableCollection<ReportsList> _ReportList = new ObservableCollection<ReportsList>();
-private ObservableCollection<DatePattern> _DatePatterns = new ObservableCollection<DatePattern>();
-private ObservableCollection<Report> _Reports = new ObservableCollection<Report>();
+		private ObservableCollection<ReportsList> _ReportList = new ObservableCollection<ReportsList>();
+		private ObservableCollection<DatePattern> _DatePatterns = new ObservableCollection<DatePattern>();
+		private ObservableCollection<Report> _Reports = new ObservableCollection<Report>();
 
-public MainWindowViewModel() {
-	//ReportList.Add(new ReportsList() { ReportID = Guid.NewGuid(), ReportName = "Отчёт 1" });
-	DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Текущий месяц" });
-	DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Прошлый месяц" });
-	DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Текущий квартал" });
-	DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Прошлый квартал" });
-	//SystemUserBase systemUserBase = new SystemUserBase();
-	//foreach(FieldInfo item in systemUserBase.GetType().GetFields()) {
-	//	int y = 0;
-	//}						
-}
+		public MainWindowViewModel() {
+			//ReportList.Add(new ReportsList() { ReportID = Guid.NewGuid(), ReportName = "Отчёт 1" });
+			DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Текущий месяц" });
+			DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Прошлый месяц" });
+			DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Текущий квартал" });
+			DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Прошлый квартал" });
+			//SystemUserBase systemUserBase = new SystemUserBase();
+			//foreach(FieldInfo item in systemUserBase.GetType().GetFields()) {
+			//	int y = 0;
+			//}						
+		}
 
-public ObservableCollection<ReportsList> ReportList {
-	get => _ReportList;
-	set {
-		_ReportList = value;
-		OnPropertyChanged("ReportList");
-	}
-}
+		public ObservableCollection<ReportsList> ReportList {
+			get => _ReportList;
+			set {
+				_ReportList = value;
+				OnPropertyChanged("ReportList");
+			}
+		}
 
-public ObservableCollection<DatePattern> DatePatterns {
-	get => _DatePatterns;
-	set {
-		_DatePatterns = value;
-		OnPropertyChanged("DatePatterns");
-	}
-}
+		public ObservableCollection<DatePattern> DatePatterns {
+			get => _DatePatterns;
+			set {
+				_DatePatterns = value;
+				OnPropertyChanged("DatePatterns");
+			}
+		}
 
-public ObservableCollection<Report> Reports {
-	get => _Reports;
-	set {
-		_Reports = value;
-		OnPropertyChanged("Report");
-	}
-}
+		public ObservableCollection<Report> Reports {
+			get => _Reports;
+			set {
+				_Reports = value;
+				OnPropertyChanged("Report");
+			}
+		}
 	}
 }
