@@ -1,0 +1,36 @@
+﻿<UserControl  x:Class="ReportsCore.Helpers.SearchControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:icons="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             mc:Ignorable="d" Name="Search"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Border BorderThickness="0" CornerRadius="5" Background="#FFF" Margin="5,0">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="45"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.ColumnSpan="2" Style="{StaticResource MahApps.Styles.TextBox}" FontWeight="UltraLight" HorizontalAlignment="Stretch"
+                     mah:TextBoxHelper.Watermark="{Binding Watermark, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     mah:TextBoxHelper.ClearTextButton="True"
+                     mah:TextBoxHelper.WatermarkAlignment="Left" 
+                     mah:TextBoxHelper.AutoWatermark="True" 
+                     mah:TextBoxHelper.ButtonCommand="{Binding ClearSearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                     Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" BorderThickness="1" >
+                <TextBox.InputBindings>
+                    <KeyBinding Key="Enter" Command="{Binding SearchCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+                                CommandParameter="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                    <KeyBinding Key="Esc" Command="{Binding ClearSearchQuery, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                </TextBox.InputBindings>
+            </TextBox>
+            <!--<Button 
+                    HorizontalAlignment="Right" Grid.Column="1" Height="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=TextBox}}"
+                    Command="{Binding SearchCommand, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" CommandParameter="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" VerticalContentAlignment="Top">
+                <icons:PackIconMaterialDesign Kind="FindInPage"/>
+            </Button>-->
+        </Grid>
+    </Border>
+</UserControl>

@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ReportsCore" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:vm="clr-namespace:ReportsCore.ViewModels"
+        xmlns:local="clr-namespace:ReportsCore" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:vm="clr-namespace:ReportsCore.ViewModels" xmlns:helpers="clr-namespace:ReportsCore.Helpers"
                   mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" >
     <mah:MetroWindow.LeftWindowCommands>
@@ -11,8 +11,17 @@
             <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding MenuOpen}">
                 <iconPacks:PackIconMaterialDesign Kind="Menu"/>
             </Button>
+            <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding FilterOpen}">
+                <iconPacks:PackIconMaterialDesign Kind="FilterList"/>
+            </Button>
         </mah:WindowCommands>
     </mah:MetroWindow.LeftWindowCommands>
+    <mah:MetroWindow.RightWindowCommands>
+        <mah:WindowCommands>
+            <helpers:SearchControl Watermark="Укажите искомое значение" Text="{Binding FilterParameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="300" Margin="5" 
+                                   SearchCommand="{Binding Search}" ClearSearchQuery="{Binding ClearFilter}"/>
+        </mah:WindowCommands>
+    </mah:MetroWindow.RightWindowCommands>
     <mah:MetroWindow.DataContext>
         <vm:MainWindowViewModel/>
     </mah:MetroWindow.DataContext>
@@ -51,7 +60,8 @@
                                 <Setter Property="CommandParameter" Value="{Binding Name}"/>
                             </Style>
                         </mah:DropDownButton.ItemContainerStyle>
-                    </mah:DropDownButton>-->                    
+                    </mah:DropDownButton>-->
+                    
                 </StackPanel>
                 <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
                     <Button Content="Обновить" Command="{Binding GetData}"/>
@@ -61,16 +71,34 @@
         <mah:Flyout Position="Right" IsModal="True" AnimateOpacity="True" Panel.ZIndex="3" IsOpen="{Binding FlyoutSettingColumnsVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <DataGrid ItemsSource="{Binding Columns}"/>
         </mah:Flyout>
-        <DataGrid ItemsSource="{Binding Report}" AutoGenerateColumns="False" CanUserAddRows="False">
+        <DataGrid IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
+            <DataGrid.Resources>
+                <!--Дата изменения-->
+                <DataTemplate x:Key="dt_DateChanged">
+                    <mah:DateTimePicker Culture="en-IN" SelectedDateTime="{Binding Mode=TwoWay, Path=DateChanged,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+                <DataTemplate x:Key="edt_DateChanged">
+                    <mah:DateTimePicker Culture="en-IN" SelectedDateTime="{Binding Mode=TwoWay, Path=DateChanged,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+                <!--Дата подключения-->
+                <DataTemplate x:Key="dt_DateStart">
+                    <mah:DateTimePicker Culture="en-IN" SelectedDateTime="{Binding Mode=TwoWay, Path=DateStart,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+                <DataTemplate x:Key="edt_DateStart">
+                    <mah:DateTimePicker Culture="en-IN" SelectedDateTime="{Binding Mode=TwoWay, Path=DateStart,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+            </DataGrid.Resources>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Номер объекта" Binding="{Binding ObjectNumber}" Visibility="{Binding ObjectNumberVisibility}"/>
                 <DataGridTextColumn Header="Название объекта" Binding="{Binding ObjectName}" Visibility="{Binding ObjectNameVisibility}"/>
                 <DataGridTextColumn Header="Адрес объекта" Binding="{Binding ObjectAddress}" Visibility="{Binding ObjectAddressrVisibility}"/>
                 <DataGridTextColumn Header="Кем изменено" Binding="{Binding WhoChanged}" Visibility="{Binding WhoChangedVisibility}"/>
-                <DataGridTextColumn Header="Дата" Binding="{Binding DateChanged}" Visibility="{Binding DateChangedVisibility}"/>
+                <!--<DataGridTextColumn Header="Дата" Binding="{Binding DateChanged}" Visibility="{Binding DateChangedVisibility}"/>-->
+                <DataGridTemplateColumn Header="Дата" CellTemplate="{StaticResource dt_DateChanged}" CellEditingTemplate="{StaticResource edt_DateChanged}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Было" Binding="{Binding Before}" Visibility="{Binding BeforeVisibility}"/>
                 <DataGridTextColumn Header="Стало" Binding="{Binding After}" Visibility="{Binding AfterVisibility}"/>
-                <DataGridTextColumn Header="Дата подключения" Binding="{Binding DateStart}" Visibility="{Binding DateStartVisibility}"/>
+                <!--<DataGridTextColumn Header="Дата подключения" Binding="{Binding DateStart}" Visibility="{Binding DateStartVisibility}"/>-->
+                <DataGridTemplateColumn Header="Дата" CellTemplate="{StaticResource dt_DateStart}" CellEditingTemplate="{StaticResource edt_DateStart}" IsReadOnly="True"/>
                 <DataGridTextColumn Header="Куратор" Binding="{Binding Curator}" Visibility="{Binding CuratorVisibility}"/>
             </DataGrid.Columns>
         </DataGrid>
