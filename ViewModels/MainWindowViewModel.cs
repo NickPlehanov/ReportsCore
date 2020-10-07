@@ -63,8 +63,8 @@ namespace ReportsCore.ViewModels {
 				DateTime end = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1);
 				if(_DateEnd == DateTime.MinValue)
 					return DateTime.Now;
-				else if(DateTime.Now < end)
-					return DateTime.Now;
+				//else if(DateTime.Now < end)
+				//	return DateTime.Now;
 				else
 					return DateTime.Parse(_DateEnd.ToShortDateString());
 			}
@@ -89,6 +89,39 @@ namespace ReportsCore.ViewModels {
 			set {
 				_FilterParameter = value;
 				OnPropertyChanged("FilterParameter");
+			}
+		}
+
+		private bool _VisibleChangeCostMonthlyPay;
+		public bool VisibleChangeCostMonthlyPay {
+			get => _VisibleChangeCostMonthlyPay;
+			set {
+				_VisibleChangeCostMonthlyPay = value;
+				OnPropertyChanged("VisibleChangeCostMonthlyPay");
+			}
+		}
+		private bool _VisibleAlarmActs;
+		public bool VisibleAlarmActs {
+			get => _VisibleAlarmActs;
+			set {
+				_VisibleAlarmActs = value;
+				OnPropertyChanged("VisibleAlarmActs");
+			}
+		}
+		private bool _VisibleLateGbr;
+		public bool VisibleLateGbr {
+			get => _VisibleLateGbr;
+			set {
+				_VisibleLateGbr = value;
+				OnPropertyChanged("VisibleLateGbr");
+			}
+		}
+		private bool _VisibleLatePult;
+		public bool VisibleLatePult {
+			get => _VisibleLatePult;
+			set {
+				_VisibleLatePult = value;
+				OnPropertyChanged("VisibleLatePult");
 			}
 		}
 
@@ -156,8 +189,6 @@ namespace ReportsCore.ViewModels {
 		private RelayCommand _SelectDatePattern;
 		public RelayCommand SelectDatePattern {
 			get => _SelectDatePattern ??= new RelayCommand(obj => {
-				//if(obj != null)
-				//DropDownButton o = obj as DropDownButton.Items;
 				DropDownButton o = obj as DropDownButton;
 				System.Windows.MessageBox.Show(o.Items.CurrentItem.ToString());
 			});
@@ -165,61 +196,67 @@ namespace ReportsCore.ViewModels {
 		private RelayCommand _GetData;
 		public RelayCommand GetData {
 			get => _GetData ??= new RelayCommand(async obj => {
-				//List<Report> report = new List<Report>();
-				using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
-					//TODO: Перенести в get
-					NewGuardObjectHistory before = null;
-					NewGuardObjectHistory after = null;
-					DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
-					DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
-					List<NewGuardObjectHistory> history = await context.NewGuardObjectHistory.Where(x => x.ModifiedOn >= start && x.ModifiedOn <= end /*&& x.NewObjectNumber == 2866*/).ToListAsync<NewGuardObjectHistory>();
-					var r = history.GroupBy(a => new { a.NewGuardObjectId, a.ModifiedBy, DateTime = DateTime.Parse(a.ModifiedOn.ToString()) }).ToList();
-					foreach(var item in r) {
-						before = null;
-						after = null;
-						foreach(var i in item)
-							if(i.HistoryState == "Старый")
-								before = i;
-							else
-								after = i;
-						List<Comparator> t = CompareObject(before, after);
-						if(t != null)
-							if(t.Any()) {
-								string WhoChanged = context.SystemUserBase.FirstOrDefault(x => x.SystemUserId == after.ModifiedBy).FullName;
-								Guid? CuratorId = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId).NewCurator;
-								string curatorName = null;
-								if(CuratorId.HasValue) {
-									Guid _id = Guid.Empty;
-									if(Guid.TryParse(CuratorId.Value.ToString(), out _id)) {
-										curatorName = context.SystemUserBase.FirstOrDefault(x => x.SystemUserId == CuratorId).FullName;
+				//Изменение стоимости Абонентской платы
+				if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
+					Reports.Clear();
+					using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
+						//TODO: Перенести в get
+						NewGuardObjectHistory before = null;
+						NewGuardObjectHistory after = null;
+						DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
+						DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
+						List<NewGuardObjectHistory> history = await context.NewGuardObjectHistory.Where(x => x.ModifiedOn >= start && x.ModifiedOn <= end).ToListAsync<NewGuardObjectHistory>();
+						var r = history.GroupBy(a => new { a.NewGuardObjectId, a.ModifiedBy, DateTime = DateTime.Parse(a.ModifiedOn.ToString()) }).ToList();
+						foreach(var item in r) {
+							before = null;
+							after = null;
+							foreach(var i in item)
+								if(i.HistoryState == "Старый")
+									before = i;
+								else
+									after = i;
+							List<Comparator> t = CompareObject(before, after);
+							if(t != null)
+								if(t.Any()) {
+									string WhoChanged = context.SystemUserBase.FirstOrDefault(x => x.SystemUserId == after.ModifiedBy).FullName;
+									Guid? CuratorId = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId).NewCurator;
+									string curatorName = null;
+									if(CuratorId.HasValue) {
+										Guid _id = Guid.Empty;
+										if(Guid.TryParse(CuratorId.Value.ToString(), out _id)) {
+											curatorName = context.SystemUserBase.FirstOrDefault(x => x.SystemUserId == CuratorId).FullName;
+										}
 									}
+									DateTime? WhenChanged = after.ModifiedOn;
+									string oldValue = null;
+									string newValue = null;
+									foreach(Comparator c in t) {
+										oldValue = c.OldValue;
+										newValue = c.NewValue;
+									}
+									NewGuardObjectExtensionBase objectExtensionBase = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId);
+									if(objectExtensionBase != null)
+										Reports.Add(new Report() {
+											Before = oldValue,
+											After = newValue,
+											Curator = curatorName,
+											DateChanged = WhenChanged,
+											DateStart = objectExtensionBase.NewDateStart,
+											WhoChanged = WhoChanged,
+											ObjectAddress = objectExtensionBase.NewAddress,
+											ObjectName = objectExtensionBase.NewName,
+											ObjectNumber = objectExtensionBase.NewObjectNumber
+										});
 								}
-								DateTime? WhenChanged = after.ModifiedOn;
-								string oldValue = null;
-								string newValue = null;
-								foreach(Comparator c in t) {
-									oldValue = c.OldValue;
-									newValue = c.NewValue;
-								}
-								NewGuardObjectExtensionBase objectExtensionBase = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId);
-								if(objectExtensionBase != null)
-									Reports.Add(new Report() {
-										After = oldValue,
-										Before = newValue,
-										Curator = curatorName,
-										DateChanged = WhenChanged,
-										DateStart = objectExtensionBase.NewDateStart,
-										WhoChanged = WhoChanged,
-										ObjectAddress = objectExtensionBase.NewAddress,
-										ObjectName = objectExtensionBase.NewName,
-										ObjectNumber = objectExtensionBase.NewObjectNumber
-									});
-							}
+						}
 					}
+					FlyoutMenuState = false;
+					FlyoutSettingVisibleState = false;
+					FullReports = Reports;
 				}
-				FlyoutMenuState = false;
-				FlyoutSettingVisibleState = false;
-				FullReports = Reports;
+				//По актам
+				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) { 
+				}
 			});
 		}
 
@@ -235,16 +272,6 @@ namespace ReportsCore.ViewModels {
 						if(oldValue.Equals(newValue))
 							continue;
 						else
-						//	if(item.Name.ToString().Equals("ModifiedOn") || item.Name.ToString().Equals("HistoryState"))
-						//		continue;
-						//else
-						//	comparator.Add(new Comparator() {
-						//		FieldName = item.Name,
-						//		//OldValue = (string)_old.GetType().GetProperty(item.Name).GetValue(_old).ToString(),
-						//		//NewValue = (string)_new.GetType().GetProperty(item.Name).GetValue(_new).ToString()
-						//		OldValue = _old.GetType().GetProperty(item.Name).GetValue(_old) == null ? null : _old.GetType().GetProperty(item.Name).GetValue(_old).ToString(),
-						//		NewValue = _new.GetType().GetProperty(item.Name).GetValue(_new) == null ? null : _new.GetType().GetProperty(item.Name).GetValue(_new).ToString()
-						//	});
 						if(item.Name.ToString().Equals("NewMonthlypay"))
 							comparator.Add(new Comparator() {
 								FieldName = item.Name,
@@ -264,7 +291,12 @@ namespace ReportsCore.ViewModels {
 		private ObservableCollection<Report> _Reports = new ObservableCollection<Report>();
 
 		public MainWindowViewModel() {
-			//ReportList.Add(new ReportsList() { ReportID = Guid.NewGuid(), ReportName = "Отчёт 1" });
+			//ReportList.Add(new ReportsList() { ReportID = Guid.NewGuid(), ReportName = "Отчёт изменения стоимости абонентской платы" });
+			using(ReportContext context = new ReportContext()) {
+				foreach(var item in context.Reports.ToList()) {
+					ReportList.Add(new ReportsList() { ReportID=item.RptId, ReportName=item.RptName });
+				}
+			}
 			DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Текущий месяц" });
 			DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Прошлый месяц" });
 			DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Текущий квартал" });
@@ -272,7 +304,7 @@ namespace ReportsCore.ViewModels {
 			//SystemUserBase systemUserBase = new SystemUserBase();
 			//foreach(FieldInfo item in systemUserBase.GetType().GetFields()) {
 			//	int y = 0;
-			//}						
+			//}	
 		}
 
 		public ObservableCollection<ReportsList> ReportList {
@@ -280,6 +312,20 @@ namespace ReportsCore.ViewModels {
 			set {
 				_ReportList = value;
 				OnPropertyChanged("ReportList");
+			}
+		}
+
+		private ReportsList _SelectedReport;
+		public ReportsList SelectedReport {
+			get => _SelectedReport;
+			set {
+				_SelectedReport = value;
+				//if(value.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) { //отчёт по изменению Абонентской платы
+				//	VisibleChangeCostMonthlyPay = true;
+				//}
+				//else
+				//	VisibleChangeCostMonthlyPay = false;
+				OnPropertyChanged("SelectedReport");
 			}
 		}
 

@@ -3,9 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ReportsCore" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:vm="clr-namespace:ReportsCore.ViewModels" xmlns:helpers="clr-namespace:ReportsCore.Helpers"
+        xmlns:local="clr-namespace:ReportsCore" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:vm="clr-namespace:ReportsCore.ViewModels" xmlns:helpers="clr-namespace:ReportsCore.Helpers" xmlns:mah1="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
                   mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" >
+        Title="Reports" Height="450" Width="800" >
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding MenuOpen}">
@@ -28,11 +28,13 @@
     <Grid>
         <mah:Flyout Position="Left" Header="Список отчётов" Width="250" AnimateOpacity="True" Panel.ZIndex="2" IsOpen="{Binding FlyoutMenuState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <StackPanel>
-                <DataGrid Margin="5" ItemsSource="{Binding ReportList}" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
+                <ComboBox SelectedItem="{Binding SelectedReport, Mode=TwoWay}" Text="Выберите отчёт" ItemsSource="{Binding ReportList}" DisplayMemberPath="ReportName" />
+
+                <!--<DataGrid Margin="5" ItemsSource="{Binding ReportList}" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Название" Binding="{Binding ReportName}" Width="*"/>
                     </DataGrid.Columns>
-                </DataGrid>
+                </DataGrid>-->
                 <Expander FontWeight="UltraLight">
                     <Expander.Header>
                         <TextBlock Text="Настройки отчёта"/>
@@ -45,15 +47,17 @@
             </StackPanel>
         </mah:Flyout>
         <mah:Flyout Position="Top" IsModal="True" AnimateOpacity="True" Panel.ZIndex="3" IsOpen="{Binding FlyoutSettingVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <StackPanel Grid.Column="0">
-                    <mah:DateTimePicker Margin="5" Culture="en-In" SelectedDateTime="{Binding DateStart, StringFormat=\{0:dd.MM.yyyy\}}"/>
-                    <mah:DateTimePicker Margin="5" Culture="en-In" SelectedDateTime="{Binding DateEnd, StringFormat=\{0:dd.MM.yyyy\}}"/>
-                    <!--<mah:DropDownButton ItemsSource="{Binding DatePatterns}" DisplayMemberPath="Name" Command="{Binding SelectDatePattern}">
+            <StackPanel>
+                <!--Изменение стоимости абонентской платы-->
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <mah1:DatePicker Margin="5" SelectedDateFormat="Short" SelectedDate="{Binding DateStart, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                        <mah1:DatePicker Margin="5" SelectedDateFormat="Short" SelectedDate="{Binding DateEnd, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                        <!--<mah:DropDownButton ItemsSource="{Binding DatePatterns}" DisplayMemberPath="Name" Command="{Binding SelectDatePattern}">
                         <mah:DropDownButton.ItemContainerStyle>
                             <Style TargetType="MenuItem">
                                 <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type mah:DropDownButton}},Path=DatePatterns.Name}"/>
@@ -61,31 +65,48 @@
                             </Style>
                         </mah:DropDownButton.ItemContainerStyle>
                     </mah:DropDownButton>-->
-                    
-                </StackPanel>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                    <Button Content="Обновить" Command="{Binding GetData}"/>
-                </StackPanel>
-            </Grid>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Button Content="Обновить" Command="{Binding GetData}"/>
+                    </StackPanel>
+                    <StackPanel>
+                        
+                    </StackPanel>
+                </Grid>
+                <!--Отчёт по актам-->
+                <!--<Grid Visibility="{Binding VisibleAlarmActs, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <mah1:DatePicker Margin="5" SelectedDateFormat="Short" SelectedDate="{Binding DateStart, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                        <mah1:DatePicker Margin="5" SelectedDateFormat="Short" SelectedDate="{Binding DateEnd, StringFormat=\{0:dd.MM.yyyy\}}"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
+                        <Button Content="Обновить" Command="{Binding GetData}"/>
+                    </StackPanel>
+                </Grid>-->
+            </StackPanel>
         </mah:Flyout>
         <mah:Flyout Position="Right" IsModal="True" AnimateOpacity="True" Panel.ZIndex="3" IsOpen="{Binding FlyoutSettingColumnsVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <DataGrid ItemsSource="{Binding Columns}"/>
         </mah:Flyout>
-        <DataGrid IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
+        <DataGrid Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}" IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
             <DataGrid.Resources>
                 <!--Дата изменения-->
                 <DataTemplate x:Key="dt_DateChanged">
-                    <mah:DateTimePicker Culture="en-IN" SelectedDateTime="{Binding Mode=TwoWay, Path=DateChanged,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=DateChanged,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
                 </DataTemplate>
                 <DataTemplate x:Key="edt_DateChanged">
-                    <mah:DateTimePicker Culture="en-IN" SelectedDateTime="{Binding Mode=TwoWay, Path=DateChanged,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=DateChanged,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
                 </DataTemplate>
                 <!--Дата подключения-->
                 <DataTemplate x:Key="dt_DateStart">
-                    <mah:DateTimePicker Culture="en-IN" SelectedDateTime="{Binding Mode=TwoWay, Path=DateStart,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=DateStart,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
                 </DataTemplate>
                 <DataTemplate x:Key="edt_DateStart">
-                    <mah:DateTimePicker Culture="en-IN" SelectedDateTime="{Binding Mode=TwoWay, Path=DateStart,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=DateStart,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
                 </DataTemplate>
             </DataGrid.Resources>
             <DataGrid.Columns>
@@ -94,7 +115,7 @@
                 <DataGridTextColumn Header="Адрес объекта" Binding="{Binding ObjectAddress}" Visibility="{Binding ObjectAddressrVisibility}"/>
                 <DataGridTextColumn Header="Кем изменено" Binding="{Binding WhoChanged}" Visibility="{Binding WhoChangedVisibility}"/>
                 <!--<DataGridTextColumn Header="Дата" Binding="{Binding DateChanged}" Visibility="{Binding DateChangedVisibility}"/>-->
-                <DataGridTemplateColumn Header="Дата" CellTemplate="{StaticResource dt_DateChanged}" CellEditingTemplate="{StaticResource edt_DateChanged}" IsReadOnly="True"/>
+                <DataGridTemplateColumn Header="Дата" CellTemplate="{StaticResource dt_DateChanged}" CellEditingTemplate="{StaticResource edt_DateChanged}"/>
                 <DataGridTextColumn Header="Было" Binding="{Binding Before}" Visibility="{Binding BeforeVisibility}"/>
                 <DataGridTextColumn Header="Стало" Binding="{Binding After}" Visibility="{Binding AfterVisibility}"/>
                 <!--<DataGridTextColumn Header="Дата подключения" Binding="{Binding DateStart}" Visibility="{Binding DateStartVisibility}"/>-->
