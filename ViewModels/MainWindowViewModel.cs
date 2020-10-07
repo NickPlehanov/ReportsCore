@@ -255,7 +255,22 @@ namespace ReportsCore.ViewModels {
 					FullReports = Reports;
 				}
 				//По актам
-				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) { 
+				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
+					Reports.Clear();
+					using (Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
+						DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
+						DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
+						var result = context.NewAlarmExtensionBase.Where(x => x.NewAlarmDt >= start && x.NewAlarmDt < end && x.NewAct == true);
+						if (result!=null)
+							if(result.Any()) {
+								foreach(var item in result) {
+									
+									Reports.Add(new Report() { 
+
+									});
+								}
+							}
+					}
 				}
 			});
 		}

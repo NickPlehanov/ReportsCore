@@ -1,5 +1,5 @@
 ﻿{
-   "ContextClassName": "ReportContext",
+   "ContextClassName": "Vityaz_MSCRMContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
@@ -14,7 +14,27 @@
    "Tables": [
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[Reports]"
+         "Name": "[dbo].[New_alarmBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_alarmExtensionBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_guard_object_History]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_guard_objectBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_guard_objectExtensionBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[SystemUserBase]"
       }
    ],
    "UseDatabaseNames": false,

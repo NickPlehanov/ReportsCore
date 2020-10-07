@@ -4,7 +4,6 @@ namespace ReportsCore.Models {
 	public class Report {
 		public Report() {
 		}
-
 		public int? ObjectNumber { get; set; }
 		public string ObjectName { get; set; }
 		public string ObjectAddress { get; set; }
@@ -14,5 +13,19 @@ namespace ReportsCore.Models {
 		public string After { get; set; }
 		public DateTime? DateStart { get; set; }
 		public string Curator { get; set; }
+
+		//поля для отчёта по сработкам
+		public bool? Act { get; set; }
+		public bool? Police { get; set; }
+		public bool? Ho { get; set; }
+		public DateTime? Alarm { get; set; }
+		public DateTime? Departure { get; set; } //отправка
+		public DateTime? Arrival { get; set; }//прибытие
+		public DateTime? Cancel { get; set; }
+		public string Result { get; set; }
+		public bool? Os { get; set; }
+		public bool? Ps { get; set; }
+		public bool? Trs { get; set; }
+		public int? Group { get; set; }
 	}
 }

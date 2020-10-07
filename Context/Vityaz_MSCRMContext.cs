@@ -17,6 +17,8 @@ namespace ReportsCore.Context
         {
         }
 
+        public virtual DbSet<NewAlarmBase> NewAlarmBase { get; set; }
+        public virtual DbSet<NewAlarmExtensionBase> NewAlarmExtensionBase { get; set; }
         public virtual DbSet<NewGuardObjectBase> NewGuardObjectBase { get; set; }
         public virtual DbSet<NewGuardObjectExtensionBase> NewGuardObjectExtensionBase { get; set; }
         public virtual DbSet<NewGuardObjectHistory> NewGuardObjectHistory { get; set; }
@@ -26,13 +28,44 @@ namespace ReportsCore.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=sql-service;Initial Catalog=vityaz_MSCRM;Persist Security Info=True;User ID=admin;Password=111111");
+                optionsBuilder.UseSqlServer("Data Source=sql-service;Initial Catalog=vityaz_MSCRM;User ID=admin;Password=111111");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<NewAlarmBase>(entity =>
+            {
+                entity.HasIndex(e => e.OrganizationId)
+                    .HasName("ndx_Security");
+
+                entity.HasIndex(e => e.VersionNumber)
+                    .HasName("ndx_Sync");
+
+                entity.HasIndex(e => new { e.DeletionStateCode, e.Statecode, e.Statuscode })
+                    .HasName("ndx_Core");
+
+                entity.HasIndex(e => new { e.CreatedBy, e.CreatedOn, e.ModifiedBy, e.ModifiedOn })
+                    .HasName("ndx_Auditing");
+
+                entity.Property(e => e.NewAlarmId).ValueGeneratedNever();
+
+                entity.Property(e => e.VersionNumber)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+            });
+
+            modelBuilder.Entity<NewAlarmExtensionBase>(entity =>
+            {
+                entity.Property(e => e.NewAlarmId).ValueGeneratedNever();
+
+                entity.HasOne(d => d.NewAlarm)
+                    .WithOne(p => p.NewAlarmExtensionBase)
+                    .HasForeignKey<NewAlarmExtensionBase>(d => d.NewAlarmId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_New_alarmExtensionBase_New_alarmBase");
+            });
+
             modelBuilder.Entity<NewGuardObjectBase>(entity =>
             {
                 entity.HasIndex(e => e.VersionNumber)

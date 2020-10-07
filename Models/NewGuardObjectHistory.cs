@@ -7,34 +7,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ReportsCore.Models
 {
     [Table("New_guard_object_History")]
-    public partial class NewGuardObjectHistory : IEquatable<NewGuardObjectHistory> {
-                public override bool Equals(object obj) {
-            return this.Equals(obj as NewGuardObjectHistory);
-        }
-		//TODO: Переписать на проверку всех полей либо только одного и возвращать List<Class>, где Class - это имя поля, старое, новое значение
-		public bool Equals(NewGuardObjectHistory other) {
-			if(other == null)
-				return false;
-
-			return this.NewGuardObjectId.Equals(other.NewGuardObjectId) &&
-				(
-					object.ReferenceEquals(this.NewMonthlypay, other.NewMonthlypay) ||
-					this.NewMonthlypay != null &&
-					this.NewMonthlypay.Equals(other.NewMonthlypay)
-				);
-		}
-		public NewGuardObjectHistory Equals(NewGuardObjectHistory other, bool flag) {
-            if(other == null)
-                return null;
-
-            if(this.NewMonthlypay != other.NewMonthlypay) {
-                return other;
-            }
-            else
-                return this;
-        }
-
-		[Column("New_address")]
+    public partial class NewGuardObjectHistory
+    {
+        [Column("New_address")]
         [StringLength(255)]
         public string NewAddress { get; set; }
         [Column("New_another_secagency")]
