@@ -69,5 +69,8 @@ namespace ReportsCore.Models
         [ForeignKey(nameof(NewAlarmId))]
         [InverseProperty(nameof(NewAlarmBase.NewAlarmExtensionBase))]
         public virtual NewAlarmBase NewAlarm { get; set; }
+        [ForeignKey(nameof(NewAndromedaAlarm))]
+        [InverseProperty(nameof(NewAndromedaBase.NewAlarmExtensionBase))]
+        public virtual NewAndromedaBase NewAndromedaAlarmNavigation { get; set; }
     }
 }

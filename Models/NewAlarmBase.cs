@@ -9,6 +9,11 @@ namespace ReportsCore.Models
     [Table("New_alarmBase")]
     public partial class NewAlarmBase
     {
+        public NewAlarmBase()
+        {
+            NewAndromedaExtensionBase = new HashSet<NewAndromedaExtensionBase>();
+        }
+
         [Key]
         [Column("New_alarmId")]
         public Guid NewAlarmId { get; set; }
@@ -34,5 +39,7 @@ namespace ReportsCore.Models
 
         [InverseProperty("NewAlarm")]
         public virtual NewAlarmExtensionBase NewAlarmExtensionBase { get; set; }
+        [InverseProperty("NewPostNavigation")]
+        public virtual ICollection<NewAndromedaExtensionBase> NewAndromedaExtensionBase { get; set; }
     }
 }

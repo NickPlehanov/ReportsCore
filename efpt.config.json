@@ -22,6 +22,14 @@
       },
       {
          "HasPrimaryKey": true,
+         "Name": "[dbo].[New_andromedaBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_andromedaExtensionBase]"
+      },
+      {
+         "HasPrimaryKey": true,
          "Name": "[dbo].[New_guard_object_History]"
       },
       {

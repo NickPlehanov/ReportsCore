@@ -17,7 +17,7 @@ namespace ReportsCore.Models {
 		//поля для отчёта по сработкам
 		public bool? Act { get; set; }
 		public bool? Police { get; set; }
-		public bool? Ho { get; set; }
+		public bool? Owner { get; set; }
 		public DateTime? Alarm { get; set; }
 		public DateTime? Departure { get; set; } //отправка
 		public DateTime? Arrival { get; set; }//прибытие

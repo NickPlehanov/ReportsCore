@@ -19,6 +19,8 @@ namespace ReportsCore.Context
 
         public virtual DbSet<NewAlarmBase> NewAlarmBase { get; set; }
         public virtual DbSet<NewAlarmExtensionBase> NewAlarmExtensionBase { get; set; }
+        public virtual DbSet<NewAndromedaBase> NewAndromedaBase { get; set; }
+        public virtual DbSet<NewAndromedaExtensionBase> NewAndromedaExtensionBase { get; set; }
         public virtual DbSet<NewGuardObjectBase> NewGuardObjectBase { get; set; }
         public virtual DbSet<NewGuardObjectExtensionBase> NewGuardObjectExtensionBase { get; set; }
         public virtual DbSet<NewGuardObjectHistory> NewGuardObjectHistory { get; set; }
@@ -28,6 +30,7 @@ namespace ReportsCore.Context
         {
             if (!optionsBuilder.IsConfigured)
             {
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
                 optionsBuilder.UseSqlServer("Data Source=sql-service;Initial Catalog=vityaz_MSCRM;User ID=admin;Password=111111");
             }
         }
@@ -64,6 +67,56 @@ namespace ReportsCore.Context
                     .HasForeignKey<NewAlarmExtensionBase>(d => d.NewAlarmId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_New_alarmExtensionBase_New_alarmBase");
+
+                entity.HasOne(d => d.NewAndromedaAlarmNavigation)
+                    .WithMany(p => p.NewAlarmExtensionBase)
+                    .HasForeignKey(d => d.NewAndromedaAlarm)
+                    .HasConstraintName("new_andromeda_alarm");
+            });
+
+            modelBuilder.Entity<NewAndromedaBase>(entity =>
+            {
+                entity.HasIndex(e => e.VersionNumber)
+                    .HasName("ndx_Sync");
+
+                entity.HasIndex(e => new { e.OwningUser, e.OwningBusinessUnit })
+                    .HasName("ndx_Security");
+
+                entity.HasIndex(e => new { e.DeletionStateCode, e.Statecode, e.Statuscode })
+                    .HasName("ndx_Core");
+
+                entity.HasIndex(e => new { e.CreatedBy, e.CreatedOn, e.ModifiedBy, e.ModifiedOn })
+                    .HasName("ndx_Auditing");
+
+                entity.Property(e => e.NewAndromedaId).ValueGeneratedNever();
+
+                entity.Property(e => e.VersionNumber)
+                    .IsRowVersion()
+                    .IsConcurrencyToken();
+
+                entity.HasOne(d => d.OwningUserNavigation)
+                    .WithMany(p => p.NewAndromedaBase)
+                    .HasForeignKey(d => d.OwningUser)
+                    .HasConstraintName("user_new_andromeda");
+            });
+
+            modelBuilder.Entity<NewAndromedaExtensionBase>(entity =>
+            {
+                entity.HasIndex(e => e.NewContactAndromeda)
+                    .HasName("ndx_for_cascaderelationship_new_contact_new_andromeda");
+
+                entity.Property(e => e.NewAndromedaId).ValueGeneratedNever();
+
+                entity.HasOne(d => d.NewAndromeda)
+                    .WithOne(p => p.NewAndromedaExtensionBase)
+                    .HasForeignKey<NewAndromedaExtensionBase>(d => d.NewAndromedaId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_New_andromedaExtensionBase_New_andromedaBase");
+
+                entity.HasOne(d => d.NewPostNavigation)
+                    .WithMany(p => p.NewAndromedaExtensionBase)
+                    .HasForeignKey(d => d.NewPost)
+                    .HasConstraintName("new_new_alarm_new_andromeda");
             });
 
             modelBuilder.Entity<NewGuardObjectBase>(entity =>

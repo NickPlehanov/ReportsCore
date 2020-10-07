@@ -11,6 +11,7 @@ namespace ReportsCore.Models
         public SystemUserBase()
         {
             InverseParentSystemUser = new HashSet<SystemUserBase>();
+            NewAndromedaBase = new HashSet<NewAndromedaBase>();
             NewGuardObjectBase = new HashSet<NewGuardObjectBase>();
             NewGuardObjectExtensionBaseNewCuratorNavigation = new HashSet<NewGuardObjectExtensionBase>();
             NewGuardObjectExtensionBaseNewCuratorUserMountNavigation = new HashSet<NewGuardObjectExtensionBase>();
@@ -114,6 +115,8 @@ namespace ReportsCore.Models
         public virtual SystemUserBase ParentSystemUser { get; set; }
         [InverseProperty(nameof(SystemUserBase.ParentSystemUser))]
         public virtual ICollection<SystemUserBase> InverseParentSystemUser { get; set; }
+        [InverseProperty("OwningUserNavigation")]
+        public virtual ICollection<NewAndromedaBase> NewAndromedaBase { get; set; }
         [InverseProperty("OwningUserNavigation")]
         public virtual ICollection<NewGuardObjectBase> NewGuardObjectBase { get; set; }
         [InverseProperty(nameof(NewGuardObjectExtensionBase.NewCuratorNavigation))]

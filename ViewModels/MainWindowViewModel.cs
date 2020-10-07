@@ -264,10 +264,24 @@ namespace ReportsCore.ViewModels {
 						if (result!=null)
 							if(result.Any()) {
 								foreach(var item in result) {
-									
-									Reports.Add(new Report() { 
-
-									});
+									var andromeda = context.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item.NewAndromedaAlarm);
+									Reports.Add(new Report() {
+										ObjectName = andromeda.FirstOrDefault().NewName,
+										ObjectNumber = andromeda.FirstOrDefault().NewNumber,
+										ObjectAddress = andromeda.FirstOrDefault().NewAddress,
+										Os = item.NewOnc,
+										Ps = item.NewPs,
+										Trs = item.NewTpc,
+										Group = item.NewGroup + 69,
+										Alarm=item.NewAlarmDt,
+										Arrival=item.NewArrival,
+										Departure=item.NewDeparture,
+										Cancel=item.NewCancel,
+										Result=item.NewName,
+										Owner=item.NewOwner,
+										Police=item.NewPolice,
+										Act=item.NewAct
+									}) ;
 								}
 							}
 					}
