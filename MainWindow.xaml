@@ -92,7 +92,7 @@
         <mah:Flyout Position="Right" IsModal="True" AnimateOpacity="True" Panel.ZIndex="3" IsOpen="{Binding FlyoutSettingColumnsVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <DataGrid ItemsSource="{Binding Columns}"/>
         </mah:Flyout>
-        <DataGrid Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}" IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
+        <DataGrid  IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
             <DataGrid.Resources>
                 <!--Дата изменения-->
                 <DataTemplate x:Key="dt_DateChanged">
@@ -108,19 +108,55 @@
                 <DataTemplate x:Key="edt_DateStart">
                     <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=DateStart,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
                 </DataTemplate>
+                <!--Тревога-->
+                <DataTemplate x:Key="dt_Alarm">
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=Alarm,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+                <DataTemplate x:Key="edt_Alarm">
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=Alarm,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+                <!--Отправка-->
+                <DataTemplate x:Key="dt_Departure">
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=Departure,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+                <DataTemplate x:Key="edt_Departure">
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=Departure,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+                <!--Прибытие-->
+                <DataTemplate x:Key="dt_Arrival">
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=Arrival,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+                <DataTemplate x:Key="edt_Arrival">
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=Arrival,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+                <!--Отмена-->
+                <DataTemplate x:Key="dt_Cancel">
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=Cancel,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
+                <DataTemplate x:Key="edt_Cancel">
+                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=Cancel,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                </DataTemplate>
             </DataGrid.Resources>
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Номер объекта" Binding="{Binding ObjectNumber}" Visibility="{Binding ObjectNumberVisibility}"/>
-                <DataGridTextColumn Header="Название объекта" Binding="{Binding ObjectName}" Visibility="{Binding ObjectNameVisibility}"/>
-                <DataGridTextColumn Header="Адрес объекта" Binding="{Binding ObjectAddress}" Visibility="{Binding ObjectAddressrVisibility}"/>
-                <DataGridTextColumn Header="Кем изменено" Binding="{Binding WhoChanged}" Visibility="{Binding WhoChangedVisibility}"/>
+                <DataGridTextColumn Header="Номер объекта" Binding="{Binding ObjectNumber}" Visibility="{Binding ObjectNumberVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="Название объекта" Binding="{Binding ObjectName}" Visibility="{Binding ObjectNameVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="Адрес объекта" Binding="{Binding ObjectAddress}" Visibility="{Binding ObjectAddressrVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="Кем изменено" Binding="{Binding WhoChanged}" Visibility="{Binding WhoChangedVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <!--<DataGridTextColumn Header="Дата" Binding="{Binding DateChanged}" Visibility="{Binding DateChangedVisibility}"/>-->
-                <DataGridTemplateColumn Header="Дата" CellTemplate="{StaticResource dt_DateChanged}" CellEditingTemplate="{StaticResource edt_DateChanged}"/>
-                <DataGridTextColumn Header="Было" Binding="{Binding Before}" Visibility="{Binding BeforeVisibility}"/>
-                <DataGridTextColumn Header="Стало" Binding="{Binding After}" Visibility="{Binding AfterVisibility}"/>
+                <DataGridTemplateColumn Header="Дата изменения" CellTemplate="{StaticResource dt_DateChanged}" CellEditingTemplate="{StaticResource edt_DateChanged}" Visibility="{Binding DateChangedVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="Было" Binding="{Binding Before}" Visibility="{Binding BeforeVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="Стало" Binding="{Binding After}" Visibility="{Binding AfterVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <!--<DataGridTextColumn Header="Дата подключения" Binding="{Binding DateStart}" Visibility="{Binding DateStartVisibility}"/>-->
-                <DataGridTemplateColumn Header="Дата" CellTemplate="{StaticResource dt_DateStart}" CellEditingTemplate="{StaticResource edt_DateStart}" IsReadOnly="True"/>
-                <DataGridTextColumn Header="Куратор" Binding="{Binding Curator}" Visibility="{Binding CuratorVisibility}"/>
+                <DataGridTemplateColumn Header="Дата подключения" CellTemplate="{StaticResource dt_DateStart}" CellEditingTemplate="{StaticResource edt_DateStart}" IsReadOnly="True" Visibility="{Binding DateStartVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="Куратор" Binding="{Binding Curator}" Visibility="{Binding CuratorVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridCheckBoxColumn Header="Акт" Binding="{Binding Act}" Visibility="{Binding ActVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridCheckBoxColumn Header="Полиция" Binding="{Binding Police}" Visibility="{Binding PoliceVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridCheckBoxColumn Header="Вызов х/о" Binding="{Binding Owner}" Visibility="{Binding OwnerVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTemplateColumn Header="Тревога" CellTemplate="{StaticResource dt_Alarm}" CellEditingTemplate="{StaticResource edt_Alarm}" IsReadOnly="True" Visibility="{Binding AlarmVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTemplateColumn Header="Отправка" CellTemplate="{StaticResource dt_Departure}" CellEditingTemplate="{StaticResource edt_Departure}" IsReadOnly="True" Visibility="{Binding DepartureVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTemplateColumn Header="Прибытие" CellTemplate="{StaticResource dt_Arrival}" CellEditingTemplate="{StaticResource edt_Arrival}" IsReadOnly="True" Visibility="{Binding ArrivalVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTemplateColumn Header="Прибытие" CellTemplate="{StaticResource dt_Cancel}" CellEditingTemplate="{StaticResource edt_Cancel}" IsReadOnly="True" Visibility="{Binding CancelVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="Результат" Binding="{Binding Result}" Visibility="{Binding ResultVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

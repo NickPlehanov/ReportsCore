@@ -249,10 +249,7 @@ namespace ReportsCore.ViewModels {
 										});
 								}
 						}
-					}
-					FlyoutMenuState = false;
-					FlyoutSettingVisibleState = false;
-					FullReports = Reports;
+					}					
 				}
 				//По актам
 				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
@@ -264,28 +261,33 @@ namespace ReportsCore.ViewModels {
 						if (result!=null)
 							if(result.Any()) {
 								foreach(var item in result) {
-									var andromeda = context.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item.NewAndromedaAlarm);
-									Reports.Add(new Report() {
-										ObjectName = andromeda.FirstOrDefault().NewName,
-										ObjectNumber = andromeda.FirstOrDefault().NewNumber,
-										ObjectAddress = andromeda.FirstOrDefault().NewAddress,
-										Os = item.NewOnc,
-										Ps = item.NewPs,
-										Trs = item.NewTpc,
-										Group = item.NewGroup + 69,
-										Alarm=item.NewAlarmDt,
-										Arrival=item.NewArrival,
-										Departure=item.NewDeparture,
-										Cancel=item.NewCancel,
-										Result=item.NewName,
-										Owner=item.NewOwner,
-										Police=item.NewPolice,
-										Act=item.NewAct
-									}) ;
+									using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
+										var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item.NewAndromedaAlarm).ToList();
+										Reports.Add(new Report() {
+											ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
+											ObjectNumber = andromeda.FirstOrDefault().NewNumber,
+											ObjectAddress = andromeda.FirstOrDefault().NewAddress,
+											Os = item.NewOnc,
+											Ps = item.NewPs,
+											Trs = item.NewTpc,
+											Group = item.NewGroup + 69,
+											Alarm = item.NewAlarmDt,
+											Arrival = item.NewArrival,
+											Departure = item.NewDeparture,
+											Cancel = item.NewCancel,
+											Result = item.NewName,
+											Owner = item.NewOwner,
+											Police = item.NewPolice,
+											Act = item.NewAct
+										});
+									}
 								}
 							}
 					}
 				}
+				FlyoutMenuState = false;
+				FlyoutSettingVisibleState = false;
+				FullReports = Reports;
 			});
 		}
 
