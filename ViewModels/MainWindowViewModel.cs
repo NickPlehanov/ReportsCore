@@ -351,6 +351,25 @@ namespace ReportsCore.ViewModels {
 			get => _GetData ??= new RelayCommand(async obj => {
 				//Изменение стоимости Абонентской платы
 				if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
+					//TODO: переделать на отдельный метод
+					ObjectNumberVisibility = true;
+					ObjectNameVisibility = true;
+					ObjectAddressVisibility = true;
+					WhoChangedVisibility = true;
+					DateChangedVisibility = true;
+					BeforeVisibility = true;
+					AfterVisibility = true;
+					DateStartVisibility = true;
+					CuratorVisibility = true;
+					ActVisibility = false;
+					PoliceVisibility = false;
+					OwnerVisibility = false;
+					AlarmVisibility = false;
+					DepartureVisibility = false;
+					ArrivalVisibility = false;
+					CancelVisibility = false;
+					ResultVisibility = false;
+
 					Reports.Clear();
 					using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 						//TODO: Перенести в get
@@ -406,6 +425,24 @@ namespace ReportsCore.ViewModels {
 				}
 				//По актам
 				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
+					//TODO: переделать на отдельный метод
+					ObjectNumberVisibility = true;
+					ObjectNameVisibility = true;
+					ObjectAddressVisibility = true;
+					WhoChangedVisibility = false;
+					DateChangedVisibility = false;
+					BeforeVisibility = false;
+					AfterVisibility = false;
+					DateStartVisibility = false;
+					CuratorVisibility = false;
+					ActVisibility = true;
+					PoliceVisibility = true;
+					OwnerVisibility = true;
+					AlarmVisibility = true;
+					DepartureVisibility = true;
+					ArrivalVisibility = true;
+					CancelVisibility = true;
+					ResultVisibility = true;
 					Reports.Clear();
 					using (Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 						DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
