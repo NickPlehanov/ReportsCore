@@ -94,7 +94,7 @@
         </mah:Flyout>
         <DataGrid  IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
             <DataGrid.Resources>
-                <helpers:BindingProxy x:Key="proxy" Data="{Binding}" />
+                <helpers:BindingProxy x:Key="proxy" Data="{Binding}"/>
                 <converters:BooleanToCollapsedConverter  x:Key="btvc" />
                 <!--Дата изменения-->
                 <DataTemplate x:Key="dt_DateChanged">
@@ -159,7 +159,7 @@
                 <DataGridTemplateColumn Header="Прибытие" CellTemplate="{StaticResource dt_Arrival}" CellEditingTemplate="{StaticResource edt_Arrival}" IsReadOnly="True" Visibility="{Binding ArrivalVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <DataGridTemplateColumn Header="Отмена" CellTemplate="{StaticResource dt_Cancel}" CellEditingTemplate="{StaticResource edt_Cancel}" IsReadOnly="True" Visibility="{Binding CancelVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <!--<DataGridTextColumn Header="Результат" Binding="{Binding Result}" Visibility="{Binding ResultVisibility, Converter={StaticResource btvc}}"/>-->
-                <DataGridTextColumn Header="Результат" Binding="{Binding Result}" Visibility="{Binding DataContext.ResultVisibility, RelativeSource={RelativeSource AncestorType={x:Type mah:MetroWindow},Mode=FindAncestor}, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="Результат" Binding="{Binding Result}" Visibility="{Binding Data.ResultVisibility, Source={StaticResource proxy}}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
