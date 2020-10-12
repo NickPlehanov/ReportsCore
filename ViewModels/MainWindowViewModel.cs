@@ -43,6 +43,159 @@ namespace ReportsCore.ViewModels {
 			}
 		}
 
+		private bool _ObjectNumberVisibility;
+		public bool ObjectNumberVisibility {
+			get => _ObjectNumberVisibility;
+			set {
+				_ObjectNumberVisibility = value;
+				OnPropertyChanged(nameof(ObjectNumberVisibility));
+			}
+		}
+
+		private bool _ObjectNameVisibility;
+		public bool ObjectNameVisibility {
+			get => _ObjectNameVisibility;
+			set {
+				_ObjectNameVisibility = value;
+				OnPropertyChanged(nameof(ObjectNameVisibility));
+			}
+		}
+
+		private bool _ObjectAddressVisibility;
+		public bool ObjectAddressVisibility {
+			get => _ObjectAddressVisibility;
+			set {
+				_ObjectAddressVisibility = value;
+				OnPropertyChanged(nameof(ObjectAddressVisibility));
+			}
+		}
+
+		private bool _WhoChangedVisibility;
+		public bool WhoChangedVisibility {
+			get => _WhoChangedVisibility;
+			set {
+				_WhoChangedVisibility = value;
+				OnPropertyChanged(nameof(WhoChangedVisibility));
+			}
+		}
+
+		private bool _DateChangedVisibility;
+		public bool DateChangedVisibility {
+			get => _DateChangedVisibility;
+			set {
+				_DateChangedVisibility = value;
+				OnPropertyChanged(nameof(DateChangedVisibility));
+			}
+		}
+
+		private bool _BeforeVisibility;
+		public bool BeforeVisibility {
+			get => _BeforeVisibility;
+			set {
+				_BeforeVisibility = value;
+				OnPropertyChanged(nameof(BeforeVisibility));
+			}
+		}
+
+		private bool _AfterVisibility;
+		public bool AfterVisibility {
+			get => _AfterVisibility;
+			set {
+				_AfterVisibility = value;
+				OnPropertyChanged(nameof(AfterVisibility));
+			}
+		}
+
+		private bool _DateStartVisibility;
+		public bool DateStartVisibility {
+			get => _DateStartVisibility;
+			set {
+				_DateStartVisibility = value;
+				OnPropertyChanged(nameof(DateStartVisibility));
+			}
+		}
+
+		private bool _CuratorVisibility;
+		public bool CuratorVisibility {
+			get => _CuratorVisibility;
+			set {
+				_CuratorVisibility = value;
+				OnPropertyChanged(nameof(CuratorVisibility));
+			}
+		}
+
+		private bool _ActVisibility;
+		public bool ActVisibility {
+			get => _ActVisibility;
+			set {
+				_ActVisibility = value;
+				OnPropertyChanged(nameof(ActVisibility));
+			}
+		}
+
+		private bool _PoliceVisibility;
+		public bool PoliceVisibility {
+			get => _PoliceVisibility;
+			set {
+				_PoliceVisibility = value;
+				OnPropertyChanged(nameof(PoliceVisibility));
+			}
+		}
+
+		private bool _OwnerVisibility;
+		public bool OwnerVisibility {
+			get => _OwnerVisibility;
+			set {
+				_OwnerVisibility = value;
+				OnPropertyChanged(nameof(OwnerVisibility));
+			}
+		}
+
+		private bool _AlarmVisibility;
+		public bool AlarmVisibility {
+			get => _AlarmVisibility;
+			set {
+				_AlarmVisibility = value;
+				OnPropertyChanged(nameof(AlarmVisibility));
+			}
+		}
+
+		private bool _DepartureVisibility;
+		public bool DepartureVisibility {
+			get => _DepartureVisibility;
+			set {
+				_DepartureVisibility = value;
+				OnPropertyChanged(nameof(DepartureVisibility));
+			}
+		}
+
+		private bool _ArrivalVisibility;
+		public bool ArrivalVisibility {
+			get => _ArrivalVisibility;
+			set {
+				_ArrivalVisibility = value;
+				OnPropertyChanged(nameof(ArrivalVisibility));
+			}
+		}
+
+		private bool _CancelVisibility;
+		public bool CancelVisibility {
+			get => _CancelVisibility;
+			set {
+				_CancelVisibility = value;
+				OnPropertyChanged(nameof(CancelVisibility));
+			}
+		}
+
+		private bool _ResultVisibility;
+		public bool ResultVisibility {
+			get => _ResultVisibility;
+			set {
+				_ResultVisibility = value;
+				OnPropertyChanged(nameof(ResultVisibility));
+			}
+		}
+
 		private DateTime _DateStart;
 		public DateTime DateStart {
 			get {

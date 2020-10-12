@@ -155,7 +155,7 @@
                 <DataGridTemplateColumn Header="Тревога" CellTemplate="{StaticResource dt_Alarm}" CellEditingTemplate="{StaticResource edt_Alarm}" IsReadOnly="True" Visibility="{Binding AlarmVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <DataGridTemplateColumn Header="Отправка" CellTemplate="{StaticResource dt_Departure}" CellEditingTemplate="{StaticResource edt_Departure}" IsReadOnly="True" Visibility="{Binding DepartureVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <DataGridTemplateColumn Header="Прибытие" CellTemplate="{StaticResource dt_Arrival}" CellEditingTemplate="{StaticResource edt_Arrival}" IsReadOnly="True" Visibility="{Binding ArrivalVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                <DataGridTemplateColumn Header="Прибытие" CellTemplate="{StaticResource dt_Cancel}" CellEditingTemplate="{StaticResource edt_Cancel}" IsReadOnly="True" Visibility="{Binding CancelVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTemplateColumn Header="Отмена" CellTemplate="{StaticResource dt_Cancel}" CellEditingTemplate="{StaticResource edt_Cancel}" IsReadOnly="True" Visibility="{Binding CancelVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <DataGridTextColumn Header="Результат" Binding="{Binding Result}" Visibility="{Binding ResultVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </DataGrid.Columns>
         </DataGrid>
