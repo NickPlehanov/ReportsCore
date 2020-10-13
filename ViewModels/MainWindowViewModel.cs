@@ -196,6 +196,15 @@ namespace ReportsCore.ViewModels {
 			}
 		}
 
+		private int _ResultWidth;
+		public int ResultWidth {
+			get => _ResultWidth;
+			set {
+				_ResultWidth = value;
+				OnPropertyChanged(nameof(ResultWidth));
+			}
+		}
+
 		private DateTime _DateStart;
 		public DateTime DateStart {
 			get {
@@ -369,6 +378,7 @@ namespace ReportsCore.ViewModels {
 					ArrivalVisibility = false;
 					CancelVisibility = false;
 					ResultVisibility = false;
+					ResultWidth = 0;
 
 					Reports.Clear();
 					using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {

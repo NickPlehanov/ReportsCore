@@ -3,7 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ReportsCore" xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:vm="clr-namespace:ReportsCore.ViewModels" xmlns:helpers="clr-namespace:ReportsCore.Helpers" xmlns:mah1="http://schemas.microsoft.com/netfx/2009/xaml/presentation" xmlns:converters="clr-namespace:ReportsCore.Helpers.Converters"
+        xmlns:local="clr-namespace:ReportsCore" 
+                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
+                  xmlns:vm="clr-namespace:ReportsCore.ViewModels" 
+                  xmlns:helpers="clr-namespace:ReportsCore.Helpers" 
+                  xmlns:mah1="http://schemas.microsoft.com/netfx/2009/xaml/presentation" 
+                  xmlns:converters="clr-namespace:ReportsCore.Helpers.Converters"
                   mc:Ignorable="d"
         Title="Reports" Height="450" Width="800" >
     <mah:MetroWindow.LeftWindowCommands>
@@ -159,7 +164,7 @@
                 <DataGridTemplateColumn Header="Прибытие" CellTemplate="{StaticResource dt_Arrival}" CellEditingTemplate="{StaticResource edt_Arrival}" IsReadOnly="True" Visibility="{Binding ArrivalVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <DataGridTemplateColumn Header="Отмена" CellTemplate="{StaticResource dt_Cancel}" CellEditingTemplate="{StaticResource edt_Cancel}" IsReadOnly="True" Visibility="{Binding CancelVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <!--<DataGridTextColumn Header="Результат" Binding="{Binding Result}" Visibility="{Binding ResultVisibility, Converter={StaticResource btvc}}"/>-->
-                <DataGridTextColumn Header="Результат" Binding="{Binding Result}" Visibility="{Binding Data.ResultVisibility, Source={StaticResource proxy}}"/>
+                <DataGridTextColumn Header="Результат" Binding="{Binding Result}" Width="{Binding ResultWidth}" Visibility="{Binding Data.ResultVisibility, Source={StaticResource proxy}}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
