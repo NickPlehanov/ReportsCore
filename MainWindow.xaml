@@ -97,7 +97,7 @@
         <mah:Flyout Position="Right" IsModal="True" AnimateOpacity="True" Panel.ZIndex="3" IsOpen="{Binding FlyoutSettingColumnsVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <DataGrid ItemsSource="{Binding Columns}"/>
         </mah:Flyout>
-        <DataGrid  IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
+        <DataGrid Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}"  IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
             <DataGrid.Resources>
                 <helpers:BindingProxy x:Key="proxy" Data="{Binding}"/>
                 <converters:BooleanToCollapsedConverter  x:Key="btvc" />
@@ -163,7 +163,6 @@
                 <DataGridTemplateColumn Header="Отправка" CellTemplate="{StaticResource dt_Departure}" CellEditingTemplate="{StaticResource edt_Departure}" IsReadOnly="True" Visibility="{Binding DepartureVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <DataGridTemplateColumn Header="Прибытие" CellTemplate="{StaticResource dt_Arrival}" CellEditingTemplate="{StaticResource edt_Arrival}" IsReadOnly="True" Visibility="{Binding ArrivalVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <DataGridTemplateColumn Header="Отмена" CellTemplate="{StaticResource dt_Cancel}" CellEditingTemplate="{StaticResource edt_Cancel}" IsReadOnly="True" Visibility="{Binding CancelVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                <!--<DataGridTextColumn Header="Результат" Binding="{Binding Result}" Visibility="{Binding ResultVisibility, Converter={StaticResource btvc}}"/>-->
                 <DataGridTextColumn Header="Результат" Binding="{Binding Result}" Width="{Binding ResultWidth}" Visibility="{Binding Data.ResultVisibility, Source={StaticResource proxy}}"/>
             </DataGrid.Columns>
         </DataGrid>

@@ -361,24 +361,26 @@ namespace ReportsCore.ViewModels {
 				//Изменение стоимости Абонентской платы
 				if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
 					//TODO: переделать на отдельный метод
-					ObjectNumberVisibility = true;
-					ObjectNameVisibility = true;
-					ObjectAddressVisibility = true;
-					WhoChangedVisibility = true;
-					DateChangedVisibility = true;
-					BeforeVisibility = true;
-					AfterVisibility = true;
-					DateStartVisibility = true;
-					CuratorVisibility = true;
-					ActVisibility = false;
-					PoliceVisibility = false;
-					OwnerVisibility = false;
-					AlarmVisibility = false;
-					DepartureVisibility = false;
-					ArrivalVisibility = false;
-					CancelVisibility = false;
-					ResultVisibility = false;
-					ResultWidth = 0;
+					//ObjectNumberVisibility = true;
+					//ObjectNameVisibility = true;
+					//ObjectAddressVisibility = true;
+					//WhoChangedVisibility = true;
+					//DateChangedVisibility = true;
+					//BeforeVisibility = true;
+					//AfterVisibility = true;
+					//DateStartVisibility = true;
+					//CuratorVisibility = true;
+					//ActVisibility = false;
+					//PoliceVisibility = false;
+					//OwnerVisibility = false;
+					//AlarmVisibility = false;
+					//DepartureVisibility = false;
+					//ArrivalVisibility = false;
+					//CancelVisibility = false;
+					//ResultVisibility = false;
+					//ResultWidth = 0;
+
+					VisibleChangeCostMonthlyPay = true;
 
 					Reports.Clear();
 					using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
@@ -436,23 +438,25 @@ namespace ReportsCore.ViewModels {
 				//По актам
 				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
 					//TODO: переделать на отдельный метод
-					ObjectNumberVisibility = true;
-					ObjectNameVisibility = true;
-					ObjectAddressVisibility = true;
-					WhoChangedVisibility = false;
-					DateChangedVisibility = false;
-					BeforeVisibility = false;
-					AfterVisibility = false;
-					DateStartVisibility = false;
-					CuratorVisibility = false;
-					ActVisibility = true;
-					PoliceVisibility = true;
-					OwnerVisibility = true;
-					AlarmVisibility = true;
-					DepartureVisibility = true;
-					ArrivalVisibility = true;
-					CancelVisibility = true;
-					ResultVisibility = true;
+					//ObjectNumberVisibility = true;
+					//ObjectNameVisibility = true;
+					//ObjectAddressVisibility = true;
+					//WhoChangedVisibility = false;
+					//DateChangedVisibility = false;
+					//BeforeVisibility = false;
+					//AfterVisibility = false;
+					//DateStartVisibility = false;
+					//CuratorVisibility = false;
+					//ActVisibility = true;
+					//PoliceVisibility = true;
+					//OwnerVisibility = true;
+					//AlarmVisibility = true;
+					//DepartureVisibility = true;
+					//ArrivalVisibility = true;
+					//CancelVisibility = true;
+					//ResultVisibility = true;
+
+					VisibleChangeCostMonthlyPay = false;
 					Reports.Clear();
 					using (Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 						DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
