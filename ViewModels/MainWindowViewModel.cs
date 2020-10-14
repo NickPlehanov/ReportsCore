@@ -487,7 +487,8 @@ namespace ReportsCore.ViewModels {
 						if(result != null)
 							if(result.Any()) {
 								foreach(var item in result) {
-									if((item.NewDeparture - item.NewAlarmDt).Value.TotalSeconds > 30) {
+									if(item.NewDeparture.HasValue && item.NewAlarmDt.HasValue)
+										if((item.NewDeparture - item.NewAlarmDt).Value.TotalSeconds > 30) {
 										using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
 											var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item.NewAndromedaAlarm).ToList();
 											Reports.Add(new Report() {
@@ -529,6 +530,7 @@ namespace ReportsCore.ViewModels {
 						if(result != null)
 							if(result.Any()) {
 								foreach(var item in result) {
+									if (item.NewArrival.HasValue && item.NewDeparture.HasValue)
 									if((item.NewArrival - item.NewDeparture).Value.TotalMinutes >= 12) {
 										using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
 											var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item.NewAndromedaAlarm).ToList();
