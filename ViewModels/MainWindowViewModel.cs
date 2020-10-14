@@ -480,33 +480,33 @@ namespace ReportsCore.ViewModels {
 					VisibilityLates = true;
 					Reports.Clear();
 					using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
-						DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
-						DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
-						var result = context.NewAlarmExtensionBase.Where(x => x.NewAlarmDt >= start && x.NewAlarmDt < end);
+						DateTime start1 = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
+						DateTime end1 = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
+						var result = context.NewAlarmExtensionBase.Where(x => x.NewAlarmDt >= start1 && x.NewAlarmDt < end1);
 						if(result != null)
 							if(result.Any()) {
-								foreach(var item in result) {
-									if(item.NewDeparture.HasValue && item.NewAlarmDt.HasValue) {
-										if((item.NewDeparture - item.NewAlarmDt).Value.TotalSeconds > 30) {
+								foreach(var item1 in result) {
+									if(item1.NewDeparture.HasValue && item1.NewAlarmDt.HasValue) {
+										if((item1.NewDeparture - item1.NewAlarmDt).Value.TotalSeconds > 30) {
 											using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
-												var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item.NewAndromedaAlarm).ToList();
+												var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item1.NewAndromedaAlarm).ToList();
 												Reports.Add(new Report() {
 													ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
 													ObjectNumber = andromeda.FirstOrDefault().NewNumber,
 													ObjectAddress = andromeda.FirstOrDefault().NewAddress,
-													Os = item.NewOnc,
-													Ps = item.NewPs,
-													Trs = item.NewTpc,
-													Group = item.NewGroup + 69,
-													Alarm = item.NewAlarmDt,
-													Arrival = item.NewArrival,
-													Departure = item.NewDeparture,
-													Cancel = item.NewCancel,
-													Result = item.NewName,
-													Owner = item.NewOwner,
-													Police = item.NewPolice,
-													Act = item.NewAct,
-													Late = (item.NewDeparture - item.NewAlarmDt).Value.ToString("hh:mm:ss")
+													Os = item1.NewOnc,
+													Ps = item1.NewPs,
+													Trs = item1.NewTpc,
+													Group = item1.NewGroup + 69,
+													Alarm = item1.NewAlarmDt,
+													Arrival = item1.NewArrival,
+													Departure = item1.NewDeparture,
+													Cancel = item1.NewCancel,
+													Result = item1.NewName,
+													Owner = item1.NewOwner,
+													Police = item1.NewPolice,
+													Act = item1.NewAct,
+													Late = (item1.NewDeparture - item1.NewAlarmDt).Value.ToString()
 												});
 											}
 										}
@@ -523,33 +523,33 @@ namespace ReportsCore.ViewModels {
 					VisibilityLates = true;
 					Reports.Clear();
 					using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
-						DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
-						DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
-						var result = context.NewAlarmExtensionBase.Where(x => x.NewAlarmDt >= start && x.NewAlarmDt < end && x.NewAct == true);
+						DateTime start2 = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
+						DateTime end2 = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
+						var result = context.NewAlarmExtensionBase.Where(x => x.NewAlarmDt >= start2 && x.NewAlarmDt < end2);
 						if(result != null)
 							if(result.Any()) {
-								foreach(var item in result) {
-									if (item.NewArrival.HasValue && item.NewDeparture.HasValue)
-									if((item.NewArrival - item.NewDeparture).Value.TotalMinutes >= 12) {
+								foreach(var item2 in result) {
+									if (item2.NewArrival.HasValue && item2.NewDeparture.HasValue)
+									if((item2.NewArrival - item2.NewDeparture).Value.TotalMinutes >= 12) {
 										using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
-											var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item.NewAndromedaAlarm).ToList();
+											var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item2.NewAndromedaAlarm).ToList();
 											Reports.Add(new Report() {
 												ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
 												ObjectNumber = andromeda.FirstOrDefault().NewNumber,
 												ObjectAddress = andromeda.FirstOrDefault().NewAddress,
-												Os = item.NewOnc,
-												Ps = item.NewPs,
-												Trs = item.NewTpc,
-												Group = item.NewGroup + 69,
-												Alarm = item.NewAlarmDt,
-												Arrival = item.NewArrival,
-												Departure = item.NewDeparture,
-												Cancel = item.NewCancel,
-												Result = item.NewName,
-												Owner = item.NewOwner,
-												Police = item.NewPolice,
-												Act = item.NewAct,
-												Late = (item.NewArrival - item.NewDeparture).Value.ToString("hh:mm:ss")
+												Os = item2.NewOnc,
+												Ps = item2.NewPs,
+												Trs = item2.NewTpc,
+												Group = item2.NewGroup + 69,
+												Alarm = item2.NewAlarmDt,
+												Arrival = item2.NewArrival,
+												Departure = item2.NewDeparture,
+												Cancel = item2.NewCancel,
+												Result = item2.NewName,
+												Owner = item2.NewOwner,
+												Police = item2.NewPolice,
+												Act = item2.NewAct,
+												Late = (item2.NewArrival - item2.NewDeparture).Value.ToString()
 											});
 										}
 									}
