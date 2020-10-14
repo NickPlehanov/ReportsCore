@@ -40,7 +40,7 @@
                         <DataGridTextColumn Header="Название" Binding="{Binding ReportName}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>-->
-                <Expander FontWeight="UltraLight">
+                <!--<Expander FontWeight="UltraLight">
                     <Expander.Header>
                         <TextBlock Text="Настройки отчёта"/>
                     </Expander.Header>
@@ -48,7 +48,7 @@
                         <Button Content="Изменить список столбцов" Margin="5" FontWeight="UltraLight" Command="{Binding MenuSettingColumnsOpen}"/>
                         <Button Content="Изменить условия фильтра" Margin="5" FontWeight="UltraLight" Command="{Binding MenuSettingsOpen}"/>
                     </StackPanel>
-                </Expander>
+                </Expander>-->
             </StackPanel>
         </mah:Flyout>
         <mah:Flyout Position="Top" IsModal="True" AnimateOpacity="True" Panel.ZIndex="3" IsOpen="{Binding FlyoutSettingVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
