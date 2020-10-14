@@ -473,8 +473,7 @@ namespace ReportsCore.ViewModels {
 					}
 				}
 				//По опозданиям операторов
-				//TODO: передалать айдишки
-				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
+				if(SelectedReport.ReportID == Guid.Parse("a35a2859-3e10-42f1-9e9b-5f29b5e953d9")) {
 					//TODO: переделать на отдельный метод
 					VisibleChangeCostMonthlyPay = false;
 					VisibilityActs = false;
@@ -516,8 +515,7 @@ namespace ReportsCore.ViewModels {
 					}
 				}
 				//По опозданиям ГБР
-				//TODO: передалать айдишки
-				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
+				if(SelectedReport.ReportID == Guid.Parse("8a7e33df-e27d-413c-80d5-e3812b57853c")) {
 					//TODO: переделать на отдельный метод
 					VisibleChangeCostMonthlyPay = false;
 					VisibilityActs = false;
