@@ -262,6 +262,23 @@ namespace ReportsCore.ViewModels {
 				OnPropertyChanged("VisibleChangeCostMonthlyPay");
 			}
 		}
+		private bool _VisibilityActs;
+		public bool VisibilityActs {
+			get => _VisibilityActs;
+			set {
+				_VisibilityActs = value;
+				OnPropertyChanged(nameof(VisibilityActs));
+			}
+		}
+		private bool _VisibilityLates;
+		public bool VisibilityLates {
+			get => _VisibilityLates;
+			set {
+				_VisibilityLates = value;
+				OnPropertyChanged(nameof(VisibilityLates));
+			}
+		}
+
 		private bool _VisibleAlarmActs;
 		public bool VisibleAlarmActs {
 			get => _VisibleAlarmActs;
@@ -360,28 +377,10 @@ namespace ReportsCore.ViewModels {
 			get => _GetData ??= new RelayCommand(async obj => {
 				//Изменение стоимости Абонентской платы
 				if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
-					//TODO: переделать на отдельный метод
-					//ObjectNumberVisibility = true;
-					//ObjectNameVisibility = true;
-					//ObjectAddressVisibility = true;
-					//WhoChangedVisibility = true;
-					//DateChangedVisibility = true;
-					//BeforeVisibility = true;
-					//AfterVisibility = true;
-					//DateStartVisibility = true;
-					//CuratorVisibility = true;
-					//ActVisibility = false;
-					//PoliceVisibility = false;
-					//OwnerVisibility = false;
-					//AlarmVisibility = false;
-					//DepartureVisibility = false;
-					//ArrivalVisibility = false;
-					//CancelVisibility = false;
-					//ResultVisibility = false;
-					//ResultWidth = 0;
-
+					//TODO: переделать на отдельный метод					
 					VisibleChangeCostMonthlyPay = true;
-
+					VisibilityActs = false;
+					VisibilityLates = false;
 					Reports.Clear();
 					using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 						//TODO: Перенести в get
@@ -438,25 +437,9 @@ namespace ReportsCore.ViewModels {
 				//По актам
 				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
 					//TODO: переделать на отдельный метод
-					//ObjectNumberVisibility = true;
-					//ObjectNameVisibility = true;
-					//ObjectAddressVisibility = true;
-					//WhoChangedVisibility = false;
-					//DateChangedVisibility = false;
-					//BeforeVisibility = false;
-					//AfterVisibility = false;
-					//DateStartVisibility = false;
-					//CuratorVisibility = false;
-					//ActVisibility = true;
-					//PoliceVisibility = true;
-					//OwnerVisibility = true;
-					//AlarmVisibility = true;
-					//DepartureVisibility = true;
-					//ArrivalVisibility = true;
-					//CancelVisibility = true;
-					//ResultVisibility = true;
-
 					VisibleChangeCostMonthlyPay = false;
+					VisibilityActs = true;
+					VisibilityLates = false;
 					Reports.Clear();
 					using (Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 						DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
@@ -484,6 +467,90 @@ namespace ReportsCore.ViewModels {
 											Police = item.NewPolice,
 											Act = item.NewAct
 										});
+									}
+								}
+							}
+					}
+				}
+				//По опозданиям операторов
+				//TODO: передалать айдишки
+				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
+					//TODO: переделать на отдельный метод
+					VisibleChangeCostMonthlyPay = false;
+					VisibilityActs = false;
+					VisibilityLates = true;
+					Reports.Clear();
+					using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
+						DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
+						DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
+						var result = context.NewAlarmExtensionBase.Where(x => x.NewAlarmDt >= start && x.NewAlarmDt < end && x.NewAct == true);
+						if(result != null)
+							if(result.Any()) {
+								foreach(var item in result) {
+									if((item.NewDeparture - item.NewAlarmDt).Value.TotalSeconds > 30) {
+										using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
+											var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item.NewAndromedaAlarm).ToList();
+											Reports.Add(new Report() {
+												ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
+												ObjectNumber = andromeda.FirstOrDefault().NewNumber,
+												ObjectAddress = andromeda.FirstOrDefault().NewAddress,
+												Os = item.NewOnc,
+												Ps = item.NewPs,
+												Trs = item.NewTpc,
+												Group = item.NewGroup + 69,
+												Alarm = item.NewAlarmDt,
+												Arrival = item.NewArrival,
+												Departure = item.NewDeparture,
+												Cancel = item.NewCancel,
+												Result = item.NewName,
+												Owner = item.NewOwner,
+												Police = item.NewPolice,
+												Act = item.NewAct,
+												Late = (item.NewDeparture - item.NewAlarmDt).Value.ToString("hh:mm:ss")
+											});
+										}
+									}
+								}
+							}
+					}
+				}
+				//По опозданиям ГБР
+				//TODO: передалать айдишки
+				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
+					//TODO: переделать на отдельный метод
+					VisibleChangeCostMonthlyPay = false;
+					VisibilityActs = false;
+					VisibilityLates = true;
+					Reports.Clear();
+					using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
+						DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
+						DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
+						var result = context.NewAlarmExtensionBase.Where(x => x.NewAlarmDt >= start && x.NewAlarmDt < end && x.NewAct == true);
+						if(result != null)
+							if(result.Any()) {
+								foreach(var item in result) {
+									if((item.NewArrival - item.NewDeparture).Value.TotalMinutes >= 12) {
+										using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
+											var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item.NewAndromedaAlarm).ToList();
+											Reports.Add(new Report() {
+												ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
+												ObjectNumber = andromeda.FirstOrDefault().NewNumber,
+												ObjectAddress = andromeda.FirstOrDefault().NewAddress,
+												Os = item.NewOnc,
+												Ps = item.NewPs,
+												Trs = item.NewTpc,
+												Group = item.NewGroup + 69,
+												Alarm = item.NewAlarmDt,
+												Arrival = item.NewArrival,
+												Departure = item.NewDeparture,
+												Cancel = item.NewCancel,
+												Result = item.NewName,
+												Owner = item.NewOwner,
+												Police = item.NewPolice,
+												Act = item.NewAct,
+												Late = (item.NewArrival - item.NewDeparture).Value.ToString("hh:mm:ss")
+											});
+										}
 									}
 								}
 							}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Dynamic;
 
 namespace ReportsCore.Models {
 	public class Report {
@@ -27,5 +28,15 @@ namespace ReportsCore.Models {
 		public bool? Ps { get; set; }
 		public bool? Trs { get; set; }
 		public int? Group { get; set; }
+		public string Late { get; set; }
+		//private string _StringLate;
+		//public string StringLate {
+		//	get => _StringLate;
+		//	set {
+		//		if(!string.IsNullOrEmpty(value)) {
+
+		//		}
+		//	}
+		//}
 	}
 }
