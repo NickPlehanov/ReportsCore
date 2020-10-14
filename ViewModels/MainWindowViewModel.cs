@@ -328,6 +328,7 @@ namespace ReportsCore.ViewModels {
 		public RelayCommand FilterOpen {
 			get => _FilterOpen ??= new RelayCommand(obj => {
 				FlyoutSettingVisibleState = FlyoutSettingVisibleState ? false : true;
+				//FlyoutMenuState = !FlyoutSettingVisibleState;
 			});
 		}
 		private RelayCommand _Search;
@@ -628,6 +629,8 @@ namespace ReportsCore.ViewModels {
 				//}
 				//else
 				//	VisibleChangeCostMonthlyPay = false;
+				FlyoutMenuState = false;
+				FlyoutSettingVisibleState = true;
 				OnPropertyChanged("SelectedReport");
 			}
 		}
