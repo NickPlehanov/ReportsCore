@@ -97,7 +97,7 @@
         <mah:Flyout Position="Right" IsModal="True" AnimateOpacity="True" Panel.ZIndex="3" IsOpen="{Binding FlyoutSettingColumnsVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <DataGrid ItemsSource="{Binding Columns}"/>
         </mah:Flyout>
-        <DataGrid Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}"  IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
+        <DataGrid Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
             <DataGrid.Resources>
                 <helpers:BindingProxy x:Key="proxy" Data="{Binding}"/>
                 <converters:BooleanToCollapsedConverter  x:Key="btvc" />
@@ -130,7 +130,7 @@
                 <DataGridTextColumn Header="Куратор" Binding="{Binding Curator}" Visibility="{Binding CuratorVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>                
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid Visibility="{Binding VisibilityActs}" ItemsSource="{Binding Reports}" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <DataGrid Visibility="{Binding VisibilityActs}" ItemsSource="{Binding Reports}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <DataGrid.Resources>
                 <!--Тревога-->                
                 <DataTemplate x:Key="dt_Alarm">
@@ -175,7 +175,7 @@
                 <DataGridTextColumn Header="Результат" Binding="{Binding Result}" Width="{Binding ResultWidth}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid Visibility="{Binding VisibilityLates}" ItemsSource="{Binding Reports}" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <DataGrid Visibility="{Binding VisibilityLates}" ItemsSource="{Binding Reports}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <DataGrid.Resources>
                 <!--Тревога-->
                 <DataTemplate x:Key="dt_Alarm">
