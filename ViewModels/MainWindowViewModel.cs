@@ -1,8 +1,11 @@
 ﻿using MahApps.Metro.Controls;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Office.Interop.Word;
+using Microsoft.Win32;
 using ReportsCore.Context;
 using ReportsCore.Helpers;
 using ReportsCore.Models;
+using ReportsCore.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -433,7 +436,7 @@ namespace ReportsCore.ViewModels {
 										});
 								}
 						}
-					}					
+					}
 				}
 				//По актам
 				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
@@ -442,11 +445,11 @@ namespace ReportsCore.ViewModels {
 					VisibilityActs = true;
 					VisibilityLates = false;
 					Reports.Clear();
-					using (Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
+					using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 						DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
 						DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
 						var result = context.NewAlarmExtensionBase.Where(x => x.NewAlarmDt >= start && x.NewAlarmDt < end && x.NewAct == true);
-						if (result!=null)
+						if(result != null)
 							if(result.Any()) {
 								foreach(var item in result) {
 									using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
@@ -530,30 +533,30 @@ namespace ReportsCore.ViewModels {
 						if(result != null)
 							if(result.Any()) {
 								foreach(var item2 in result) {
-									if (item2.NewArrival.HasValue && item2.NewDeparture.HasValue)
-									if((item2.NewArrival - item2.NewDeparture).Value.TotalMinutes >= 12) {
-										using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
-											var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item2.NewAndromedaAlarm).ToList();
-											Reports.Add(new Report() {
-												ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
-												ObjectNumber = andromeda.FirstOrDefault().NewNumber,
-												ObjectAddress = andromeda.FirstOrDefault().NewAddress,
-												Os = item2.NewOnc,
-												Ps = item2.NewPs,
-												Trs = item2.NewTpc,
-												Group = item2.NewGroup + 69,
-												Alarm = item2.NewAlarmDt,
-												Arrival = item2.NewArrival,
-												Departure = item2.NewDeparture,
-												Cancel = item2.NewCancel,
-												Result = item2.NewName,
-												Owner = item2.NewOwner,
-												Police = item2.NewPolice,
-												Act = item2.NewAct,
-												Late = (item2.NewArrival - item2.NewDeparture).Value.ToString()
-											});
+									if(item2.NewArrival.HasValue && item2.NewDeparture.HasValue)
+										if((item2.NewArrival - item2.NewDeparture).Value.TotalMinutes >= 12) {
+											using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
+												var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item2.NewAndromedaAlarm).ToList();
+												Reports.Add(new Report() {
+													ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
+													ObjectNumber = andromeda.FirstOrDefault().NewNumber,
+													ObjectAddress = andromeda.FirstOrDefault().NewAddress,
+													Os = item2.NewOnc,
+													Ps = item2.NewPs,
+													Trs = item2.NewTpc,
+													Group = item2.NewGroup + 69,
+													Alarm = item2.NewAlarmDt,
+													Arrival = item2.NewArrival,
+													Departure = item2.NewDeparture,
+													Cancel = item2.NewCancel,
+													Result = item2.NewName,
+													Owner = item2.NewOwner,
+													Police = item2.NewPolice,
+													Act = item2.NewAct,
+													Late = (item2.NewArrival - item2.NewDeparture).Value.ToString()
+												});
+											}
 										}
-									}
 								}
 							}
 					}
@@ -598,7 +601,7 @@ namespace ReportsCore.ViewModels {
 			//ReportList.Add(new ReportsList() { ReportID = Guid.NewGuid(), ReportName = "Отчёт изменения стоимости абонентской платы" });
 			using(ReportContext context = new ReportContext()) {
 				foreach(var item in context.Reports.ToList()) {
-					ReportList.Add(new ReportsList() { ReportID=item.RptId, ReportName=item.RptName });
+					ReportList.Add(new ReportsList() { ReportID = item.RptId, ReportName = item.RptName });
 				}
 			}
 			DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Текущий месяц" });
@@ -650,5 +653,136 @@ namespace ReportsCore.ViewModels {
 				OnPropertyChanged("Reports");
 			}
 		}
+
+		private RelayCommand _CreateWordReport;
+		public RelayCommand CreateWordReport {
+			get => _CreateWordReport ??= new RelayCommand(async obj => {
+				createWordReport(Reports.OrderBy(x => x.Alarm));
+			});
+		}
+		string filename = null;
+		private void createWordReport(IEnumerable<Report> flo) {
+			try {
+				if(flo != null) {
+					if(flo.Any()) {
+						Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
+						SaveFileDialog saveFileDialog_word = new SaveFileDialog();
+							saveFileDialog_word.ShowDialog();
+						if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
+							string[] headers = Resources.HeaderReportWord.Split(',');
+							filename = saveFileDialog_word.FileName;
+							object missing = Type.Missing;
+							Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
+								ref missing, ref missing, ref missing, ref missing);
+							var Paragraph = app.ActiveDocument.Paragraphs.Add();
+							var tableRange = Paragraph.Range;
+							tableRange.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+							tableRange.PageSetup.LeftMargin = 28;
+							tableRange.PageSetup.RightMargin = 28;
+							tableRange.PageSetup.TopMargin = 28;
+							tableRange.PageSetup.BottomMargin = 28;
+							app.ActiveDocument.Tables.Add(tableRange, 1, headers.Length);
+							var table = app.ActiveDocument.Tables[app.ActiveDocument.Tables.Count];
+							table.set_Style("Сетка таблицы");
+							table.ApplyStyleHeadingRows = true;
+							table.ApplyStyleLastRow = false;
+							table.ApplyStyleFirstColumn = true;
+							table.ApplyStyleLastColumn = false;
+							table.ApplyStyleRowBands = true;
+							table.ApplyStyleColumnBands = false;
+							table.AllowAutoFit = true;
+							//table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitContent);
+							table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
+
+							for(int i = 0; i < headers.Length; i++)
+								word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Text = headers[i];
+
+							//word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = "№ объекта";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = "Объект";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = "Адрес";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = "ОС";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = "ПС";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = "ТРС";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = "Маршрут";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = "Зоны";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = "Сработка";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = "Прибытие";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = "Отмена";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = "Вызов полиции";
+							//word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = "Результат";
+
+							for(int i = 0; i < headers.Length; i++) {
+								word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
+								word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+							}
+							word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+							word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+							word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+							word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+							//word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+
+
+
+							word_doc.Tables[1].Cell(table.Rows.Count, 1).SetWidth(54, WdRulerStyle.wdAdjustNone);
+							word_doc.Tables[1].Cell(table.Rows.Count, 4).SetWidth(17, WdRulerStyle.wdAdjustNone);
+							word_doc.Tables[1].Cell(table.Rows.Count, 5).SetWidth(17, WdRulerStyle.wdAdjustNone);
+							word_doc.Tables[1].Cell(table.Rows.Count, 6).SetWidth(17, WdRulerStyle.wdAdjustNone);
+							word_doc.Tables[1].Cell(table.Rows.Count, 7).SetWidth(17, WdRulerStyle.wdAdjustNone);
+							word_doc.Tables[1].Cell(table.Rows.Count, 8).SetWidth(92, WdRulerStyle.wdAdjustNone);
+							word_doc.Tables[1].Cell(table.Rows.Count, 9).SetWidth(92, WdRulerStyle.wdAdjustNone);
+							word_doc.Tables[1].Cell(table.Rows.Count, 10).SetWidth(92, WdRulerStyle.wdAdjustNone);
+							word_doc.Tables[1].Cell(table.Rows.Count, 11).SetWidth(92, WdRulerStyle.wdAdjustNone);
+							word_doc.Tables[1].Cell(table.Rows.Count, 12).SetWidth(36, WdRulerStyle.wdAdjustNone);
+							word_doc.Tables[1].Cell(table.Rows.Count, 13).SetWidth(100, WdRulerStyle.wdAdjustProportional);
+							foreach(var item in flo) {
+								table.Rows.Add();
+								word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
+								word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
+								word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName.ToString();
+								word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress.ToString();
+								word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.Os.Value ? "+" : "";
+								word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Ps.Value ? "+" : "";
+								word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.Trs.Value ? "+" : "";
+								word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.Group.ToString().Trim();
+								//word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.zone.ToString().Trim();
+								word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Alarm.ToString();
+								word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.Departure.ToString();
+								word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = item.Arrival.ToString();
+								word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Cancel.ToString();
+								word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Police.Value ? "+" : "";
+								word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = item.Result.ToString();
+							}
+							word_doc.Tables[1].Cell(1, 4).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+							word_doc.Tables[1].Cell(1, 5).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+							word_doc.Tables[1].Cell(1, 6).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+							word_doc.Tables[1].Cell(1, 7).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+							//word_doc.Tables[1].Cell(1, 8).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+							object filename_local = saveFileDialog_word.FileName;
+							word_doc.SaveAs(ref filename_local, ref missing, ref missing,
+								ref missing, ref missing, ref missing, ref missing,
+								ref missing, ref missing, ref missing, ref missing,
+								ref missing, ref missing, ref missing, ref missing,
+								ref missing);
+							object save_changes = false;
+							word_doc.Close(ref save_changes, ref missing, ref missing);
+							app.Quit(ref save_changes, ref missing, ref missing);
+							//notify("Информация", "Отчёт сохранен. Открыть сейчас?", System.Windows.Forms.ToolTipIcon.Info, true);
+						}
+					}
+					else
+						MessageBox.Show("test");
+					//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+				}
+				else
+					MessageBox.Show("test");
+				//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+			}
+			catch(Exception ex) {
+				MessageBox.Show("test");
+				//notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
+			}
+		}
+
 	}
+
 }

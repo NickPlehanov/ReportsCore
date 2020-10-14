@@ -19,6 +19,9 @@
             <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding FilterOpen}">
                 <iconPacks:PackIconMaterialDesign Kind="FilterList"/>
             </Button>
+            <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding CreateWordReport}">
+                <iconPacks:PackIconMaterialDesign Kind="Print"/>
+            </Button>
         </mah:WindowCommands>
     </mah:MetroWindow.LeftWindowCommands>
     <mah:MetroWindow.RightWindowCommands>
