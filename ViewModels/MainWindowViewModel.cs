@@ -700,7 +700,7 @@ namespace ReportsCore.ViewModels {
 							SaveFileDialog saveFileDialog_word = new SaveFileDialog() {
 								InitialDirectory = "c:\\",
 								Filter = "Word files (*.docx)|*.docx|All files (*.*)|*.*",
-								FilterIndex = 2,
+								FilterIndex = 1,
 								RestoreDirectory = true
 							};
 							saveFileDialog_word.ShowDialog();
@@ -827,6 +827,7 @@ namespace ReportsCore.ViewModels {
 			bw.RunWorkerCompleted += (s, e) => {
 				ProcessStartInfo processStartInfo = new ProcessStartInfo();
 				processStartInfo.FileName = filename;
+				processStartInfo.UseShellExecute = true;
 				Process.Start(processStartInfo);
 				Loading = false;
 			};
