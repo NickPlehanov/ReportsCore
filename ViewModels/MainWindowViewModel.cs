@@ -836,7 +836,9 @@ namespace ReportsCore.ViewModels {
 					processStartInfo.UseShellExecute = true;
 					Process.Start(processStartInfo);
 				}
-				catch { }
+				catch {
+					MessageBox.Show("Не удалось открыть отчёт", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+				}
 				//MessageBox.Show("Отчёт успешно сохранен", "Информация", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
 				finally {
 					Loading = false;
