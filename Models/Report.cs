@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Dynamic;
 
 namespace ReportsCore.Models {
@@ -19,7 +20,15 @@ namespace ReportsCore.Models {
 		public bool? Act { get; set; }
 		public bool? Police { get; set; }
 		public bool? Owner { get; set; }
-		public DateTime? Alarm { get; set; }
+		[NotMapped]
+		private DateTime? _Alarm;
+		public DateTime? Alarm {
+			get => _Alarm; 
+			set {
+				if (value.HasValue)
+				_Alarm = value.Value.AddHours(5);
+			}
+		}
 		public DateTime? Departure { get; set; } //отправка
 		public DateTime? Arrival { get; set; }//прибытие
 		public DateTime? Cancel { get; set; }
