@@ -747,27 +747,7 @@ namespace ReportsCore.ViewModels {
 										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
 										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
 									}
-									//word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									//word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									//word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									//word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									//word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-
-
-
-									//word_doc.Tables[1].Cell(table.Rows.Count, 1).SetWidth(54, WdRulerStyle.wdAdjustNone);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 4).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 5).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 6).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 7).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 8).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 9).SetWidth(92, WdRulerStyle.wdAdjustNone);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 10).SetWidth(92, WdRulerStyle.wdAdjustNone);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 11).SetWidth(92, WdRulerStyle.wdAdjustNone);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 12).SetWidth(36, WdRulerStyle.wdAdjustNone);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 13).SetWidth(100, WdRulerStyle.wdAdjustProportional);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 14).SetWidth(100, WdRulerStyle.wdAdjustProportional);
-									foreach(var item in flo) {
+									foreach(var item in flo.OrderBy(x=>x.DateChanged).ThenBy(y=>y.WhoChanged)) {
 										table.Rows.Add();
 										word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
 										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
@@ -779,17 +759,7 @@ namespace ReportsCore.ViewModels {
 										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.DateChanged.HasValue ? item.DateChanged.Value.ToString() : "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Before;
 										word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.After;
-										//word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = item.Departure.ToString();
-										//word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Arrival.ToString();
-										//word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Cancel.ToString();
-										//word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = item.Result.ToString();
-										//word_doc.Tables[1].Cell(table.Rows.Count, 14).Range.Text = item.Late.ToString();
 									}
-									//word_doc.Tables[1].Cell(1, 4).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									//word_doc.Tables[1].Cell(1, 5).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									//word_doc.Tables[1].Cell(1, 6).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									//word_doc.Tables[1].Cell(1, 7).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									//word_doc.Tables[1].Cell(1, 8).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
 									object filename_local = saveFileDialog_word.FileName;
 									word_doc.SaveAs(ref filename_local, ref missing, ref missing,
 										ref missing, ref missing, ref missing, ref missing,
