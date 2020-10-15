@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -390,10 +391,10 @@ namespace ReportsCore.ViewModels {
 		private RelayCommand _GetData;
 		public RelayCommand GetData {
 			get => _GetData ??= new RelayCommand(obj => {
-				Dispatcher.CurrentDispatcher.Invoke(() => { 
+				//Dispatcher.CurrentDispatcher.Invoke(() => { 
 				Reports.Clear();
-				//BackgroundWorker bw = new BackgroundWorker();
-				//bw.DoWork += (s, e) => {
+				BackgroundWorker bw = new BackgroundWorker();
+				bw.DoWork += (s, e) => {
 					Loading = true;
 					//Изменение стоимости Абонентской платы
 					if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
@@ -436,9 +437,10 @@ namespace ReportsCore.ViewModels {
 											oldValue = c.OldValue;
 											newValue = c.NewValue;
 										}
+										var uiContext = SynchronizationContext.Current;
 										NewGuardObjectExtensionBase objectExtensionBase = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId);
 										if(objectExtensionBase != null)
-											Reports.Add(new Report() {
+											uiContext.Send(x => Reports.Add(new Report() {
 												Before = oldValue,
 												After = newValue,
 												Curator = curatorName,
@@ -448,7 +450,19 @@ namespace ReportsCore.ViewModels {
 												ObjectAddress = objectExtensionBase.NewAddress,
 												ObjectName = objectExtensionBase.NewName,
 												ObjectNumber = objectExtensionBase.NewObjectNumber
-											});
+											})
+											, null);
+										//Reports.Add(new Report() {
+										//		Before = oldValue,
+										//		After = newValue,
+										//		Curator = curatorName,
+										//		DateChanged = WhenChanged,
+										//		DateStart = objectExtensionBase.NewDateStart,
+										//		WhoChanged = WhoChanged,
+										//		ObjectAddress = objectExtensionBase.NewAddress,
+										//		ObjectName = objectExtensionBase.NewName,
+										//		ObjectNumber = objectExtensionBase.NewObjectNumber
+										//	});
 									}
 							}
 						}
@@ -576,12 +590,12 @@ namespace ReportsCore.ViewModels {
 					FlyoutMenuState = false;
 					FlyoutSettingVisibleState = false;
 					FullReports = Reports;
-				//};
-				//bw.RunWorkerCompleted += (s, e) =>{
+				};
+				bw.RunWorkerCompleted += (s, e) => {
 					Loading = false;
-					//};
-					//bw.RunWorkerAsync();
-				});
+				};
+				bw.RunWorkerAsync();
+				//});
 			});
 		}
 
