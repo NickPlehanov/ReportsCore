@@ -729,8 +729,8 @@ namespace ReportsCore.ViewModels {
 									var Paragraph = app.ActiveDocument.Paragraphs.Add();
 									var tableRange = Paragraph.Range;
 									tableRange.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
-									tableRange.PageSetup.LeftMargin = 28;
-									tableRange.PageSetup.RightMargin = 28;
+									tableRange.PageSetup.LeftMargin = 20;
+									tableRange.PageSetup.RightMargin = 20;
 									tableRange.PageSetup.TopMargin = 28;
 									tableRange.PageSetup.BottomMargin = 28;
 									app.ActiveDocument.Tables.Add(tableRange, 1, headers.Length);
@@ -772,8 +772,7 @@ namespace ReportsCore.ViewModels {
 									word_doc.Tables[1].Cell(table.Rows.Count, 11).SetWidth(92, WdRulerStyle.wdAdjustNone);
 									word_doc.Tables[1].Cell(table.Rows.Count, 12).SetWidth(36, WdRulerStyle.wdAdjustNone);
 									word_doc.Tables[1].Cell(table.Rows.Count, 13).SetWidth(100, WdRulerStyle.wdAdjustProportional);
-									//if(late)
-										word_doc.Tables[1].Cell(table.Rows.Count, 14).SetWidth(100, WdRulerStyle.wdAdjustProportional);
+									word_doc.Tables[1].Cell(table.Rows.Count, 14).SetWidth(100, WdRulerStyle.wdAdjustProportional);
 									foreach(var item in flo) {
 										table.Rows.Add();
 										word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
@@ -783,15 +782,14 @@ namespace ReportsCore.ViewModels {
 										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.Os.Value ? "+" : "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Ps.Value ? "+" : "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.Trs.Value ? "+" : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.Police.Value ? "+" : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Group.ToString().Trim();
+										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.Group.ToString().Trim();
+										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Police.Value ? "+" : "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.Alarm.ToString();
 										word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = item.Departure.ToString();
 										word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Arrival.ToString();
 										word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Cancel.ToString();
 										word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = item.Result.ToString();
-										//if(late)
-											word_doc.Tables[1].Cell(table.Rows.Count, 14).Range.Text = item.Late.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 14).Range.Text = item.Late.ToString();
 									}
 									word_doc.Tables[1].Cell(1, 4).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
 									word_doc.Tables[1].Cell(1, 5).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
@@ -812,7 +810,7 @@ namespace ReportsCore.ViewModels {
 							}
 							else
 								//TaskBarIconVisibility = true;
-								MessageBox.Show("Данных для построения отчёта не обнаружено","Ошибка",MessageBoxButton.OK,MessageBoxImage.Error,MessageBoxResult.OK,MessageBoxOptions.RightAlign);
+								MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
 							//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
 						}
 						else
