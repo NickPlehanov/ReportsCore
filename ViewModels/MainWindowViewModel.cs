@@ -389,6 +389,7 @@ namespace ReportsCore.ViewModels {
 		private RelayCommand _GetData;
 		public RelayCommand GetData {
 			get => _GetData ??= new RelayCommand(async obj => {
+				Reports.Clear();
 				BackgroundWorker bw = new BackgroundWorker();
 				bw.DoWork += (s, e) => {
 					Loading = true;
@@ -398,7 +399,6 @@ namespace ReportsCore.ViewModels {
 						VisibleChangeCostMonthlyPay = true;
 						VisibilityActs = false;
 						VisibilityLates = false;
-						Reports.Clear();
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							//TODO: Перенести в get
 							NewGuardObjectHistory before = null;
@@ -457,7 +457,6 @@ namespace ReportsCore.ViewModels {
 						VisibleChangeCostMonthlyPay = false;
 						VisibilityActs = true;
 						VisibilityLates = false;
-						Reports.Clear();
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
 							DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
@@ -495,7 +494,6 @@ namespace ReportsCore.ViewModels {
 						VisibleChangeCostMonthlyPay = false;
 						VisibilityActs = false;
 						VisibilityLates = true;
-						Reports.Clear();
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							DateTime start1 = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
 							DateTime end1 = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
@@ -538,7 +536,6 @@ namespace ReportsCore.ViewModels {
 						VisibleChangeCostMonthlyPay = false;
 						VisibilityActs = false;
 						VisibilityLates = true;
-						Reports.Clear();
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							DateTime start2 = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
 							DateTime end2 = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
