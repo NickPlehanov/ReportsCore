@@ -811,27 +811,30 @@ namespace ReportsCore.ViewModels {
 								}
 							}
 							else
-								TaskBarIconVisibility = true;
-								//MessageBox.Show("test");
-								//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+								//TaskBarIconVisibility = true;
+								MessageBox.Show("Данных для построения отчёта не обнаружено","Ошибка",MessageBoxButton.OK,MessageBoxImage.Error,MessageBoxResult.OK,MessageBoxOptions.RightAlign);
+							//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
 						}
 						else
-							TaskBarIconVisibility = true;
+							MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+						//TaskBarIconVisibility = true;
 						//MessageBox.Show("test");
 						//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
 					}
 					catch(Exception ex) {
-						TaskBarIconVisibility = true;
+						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+						//TaskBarIconVisibility = true;
 						//MessageBox.Show("test");
 						//notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
 					}
 				}
 			};
 			bw.RunWorkerCompleted += (s, e) => {
-				ProcessStartInfo processStartInfo = new ProcessStartInfo();
-				processStartInfo.FileName = filename;
-				processStartInfo.UseShellExecute = true;
-				Process.Start(processStartInfo);
+				//ProcessStartInfo processStartInfo = new ProcessStartInfo();
+				//processStartInfo.FileName = filename;
+				//processStartInfo.UseShellExecute = true;
+				//Process.Start(processStartInfo);
+				MessageBox.Show("Отчёт успешно сохранен", "Информация", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
 				Loading = false;
 			};
 			bw.RunWorkerAsync();
