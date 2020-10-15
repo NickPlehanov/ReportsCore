@@ -320,6 +320,15 @@ namespace ReportsCore.ViewModels {
 			}
 		}
 
+		private bool _TaskBarIconVisibility;
+		public bool TaskBarIconVisibility {
+			get => _TaskBarIconVisibility;
+			set {
+				_TaskBarIconVisibility = value;
+				OnPropertyChanged(nameof(TaskBarIconVisibility));
+			}
+		}
+
 		private RelayCommand _MenuOpen;
 		public RelayCommand MenuOpen {
 			get => _MenuOpen ??= new RelayCommand(obj => {
@@ -802,15 +811,18 @@ namespace ReportsCore.ViewModels {
 								}
 							}
 							else
-								MessageBox.Show("test");
-							//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+								TaskBarIconVisibility = true;
+								//MessageBox.Show("test");
+								//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
 						}
 						else
-							MessageBox.Show("test");
+							TaskBarIconVisibility = true;
+						//MessageBox.Show("test");
 						//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
 					}
 					catch(Exception ex) {
-						MessageBox.Show("test");
+						TaskBarIconVisibility = true;
+						//MessageBox.Show("test");
 						//notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
 					}
 				}
@@ -824,6 +836,15 @@ namespace ReportsCore.ViewModels {
 			};
 			bw.RunWorkerAsync();
 		}
+		//private void notify(string title, string msg, System.Windows.Forms.ToolTipIcon toolTipIcon, bool isClicked) {
+		//	NotifyIcon nIcon = new NotifyIcon();
+		//	nIcon.Icon = new Icon(@"headphones_audio_sound_10907.ico");
+		//	nIcon.Visible = true;
+		//	nIcon.ShowBalloonTip(15000, title, msg, toolTipIcon);
+		//	if(isClicked)
+		//		nIcon.BalloonTipClicked += BallonTipClicked;
+		//	//nIcon.Dispose();
+		//}
 
 	}
 
