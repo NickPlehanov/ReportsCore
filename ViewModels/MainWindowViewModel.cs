@@ -661,11 +661,13 @@ namespace ReportsCore.ViewModels {
 			//ReportList.Add(new ReportsList() { ReportID = Guid.NewGuid(), ReportName = "Отчёт изменения стоимости абонентской платы" });
 			using(ReportContext.ReportContext context = new ReportContext.ReportContext()) {
 				string login = Environment.UserName;
-				foreach(var accessReports in context.UsersReports.Where(x=>x.UsrLogin.ToLower().Contains(login.ToLower()))) {
-					ReportList.Add(new ReportsList() {
-						ReportID = context.Reports.FirstOrDefault(y => y.RptId == accessReports.RptId).RptId,
-						ReportName = context.Reports.FirstOrDefault(y => y.RptId == accessReports.RptId).RptName
-					});
+				using(ReportContext.ReportContext context1 = new ReportContext.ReportContext()) {
+					foreach(var accessReports in context.UsersReports.Where(x => x.UsrLogin.ToLower().Contains(login.ToLower()))) {
+						ReportList.Add(new ReportsList() {
+							ReportID = context1.Reports.FirstOrDefault(y => y.RptId == accessReports.RptId).RptId,
+							ReportName = context1.Reports.FirstOrDefault(y => y.RptId == accessReports.RptId).RptName
+						});
+					}
 				}
 				//foreach(var item in context.Reports.ToList()) {
 				//	ReportList.Add(new ReportsList() { ReportID = item.RptId, ReportName = item.RptName });
