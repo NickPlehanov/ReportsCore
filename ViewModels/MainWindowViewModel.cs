@@ -359,34 +359,34 @@ namespace ReportsCore.ViewModels {
 		private RelayCommand _Search;
 		public RelayCommand Search {
 			get => _Search ??= new RelayCommand(obj => {
-			BackgroundWorker bw = new BackgroundWorker();
-			bw.DoWork += (s, e) => {
-				Loading = true;
-				Reports = FullReports;
-				if(!string.IsNullOrEmpty(FilterParameter) || !string.IsNullOrWhiteSpace(FilterParameter)) {
-					bool isDigit = false;
-					char[] filter = FilterParameter.ToCharArray();
-					foreach(char item in filter) {
-						if(char.IsDigit(item))
-							isDigit = true;
-						else {
-							isDigit = false;
-							break;
+				BackgroundWorker bw = new BackgroundWorker();
+				bw.DoWork += (s, e) => {
+					Loading = true;
+					Reports = FullReports;
+					if(!string.IsNullOrEmpty(FilterParameter) || !string.IsNullOrWhiteSpace(FilterParameter)) {
+						bool isDigit = false;
+						char[] filter = FilterParameter.ToCharArray();
+						foreach(char item in filter) {
+							if(char.IsDigit(item))
+								isDigit = true;
+							else {
+								isDigit = false;
+								break;
+							}
 						}
+						//TODO: Проверить что второй раз ищется
+						//FullReports = Reports;
+						if(isDigit)
+							Reports = new ObservableCollection<Report>(Reports.Where(x => x.ObjectNumber.ToString().Contains(FilterParameter)));
+						else
+							Reports = new ObservableCollection<Report>(Reports.Where(x => x.ObjectAddress.ToLower().Contains(FilterParameter.ToLower()) || x.ObjectName.ToLower().Contains(FilterParameter.ToLower())));
+						OnPropertyChanged("Reports");
 					}
-					//TODO: Проверить что второй раз ищется
-					//FullReports = Reports;
-					if(isDigit)
-						Reports = new ObservableCollection<Report>(Reports.Where(x => x.ObjectNumber.ToString().Contains(FilterParameter)));
 					else
-						Reports = new ObservableCollection<Report>(Reports.Where(x => x.ObjectAddress.ToLower().Contains(FilterParameter.ToLower()) || x.ObjectName.ToLower().Contains(FilterParameter.ToLower())));
-					OnPropertyChanged("Reports");
-				}
-				else
-					MessageBox.Show("Значение для фильтрации не может быть пустым");
-			};
-				bw.RunWorkerCompleted += (s, e) => {					
-						Loading = false;
+						MessageBox.Show("Значение для фильтрации не может быть пустым");
+				};
+				bw.RunWorkerCompleted += (s, e) => {
+					Loading = false;
 				};
 				bw.RunWorkerAsync();
 			});
@@ -395,8 +395,16 @@ namespace ReportsCore.ViewModels {
 		private RelayCommand _ClearFilter;
 		public RelayCommand ClearFilter {
 			get => _ClearFilter ??= new RelayCommand(obj => {
-				FilterParameter = null;
-				Reports = FullReports;
+				BackgroundWorker bw = new BackgroundWorker();
+				bw.DoWork += (s, e) => {
+					Loading = true;
+					FilterParameter = null;
+					Reports = FullReports;
+				};
+				bw.RunWorkerCompleted += (s, e) => {
+					Loading = false;
+				};
+				bw.RunWorkerAsync();
 			});
 		}
 		private RelayCommand _SelectDatePattern;
@@ -755,7 +763,7 @@ namespace ReportsCore.ViewModels {
 										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
 										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
 									}
-									foreach(var item in flo.OrderBy(x=>x.DateChanged).ThenBy(y=>y.WhoChanged)) {
+									foreach(var item in flo.OrderBy(x => x.DateChanged).ThenBy(y => y.WhoChanged)) {
 										table.Rows.Add();
 										word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
 										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
