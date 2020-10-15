@@ -405,7 +405,7 @@ namespace ReportsCore.ViewModels {
 							NewGuardObjectHistory after = null;
 							DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
 							DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
-							List<NewGuardObjectHistory> history = await context.NewGuardObjectHistory.Where(x => x.ModifiedOn >= start && x.ModifiedOn <= end).ToListAsync<NewGuardObjectHistory>();
+							List<NewGuardObjectHistory> history = context.NewGuardObjectHistory.Where(x => x.ModifiedOn >= start && x.ModifiedOn <= end).ToList<NewGuardObjectHistory>();
 							var r = history.GroupBy(a => new { a.NewGuardObjectId, a.ModifiedBy, DateTime = DateTime.Parse(a.ModifiedOn.ToString()) }).ToList();
 							foreach(var item in r) {
 								before = null;
