@@ -773,10 +773,10 @@ namespace ReportsCore.ViewModels {
 										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
 										word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName.ToString();
 										word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.DateStart.Value.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.DateStart.HasValue ? item.DateStart.Value.ToString() : "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Curator;
 										word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.WhoChanged;
-										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.DateChanged.Value.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.DateChanged.HasValue ? item.DateChanged.Value.ToString() : "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Before;
 										word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.After;
 										//word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = item.Departure.ToString();
