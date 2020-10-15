@@ -359,6 +359,9 @@ namespace ReportsCore.ViewModels {
 		private RelayCommand _Search;
 		public RelayCommand Search {
 			get => _Search ??= new RelayCommand(obj => {
+			BackgroundWorker bw = new BackgroundWorker();
+			bw.DoWork += (s, e) => {
+				Loading = true;
 				Reports = FullReports;
 				if(!string.IsNullOrEmpty(FilterParameter) || !string.IsNullOrWhiteSpace(FilterParameter)) {
 					bool isDigit = false;
@@ -381,6 +384,11 @@ namespace ReportsCore.ViewModels {
 				}
 				else
 					MessageBox.Show("Значение для фильтрации не может быть пустым");
+			};
+				bw.RunWorkerCompleted += (s, e) => {					
+						Loading = false;
+				};
+				bw.RunWorkerAsync();
 			});
 		}
 
