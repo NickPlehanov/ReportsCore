@@ -723,7 +723,7 @@ namespace ReportsCore.ViewModels {
 								if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
 									string[] headers = Resources.HeaderReportWord.Split(',');
 									if(late)
-										headers[headers.Length + 1] = "Опоздание";
+										headers[headers.Length] = "Опоздание";
 									filename = saveFileDialog_word.FileName;
 									object missing = Type.Missing;
 									Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
