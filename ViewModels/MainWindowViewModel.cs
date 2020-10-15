@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -658,10 +659,17 @@ namespace ReportsCore.ViewModels {
 
 		public MainWindowViewModel() {
 			//ReportList.Add(new ReportsList() { ReportID = Guid.NewGuid(), ReportName = "Отчёт изменения стоимости абонентской платы" });
-			using(ReportContext context = new ReportContext()) {
-				foreach(var item in context.Reports.ToList()) {
-					ReportList.Add(new ReportsList() { ReportID = item.RptId, ReportName = item.RptName });
+			using(ReportContext.ReportContext context = new ReportContext.ReportContext()) {
+				string login = Environment.UserName;
+				foreach(var accessReports in context.UsersReports.Where(x=>x.UsrLogin.ToLower().Contains(login.ToLower()))) {
+					ReportList.Add(new ReportsList() {
+						ReportID = context.Reports.FirstOrDefault(y => y.RptId == accessReports.RptId).RptId,
+						ReportName = context.Reports.FirstOrDefault(y => y.RptId == accessReports.RptId).RptName
+					});
 				}
+				//foreach(var item in context.Reports.ToList()) {
+				//	ReportList.Add(new ReportsList() { ReportID = item.RptId, ReportName = item.RptName });
+				//}
 			}
 			DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Текущий месяц" });
 			DatePatterns.Add(new DatePattern() { Id = Guid.NewGuid(), Name = "Прошлый месяц" });

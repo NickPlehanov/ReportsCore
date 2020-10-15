@@ -5,8 +5,8 @@
    "FilterSchemas": false,
    "IncludeConnectionString": true,
    "ModelNamespace": null,
-   "OutputContextPath": "Context",
-   "OutputPath": "Models",
+   "OutputContextPath": "ReportContext",
+   "OutputPath": "ReportBaseModels",
    "ProjectRootNamespace": "ReportsCore",
    "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
@@ -14,35 +14,11 @@
    "Tables": [
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[New_alarmBase]"
+         "Name": "[dbo].[Reports]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[New_alarmExtensionBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_andromedaBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_andromedaExtensionBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_guard_object_History]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_guard_objectBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_guard_objectExtensionBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[SystemUserBase]"
+         "Name": "[dbo].[UsersReports]"
       }
    ],
    "UseDatabaseNames": false,
