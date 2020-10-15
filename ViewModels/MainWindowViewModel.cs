@@ -437,32 +437,33 @@ namespace ReportsCore.ViewModels {
 											oldValue = c.OldValue;
 											newValue = c.NewValue;
 										}
-										var uiContext = SynchronizationContext.Current;
+										//var uiContext = SynchronizationContext.Current;
 										NewGuardObjectExtensionBase objectExtensionBase = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId);
 										if(objectExtensionBase != null)
-											uiContext.Send(x => Reports.Add(new Report() {
-												Before = oldValue,
-												After = newValue,
-												Curator = curatorName,
-												DateChanged = WhenChanged,
-												DateStart = objectExtensionBase.NewDateStart,
-												WhoChanged = WhoChanged,
-												ObjectAddress = objectExtensionBase.NewAddress,
-												ObjectName = objectExtensionBase.NewName,
-												ObjectNumber = objectExtensionBase.NewObjectNumber
-											})
-											, null);
-										//Reports.Add(new Report() {
-										//		Before = oldValue,
-										//		After = newValue,
-										//		Curator = curatorName,
-										//		DateChanged = WhenChanged,
-										//		DateStart = objectExtensionBase.NewDateStart,
-										//		WhoChanged = WhoChanged,
-										//		ObjectAddress = objectExtensionBase.NewAddress,
-										//		ObjectName = objectExtensionBase.NewName,
-										//		ObjectNumber = objectExtensionBase.NewObjectNumber
-										//	});
+											//uiContext.Send(x => Reports.Add(new Report() {
+											//	Before = oldValue,
+											//	After = newValue,
+											//	Curator = curatorName,
+											//	DateChanged = WhenChanged,
+											//	DateStart = objectExtensionBase.NewDateStart,
+											//	WhoChanged = WhoChanged,
+											//	ObjectAddress = objectExtensionBase.NewAddress,
+											//	ObjectName = objectExtensionBase.NewName,
+											//	ObjectNumber = objectExtensionBase.NewObjectNumber
+											//}),null);
+											App.Current.Dispatcher.Invoke((System.Action)delegate {
+												Reports.Add(new Report() {
+													Before = oldValue,
+													After = newValue,
+													Curator = curatorName,
+													DateChanged = WhenChanged,
+													DateStart = objectExtensionBase.NewDateStart,
+													WhoChanged = WhoChanged,
+													ObjectAddress = objectExtensionBase.NewAddress,
+													ObjectName = objectExtensionBase.NewName,
+													ObjectNumber = objectExtensionBase.NewObjectNumber
+												});
+											});
 									}
 							}
 						}
