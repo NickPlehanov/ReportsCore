@@ -355,7 +355,7 @@ namespace ReportsCore.ViewModels {
 			get => _FilterOpen ??= new RelayCommand(obj => {
 				FlyoutSettingVisibleState = FlyoutSettingVisibleState ? false : true;
 				//FlyoutMenuState = !FlyoutSettingVisibleState;
-			});
+			},obj=>SelectedReport!=null);
 		}
 		private RelayCommand _Search;
 		public RelayCommand Search {
@@ -734,7 +734,7 @@ namespace ReportsCore.ViewModels {
 		public RelayCommand CreateWordReport {
 			get => _CreateWordReport ??= new RelayCommand(async obj => {
 				createWordReport(Reports.OrderBy(x => x.Alarm));
-			});
+			},obj=>Reports.Count()>0);
 		}
 		string filename = null;
 		private void createWordReport(IEnumerable<Report> flo, bool late = false) {
