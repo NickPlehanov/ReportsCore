@@ -137,7 +137,7 @@
                 </DataGrid.Columns>
             </DataGrid>
         <!--</StackPanel>-->
-        <StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <!--<StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}">-->
             <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding Reports}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <DataGrid.Resources>
                     <!--Тревога-->
@@ -183,8 +183,8 @@
                     <DataGridTextColumn Header="Результат" Binding="{Binding Result}" Width="{Binding ResultWidth}"/>
                 </DataGrid.Columns>
             </DataGrid>
-        </StackPanel>
-        <StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibilityLates, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <!--</StackPanel>-->
+        <!--<StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibilityLates, Converter={StaticResource BooleanToVisibilityConverter}}">-->
             <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibilityLates, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding Reports}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <DataGrid.Resources>
                     <!--Тревога-->
@@ -231,7 +231,7 @@
                     <DataGridTextColumn Header="Опоздание" Binding="{Binding Late}" Width="{Binding ResultWidth}"/>
                 </DataGrid.Columns>
             </DataGrid>
-        </StackPanel>
+        <!--</StackPanel>-->
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="#35100110" Panel.ZIndex="2" Width="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding Loading, Converter={StaticResource BooleanToVisibilityConverter}}" Height="{Binding ActualHeight, ElementName=MainW}" Grid.ColumnSpan="3">
             <mah:ProgressRing IsActive="{Binding Loading}"/>
         </Grid>
