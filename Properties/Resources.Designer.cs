@@ -70,6 +70,15 @@ namespace ReportsCore.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на № объекта,Объект,Адрес,Дата подключения,Куратор,Кем изменено,Дата изменения,Было,Стало.
+        /// </summary>
+        internal static string HeaderReportWordChangeCost {
+            get {
+                return ResourceManager.GetString("HeaderReportWordChangeCost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на № объекта,Объект,Адрес, ОС, ПС,ТРС,Маршрут,Полиция,Сработка,Отправка,Прибытие,Отмена,Результат,Опоздание.
         /// </summary>
         internal static string HeaderReportWordWithLate {

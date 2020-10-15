@@ -703,7 +703,122 @@ namespace ReportsCore.ViewModels {
 			bw.DoWork += (s, e) => {
 				Loading = true;
 				//Изменение стоимости абонентской платы
-				if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) { 
+				if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
+					try {
+						if(flo != null) {
+							if(flo.Any()) {
+								Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
+								SaveFileDialog saveFileDialog_word = new SaveFileDialog() {
+									//InitialDirectory = "c:\\",
+									Filter = "Word files (*.docx)|*.docx|All files (*.*)|*.*",
+									FilterIndex = 1
+								};
+								saveFileDialog_word.ShowDialog();
+								if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
+									string[] headers = Resources.HeaderReportWordChangeCost.Split(',');
+									filename = saveFileDialog_word.FileName;
+									object missing = Type.Missing;
+									Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
+										ref missing, ref missing, ref missing, ref missing);
+									var Paragraph = app.ActiveDocument.Paragraphs.Add();
+									var tableRange = Paragraph.Range;
+									tableRange.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+									tableRange.PageSetup.LeftMargin = 20;
+									tableRange.PageSetup.RightMargin = 20;
+									tableRange.PageSetup.TopMargin = 28;
+									tableRange.PageSetup.BottomMargin = 28;
+									app.ActiveDocument.Tables.Add(tableRange, 1, headers.Length);
+									var table = app.ActiveDocument.Tables[app.ActiveDocument.Tables.Count];
+									table.set_Style("Сетка таблицы");
+									table.ApplyStyleHeadingRows = true;
+									table.ApplyStyleLastRow = false;
+									table.ApplyStyleFirstColumn = true;
+									table.ApplyStyleLastColumn = false;
+									table.ApplyStyleRowBands = true;
+									table.ApplyStyleColumnBands = false;
+									table.AllowAutoFit = true;
+									//table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitContent);
+									table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
+
+									for(int i = 0; i < headers.Length; i++)
+										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Text = headers[i];
+
+									for(int i = 0; i < headers.Length; i++) {
+										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
+										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+									}
+									//word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+									//word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+									//word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+									//word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+									//word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+
+
+
+									//word_doc.Tables[1].Cell(table.Rows.Count, 1).SetWidth(54, WdRulerStyle.wdAdjustNone);
+									//word_doc.Tables[1].Cell(table.Rows.Count, 4).SetWidth(17, WdRulerStyle.wdAdjustNone);
+									//word_doc.Tables[1].Cell(table.Rows.Count, 5).SetWidth(17, WdRulerStyle.wdAdjustNone);
+									//word_doc.Tables[1].Cell(table.Rows.Count, 6).SetWidth(17, WdRulerStyle.wdAdjustNone);
+									//word_doc.Tables[1].Cell(table.Rows.Count, 7).SetWidth(17, WdRulerStyle.wdAdjustNone);
+									//word_doc.Tables[1].Cell(table.Rows.Count, 8).SetWidth(17, WdRulerStyle.wdAdjustNone);
+									//word_doc.Tables[1].Cell(table.Rows.Count, 9).SetWidth(92, WdRulerStyle.wdAdjustNone);
+									//word_doc.Tables[1].Cell(table.Rows.Count, 10).SetWidth(92, WdRulerStyle.wdAdjustNone);
+									//word_doc.Tables[1].Cell(table.Rows.Count, 11).SetWidth(92, WdRulerStyle.wdAdjustNone);
+									//word_doc.Tables[1].Cell(table.Rows.Count, 12).SetWidth(36, WdRulerStyle.wdAdjustNone);
+									//word_doc.Tables[1].Cell(table.Rows.Count, 13).SetWidth(100, WdRulerStyle.wdAdjustProportional);
+									//word_doc.Tables[1].Cell(table.Rows.Count, 14).SetWidth(100, WdRulerStyle.wdAdjustProportional);
+									foreach(var item in flo) {
+										table.Rows.Add();
+										word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
+										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.DateStart.Value.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Curator;
+										word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.WhoChanged;
+										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.DateChanged.Value.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Before;
+										word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.After;
+										//word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = item.Departure.ToString();
+										//word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Arrival.ToString();
+										//word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Cancel.ToString();
+										//word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = item.Result.ToString();
+										//word_doc.Tables[1].Cell(table.Rows.Count, 14).Range.Text = item.Late.ToString();
+									}
+									//word_doc.Tables[1].Cell(1, 4).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+									//word_doc.Tables[1].Cell(1, 5).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+									//word_doc.Tables[1].Cell(1, 6).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+									//word_doc.Tables[1].Cell(1, 7).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+									//word_doc.Tables[1].Cell(1, 8).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+									object filename_local = saveFileDialog_word.FileName;
+									word_doc.SaveAs(ref filename_local, ref missing, ref missing,
+										ref missing, ref missing, ref missing, ref missing,
+										ref missing, ref missing, ref missing, ref missing,
+										ref missing, ref missing, ref missing, ref missing,
+										ref missing);
+									object save_changes = false;
+									word_doc.Close(ref save_changes, ref missing, ref missing);
+									app.Quit(ref save_changes, ref missing, ref missing);
+									//notify("Информация", "Отчёт сохранен. Открыть сейчас?", System.Windows.Forms.ToolTipIcon.Info, true);
+								}
+							}
+							else
+								//TaskBarIconVisibility = true;
+								MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+							//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+						}
+						else
+							MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+						//TaskBarIconVisibility = true;
+						//MessageBox.Show("test");
+						//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+					}
+					catch(Exception ex) {
+						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+						//TaskBarIconVisibility = true;
+						//MessageBox.Show("test");
+						//notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
+					}
 				}
 				//Акты
 				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
