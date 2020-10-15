@@ -722,8 +722,6 @@ namespace ReportsCore.ViewModels {
 								saveFileDialog_word.ShowDialog();
 								if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
 									string[] headers = Resources.HeaderReportWordWithLate.Split(',');
-									//if(late)
-									//	headers[headers.Length] = "Опоздание";
 									filename = saveFileDialog_word.FileName;
 									object missing = Type.Missing;
 									Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
@@ -759,6 +757,7 @@ namespace ReportsCore.ViewModels {
 									word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
 									word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
 									word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+									word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
 
 
 
@@ -784,12 +783,12 @@ namespace ReportsCore.ViewModels {
 										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.Os.Value ? "+" : "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Ps.Value ? "+" : "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.Trs.Value ? "+" : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.Group.ToString().Trim();
-										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Alarm.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.Departure.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = item.Arrival.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Cancel.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Police.Value ? "+" : "";
+										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.Police.Value ? "+" : "";
+										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Group.ToString().Trim();
+										word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.Alarm.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = item.Departure.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Arrival.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Cancel.ToString();
 										word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = item.Result.ToString();
 										//if(late)
 											word_doc.Tables[1].Cell(table.Rows.Count, 14).Range.Text = item.Late.ToString();
@@ -798,6 +797,7 @@ namespace ReportsCore.ViewModels {
 									word_doc.Tables[1].Cell(1, 5).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
 									word_doc.Tables[1].Cell(1, 6).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
 									word_doc.Tables[1].Cell(1, 7).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+									word_doc.Tables[1].Cell(1, 8).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
 									object filename_local = saveFileDialog_word.FileName;
 									word_doc.SaveAs(ref filename_local, ref missing, ref missing,
 										ref missing, ref missing, ref missing, ref missing,
@@ -830,12 +830,17 @@ namespace ReportsCore.ViewModels {
 				}
 			};
 			bw.RunWorkerCompleted += (s, e) => {
-				//ProcessStartInfo processStartInfo = new ProcessStartInfo();
-				//processStartInfo.FileName = filename;
-				//processStartInfo.UseShellExecute = true;
-				//Process.Start(processStartInfo);
-				MessageBox.Show("Отчёт успешно сохранен", "Информация", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-				Loading = false;
+				try {
+					ProcessStartInfo processStartInfo = new ProcessStartInfo();
+					processStartInfo.FileName = filename;
+					processStartInfo.UseShellExecute = true;
+					Process.Start(processStartInfo);
+				}
+				catch { }
+				//MessageBox.Show("Отчёт успешно сохранен", "Информация", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+				finally {
+					Loading = false;
+				}
 			};
 			bw.RunWorkerAsync();
 		}
