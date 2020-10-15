@@ -104,7 +104,7 @@
         <mah:Flyout Position="Right" IsModal="True" AnimateOpacity="True" Panel.ZIndex="1" IsOpen="{Binding FlyoutSettingColumnsVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <DataGrid ItemsSource="{Binding Columns}"/>
         </mah:Flyout>
-        <StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <!--<StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}">-->
             <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
                 <DataGrid.Resources>
                     <!--Дата изменения-->
@@ -136,7 +136,7 @@
                     <DataGridTextColumn Header="Куратор" Binding="{Binding Curator}" Visibility="{Binding CuratorVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 </DataGrid.Columns>
             </DataGrid>
-        </StackPanel>
+        <!--</StackPanel>-->
         <StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}">
             <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding Reports}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <DataGrid.Resources>
