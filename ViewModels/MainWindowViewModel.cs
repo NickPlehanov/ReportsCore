@@ -307,6 +307,15 @@ namespace ReportsCore.ViewModels {
 			}
 		}
 
+		private bool _Loading;
+		public bool Loading {
+			get => _Loading;
+			set {
+				_Loading = value;
+				OnPropertyChanged(nameof(Loading));
+			}
+		}
+
 		private RelayCommand _MenuOpen;
 		public RelayCommand MenuOpen {
 			get => _MenuOpen ??= new RelayCommand(obj => {
@@ -379,6 +388,7 @@ namespace ReportsCore.ViewModels {
 		private RelayCommand _GetData;
 		public RelayCommand GetData {
 			get => _GetData ??= new RelayCommand(async obj => {
+				Loading = true;
 				//Изменение стоимости Абонентской платы
 				if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
 					//TODO: переделать на отдельный метод					
@@ -564,6 +574,7 @@ namespace ReportsCore.ViewModels {
 				FlyoutMenuState = false;
 				FlyoutSettingVisibleState = false;
 				FullReports = Reports;
+				Loading = false;
 			});
 		}
 
@@ -661,15 +672,17 @@ namespace ReportsCore.ViewModels {
 			});
 		}
 		string filename = null;
-		private void createWordReport(IEnumerable<Report> flo) {
+		private void createWordReport(IEnumerable<Report> flo, bool late = false) {
 			try {
 				if(flo != null) {
 					if(flo.Any()) {
 						Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
 						SaveFileDialog saveFileDialog_word = new SaveFileDialog();
-							saveFileDialog_word.ShowDialog();
+						saveFileDialog_word.ShowDialog();
 						if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
 							string[] headers = Resources.HeaderReportWord.Split(',');
+							if(late)
+								headers[headers.Length + 1] = "Опоздание";
 							filename = saveFileDialog_word.FileName;
 							object missing = Type.Missing;
 							Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
@@ -734,6 +747,8 @@ namespace ReportsCore.ViewModels {
 							word_doc.Tables[1].Cell(table.Rows.Count, 11).SetWidth(92, WdRulerStyle.wdAdjustNone);
 							word_doc.Tables[1].Cell(table.Rows.Count, 12).SetWidth(36, WdRulerStyle.wdAdjustNone);
 							word_doc.Tables[1].Cell(table.Rows.Count, 13).SetWidth(100, WdRulerStyle.wdAdjustProportional);
+							if(late)
+								word_doc.Tables[1].Cell(table.Rows.Count, 14).SetWidth(100, WdRulerStyle.wdAdjustProportional);
 							foreach(var item in flo) {
 								table.Rows.Add();
 								word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
@@ -751,6 +766,8 @@ namespace ReportsCore.ViewModels {
 								word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Cancel.ToString();
 								word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Police.Value ? "+" : "";
 								word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = item.Result.ToString();
+								if(late)
+									word_doc.Tables[1].Cell(table.Rows.Count, 14).Range.Text = item.Late.ToString();
 							}
 							word_doc.Tables[1].Cell(1, 4).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
 							word_doc.Tables[1].Cell(1, 5).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
