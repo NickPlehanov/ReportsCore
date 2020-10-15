@@ -721,9 +721,9 @@ namespace ReportsCore.ViewModels {
 								};
 								saveFileDialog_word.ShowDialog();
 								if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
-									string[] headers = Resources.HeaderReportWord.Split(',');
-									if(late)
-										headers[headers.Length] = "Опоздание";
+									string[] headers = Resources.HeaderReportWordWithLate.Split(',');
+									//if(late)
+									//	headers[headers.Length] = "Опоздание";
 									filename = saveFileDialog_word.FileName;
 									object missing = Type.Missing;
 									Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
@@ -773,7 +773,7 @@ namespace ReportsCore.ViewModels {
 									word_doc.Tables[1].Cell(table.Rows.Count, 11).SetWidth(92, WdRulerStyle.wdAdjustNone);
 									word_doc.Tables[1].Cell(table.Rows.Count, 12).SetWidth(36, WdRulerStyle.wdAdjustNone);
 									word_doc.Tables[1].Cell(table.Rows.Count, 13).SetWidth(100, WdRulerStyle.wdAdjustProportional);
-									if(late)
+									//if(late)
 										word_doc.Tables[1].Cell(table.Rows.Count, 14).SetWidth(100, WdRulerStyle.wdAdjustProportional);
 									foreach(var item in flo) {
 										table.Rows.Add();
@@ -791,7 +791,7 @@ namespace ReportsCore.ViewModels {
 										word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Cancel.ToString();
 										word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Police.Value ? "+" : "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = item.Result.ToString();
-										if(late)
+										//if(late)
 											word_doc.Tables[1].Cell(table.Rows.Count, 14).Range.Text = item.Late.ToString();
 									}
 									word_doc.Tables[1].Cell(1, 4).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;

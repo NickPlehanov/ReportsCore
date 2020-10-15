@@ -68,5 +68,14 @@ namespace ReportsCore.Properties {
                 return ResourceManager.GetString("HeaderReportWord", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на № объекта,Объект,Адрес, ОС, ПС,ТРС,Маршрут,Сработка,Отправка,Прибытие,Отмена,Вызов полиции,Результат,Опоздание.
+        /// </summary>
+        internal static string HeaderReportWordWithLate {
+            get {
+                return ResourceManager.GetString("HeaderReportWordWithLate", resourceCulture);
+            }
+        }
     }
 }

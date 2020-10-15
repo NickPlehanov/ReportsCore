@@ -120,4 +120,7 @@
   <data name="HeaderReportWord" xml:space="preserve">
     <value>№ объекта,Объект,Адрес, ОС, ПС,ТРС,Маршрут,Сработка,Отправка,Прибытие,Отмена,Вызов полиции,Результат</value>
   </data>
+  <data name="HeaderReportWordWithLate" xml:space="preserve">
+    <value>№ объекта,Объект,Адрес, ОС, ПС,ТРС,Маршрут,Сработка,Отправка,Прибытие,Отмена,Вызов полиции,Результат,Опоздание</value>
+  </data>
 </root>
