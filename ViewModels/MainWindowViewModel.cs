@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace ReportsCore.ViewModels {
 	class MainWindowViewModel : BaseViewModel {
@@ -388,10 +389,11 @@ namespace ReportsCore.ViewModels {
 		}
 		private RelayCommand _GetData;
 		public RelayCommand GetData {
-			get => _GetData ??= new RelayCommand(async obj => {
+			get => _GetData ??= new RelayCommand(obj => {
+				Dispatcher.CurrentDispatcher.Invoke(() => { 
 				Reports.Clear();
-				BackgroundWorker bw = new BackgroundWorker();
-				bw.DoWork += (s, e) => {
+				//BackgroundWorker bw = new BackgroundWorker();
+				//bw.DoWork += (s, e) => {
 					Loading = true;
 					//Изменение стоимости Абонентской платы
 					if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
@@ -574,11 +576,12 @@ namespace ReportsCore.ViewModels {
 					FlyoutMenuState = false;
 					FlyoutSettingVisibleState = false;
 					FullReports = Reports;
-				};
-				bw.RunWorkerCompleted += (s, e) =>{
+				//};
+				//bw.RunWorkerCompleted += (s, e) =>{
 					Loading = false;
-				};
-				bw.RunWorkerAsync();
+					//};
+					//bw.RunWorkerAsync();
+				});
 			});
 		}
 
