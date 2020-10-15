@@ -266,7 +266,7 @@ namespace ReportsCore.ViewModels {
 			get => _VisibleChangeCostMonthlyPay;
 			set {
 				_VisibleChangeCostMonthlyPay = value;
-				OnPropertyChanged("VisibleChangeCostMonthlyPay");
+				OnPropertyChanged(nameof(VisibleChangeCostMonthlyPay));
 			}
 		}
 		private bool _VisibilityActs;
