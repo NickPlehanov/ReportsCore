@@ -244,14 +244,14 @@ namespace ReportsCore.ViewModels {
 			}
 		}
 
-		private string _DatePatternValue;
-		public string DatePatternValue {
-			get => _DatePatternValue;
-			set {
-				_DatePatternValue = value;
-				OnPropertyChanged("DatePatternValue");
-			}
-		}
+		//private string _DatePatternValue;
+		//public string DatePatternValue {
+		//	get => _DatePatternValue;
+		//	set {
+		//		_DatePatternValue = value;
+		//		OnPropertyChanged("DatePatternValue");
+		//	}
+		//}
 
 		private string _FilterParameter;
 		public string FilterParameter {
@@ -287,30 +287,30 @@ namespace ReportsCore.ViewModels {
 			}
 		}
 
-		private bool _VisibleAlarmActs;
-		public bool VisibleAlarmActs {
-			get => _VisibleAlarmActs;
-			set {
-				_VisibleAlarmActs = value;
-				OnPropertyChanged("VisibleAlarmActs");
-			}
-		}
-		private bool _VisibleLateGbr;
-		public bool VisibleLateGbr {
-			get => _VisibleLateGbr;
-			set {
-				_VisibleLateGbr = value;
-				OnPropertyChanged("VisibleLateGbr");
-			}
-		}
-		private bool _VisibleLatePult;
-		public bool VisibleLatePult {
-			get => _VisibleLatePult;
-			set {
-				_VisibleLatePult = value;
-				OnPropertyChanged("VisibleLatePult");
-			}
-		}
+		//private bool _VisibleAlarmActs;
+		//public bool VisibleAlarmActs {
+		//	get => _VisibleAlarmActs;
+		//	set {
+		//		_VisibleAlarmActs = value;
+		//		OnPropertyChanged("VisibleAlarmActs");
+		//	}
+		//}
+		//private bool _VisibleLateGbr;
+		//public bool VisibleLateGbr {
+		//	get => _VisibleLateGbr;
+		//	set {
+		//		_VisibleLateGbr = value;
+		//		OnPropertyChanged("VisibleLateGbr");
+		//	}
+		//}
+		//private bool _VisibleLatePult;
+		//public bool VisibleLatePult {
+		//	get => _VisibleLatePult;
+		//	set {
+		//		_VisibleLatePult = value;
+		//		OnPropertyChanged("VisibleLatePult");
+		//	}
+		//}
 
 		private bool _Loading;
 		public bool Loading {
@@ -624,6 +624,13 @@ namespace ReportsCore.ViewModels {
 				};
 				bw.RunWorkerAsync();
 				//});
+			});
+		}
+
+		private RelayCommand _ViewTotalCommand;
+		public RelayCommand ViewTotalCommand {
+			get => _ViewTotalCommand ??= new RelayCommand(obj => {
+
 			});
 		}
 

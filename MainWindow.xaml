@@ -40,7 +40,7 @@
         <mah:Flyout Position="Left" Header="Список отчётов" Width="250" AnimateOpacity="True" Panel.ZIndex="1" IsOpen="{Binding FlyoutMenuState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <StackPanel>
                 <ComboBox SelectedItem="{Binding SelectedReport, Mode=TwoWay}" Text="Выберите отчёт" ItemsSource="{Binding ReportList}" DisplayMemberPath="ReportName" FontWeight="UltraLight" FontSize="16" />
-                <mah1:CheckBox Content="Показывать итоги" IsChecked="{Binding TotalChecked}"/>
+                <Button Content="Показывать итоги" Command="{Binding ViewTotalCommand}"/>
 
                 <!--<DataGrid Margin="5" ItemsSource="{Binding ReportList}" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
                     <DataGrid.Columns>
@@ -104,7 +104,7 @@
         <mah:Flyout Position="Right" IsModal="True" AnimateOpacity="True" Panel.ZIndex="1" IsOpen="{Binding FlyoutSettingColumnsVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <DataGrid ItemsSource="{Binding Columns}"/>
         </mah:Flyout>
-        <StackPanel Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}">
             <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
                 <DataGrid.Resources>
                     <!--Дата изменения-->
@@ -137,7 +137,7 @@
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
-        <StackPanel Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}">
             <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding Reports}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <DataGrid.Resources>
                     <!--Тревога-->
@@ -184,7 +184,7 @@
                 </DataGrid.Columns>
             </DataGrid>
         </StackPanel>
-        <StackPanel Visibility="{Binding VisibilityLates, Converter={StaticResource BooleanToVisibilityConverter}}">
+        <StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibilityLates, Converter={StaticResource BooleanToVisibilityConverter}}">
             <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibilityLates, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding Reports}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <DataGrid.Resources>
                     <!--Тревога-->
