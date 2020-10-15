@@ -437,20 +437,8 @@ namespace ReportsCore.ViewModels {
 											oldValue = c.OldValue;
 											newValue = c.NewValue;
 										}
-										//var uiContext = SynchronizationContext.Current;
 										NewGuardObjectExtensionBase objectExtensionBase = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId);
 										if(objectExtensionBase != null)
-											//uiContext.Send(x => Reports.Add(new Report() {
-											//	Before = oldValue,
-											//	After = newValue,
-											//	Curator = curatorName,
-											//	DateChanged = WhenChanged,
-											//	DateStart = objectExtensionBase.NewDateStart,
-											//	WhoChanged = WhoChanged,
-											//	ObjectAddress = objectExtensionBase.NewAddress,
-											//	ObjectName = objectExtensionBase.NewName,
-											//	ObjectNumber = objectExtensionBase.NewObjectNumber
-											//}),null);
 											App.Current.Dispatcher.Invoke((System.Action)delegate {
 												Reports.Add(new Report() {
 													Before = oldValue,
@@ -483,22 +471,24 @@ namespace ReportsCore.ViewModels {
 									foreach(var item in result) {
 										using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
 											var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item.NewAndromedaAlarm).ToList();
-											Reports.Add(new Report() {
-												ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
-												ObjectNumber = andromeda.FirstOrDefault().NewNumber,
-												ObjectAddress = andromeda.FirstOrDefault().NewAddress,
-												Os = item.NewOnc,
-												Ps = item.NewPs,
-												Trs = item.NewTpc,
-												Group = item.NewGroup + 69,
-												Alarm = item.NewAlarmDt,
-												Arrival = item.NewArrival,
-												Departure = item.NewDeparture,
-												Cancel = item.NewCancel,
-												Result = item.NewName,
-												Owner = item.NewOwner,
-												Police = item.NewPolice,
-												Act = item.NewAct
+											App.Current.Dispatcher.Invoke((System.Action)delegate {
+												Reports.Add(new Report() {
+													ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
+													ObjectNumber = andromeda.FirstOrDefault().NewNumber,
+													ObjectAddress = andromeda.FirstOrDefault().NewAddress,
+													Os = item.NewOnc,
+													Ps = item.NewPs,
+													Trs = item.NewTpc,
+													Group = item.NewGroup + 69,
+													Alarm = item.NewAlarmDt,
+													Arrival = item.NewArrival,
+													Departure = item.NewDeparture,
+													Cancel = item.NewCancel,
+													Result = item.NewName,
+													Owner = item.NewOwner,
+													Police = item.NewPolice,
+													Act = item.NewAct
+												});
 											});
 										}
 									}
@@ -522,23 +512,25 @@ namespace ReportsCore.ViewModels {
 											if((item1.NewDeparture - item1.NewAlarmDt).Value.TotalSeconds > 30) {
 												using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
 													var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item1.NewAndromedaAlarm).ToList();
-													Reports.Add(new Report() {
-														ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
-														ObjectNumber = andromeda.FirstOrDefault().NewNumber,
-														ObjectAddress = andromeda.FirstOrDefault().NewAddress,
-														Os = item1.NewOnc,
-														Ps = item1.NewPs,
-														Trs = item1.NewTpc,
-														Group = item1.NewGroup + 69,
-														Alarm = item1.NewAlarmDt,
-														Arrival = item1.NewArrival,
-														Departure = item1.NewDeparture,
-														Cancel = item1.NewCancel,
-														Result = item1.NewName,
-														Owner = item1.NewOwner,
-														Police = item1.NewPolice,
-														Act = item1.NewAct,
-														Late = (item1.NewDeparture - item1.NewAlarmDt).Value.ToString()
+													App.Current.Dispatcher.Invoke((System.Action)delegate {
+														Reports.Add(new Report() {
+															ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
+															ObjectNumber = andromeda.FirstOrDefault().NewNumber,
+															ObjectAddress = andromeda.FirstOrDefault().NewAddress,
+															Os = item1.NewOnc,
+															Ps = item1.NewPs,
+															Trs = item1.NewTpc,
+															Group = item1.NewGroup + 69,
+															Alarm = item1.NewAlarmDt,
+															Arrival = item1.NewArrival,
+															Departure = item1.NewDeparture,
+															Cancel = item1.NewCancel,
+															Result = item1.NewName,
+															Owner = item1.NewOwner,
+															Police = item1.NewPolice,
+															Act = item1.NewAct,
+															Late = (item1.NewDeparture - item1.NewAlarmDt).Value.ToString()
+														});
 													});
 												}
 											}
@@ -564,23 +556,25 @@ namespace ReportsCore.ViewModels {
 											if((item2.NewArrival - item2.NewDeparture).Value.TotalMinutes >= 12) {
 												using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) {
 													var andromeda = context1.NewAndromedaExtensionBase.Where(x => x.NewAndromedaId == item2.NewAndromedaAlarm).ToList();
-													Reports.Add(new Report() {
-														ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
-														ObjectNumber = andromeda.FirstOrDefault().NewNumber,
-														ObjectAddress = andromeda.FirstOrDefault().NewAddress,
-														Os = item2.NewOnc,
-														Ps = item2.NewPs,
-														Trs = item2.NewTpc,
-														Group = item2.NewGroup + 69,
-														Alarm = item2.NewAlarmDt,
-														Arrival = item2.NewArrival,
-														Departure = item2.NewDeparture,
-														Cancel = item2.NewCancel,
-														Result = item2.NewName,
-														Owner = item2.NewOwner,
-														Police = item2.NewPolice,
-														Act = item2.NewAct,
-														Late = (item2.NewArrival - item2.NewDeparture).Value.ToString()
+													App.Current.Dispatcher.Invoke((System.Action)delegate {
+														Reports.Add(new Report() {
+															ObjectName = andromeda.FirstOrDefault(x => x.NewName != null).NewName,
+															ObjectNumber = andromeda.FirstOrDefault().NewNumber,
+															ObjectAddress = andromeda.FirstOrDefault().NewAddress,
+															Os = item2.NewOnc,
+															Ps = item2.NewPs,
+															Trs = item2.NewTpc,
+															Group = item2.NewGroup + 69,
+															Alarm = item2.NewAlarmDt,
+															Arrival = item2.NewArrival,
+															Departure = item2.NewDeparture,
+															Cancel = item2.NewCancel,
+															Result = item2.NewName,
+															Owner = item2.NewOwner,
+															Police = item2.NewPolice,
+															Act = item2.NewAct,
+															Late = (item2.NewArrival - item2.NewDeparture).Value.ToString()
+														});
 													});
 												}
 											}
