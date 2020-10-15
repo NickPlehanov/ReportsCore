@@ -22,6 +22,9 @@
             <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding CreateWordReport}">
                 <iconPacks:PackIconMaterialDesign Kind="Print"/>
             </Button>
+            <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding Test}">
+                <iconPacks:PackIconMaterialDesign Kind="_3dRotation"/>
+            </Button>
         </mah:WindowCommands>
     </mah:MetroWindow.LeftWindowCommands>
     <mah:MetroWindow.RightWindowCommands>

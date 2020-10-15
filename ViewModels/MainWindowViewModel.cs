@@ -391,6 +391,12 @@ namespace ReportsCore.ViewModels {
 				bw.RunWorkerAsync();
 			});
 		}
+		private RelayCommand _Test;
+		public RelayCommand Test {
+			get => _Test ??= new RelayCommand(obj => {
+				MessageBox.Show(Environment.UserName);
+			});
+		}
 
 		private RelayCommand _ClearFilter;
 		public RelayCommand ClearFilter {
