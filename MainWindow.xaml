@@ -75,7 +75,7 @@
                     </mah:DropDownButton>-->
                     </StackPanel>
                     <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Button Content="Обновить" Command="{Binding GetData}"/>
+                        <Button Content="Обновить" Command="{Binding GetData}" FontSize="16" FontWeight="UltraLight"/>
                     </StackPanel>
                     <StackPanel>
 
@@ -101,7 +101,7 @@
             <DataGrid ItemsSource="{Binding Columns}"/>
         </mah:Flyout>
         <StackPanel Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <DataGrid Panel.ZIndex="0" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
+            <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" IsReadOnly="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
                 <DataGrid.Resources>
                     <!--Дата изменения-->
                     <DataTemplate x:Key="dt_DateChanged">
@@ -134,7 +134,7 @@
             </DataGrid>
         </StackPanel>
         <StackPanel Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <DataGrid Panel.ZIndex="0" Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding Reports}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding Reports}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <DataGrid.Resources>
                     <!--Тревога-->
                     <DataTemplate x:Key="dt_Alarm">
@@ -181,7 +181,7 @@
             </DataGrid>
         </StackPanel>
         <StackPanel Visibility="{Binding VisibilityLates, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <DataGrid Panel.ZIndex="0" Visibility="{Binding VisibilityLates, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding Reports}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibilityLates, Converter={StaticResource BooleanToVisibilityConverter}}" ItemsSource="{Binding Reports}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" IsReadOnly="True" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <DataGrid.Resources>
                     <!--Тревога-->
                     <DataTemplate x:Key="dt_Alarm">
