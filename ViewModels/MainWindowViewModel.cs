@@ -667,7 +667,7 @@ namespace ReportsCore.ViewModels {
 			string r = null;
 			if(string.IsNullOrEmpty(param))
 				return 0;
-			else {
+			else if(!int.TryParse(param, out _)) {
 				char[] arr = param.ToCharArray();
 				foreach(var item in arr) {
 					if(char.IsDigit(item)) {
@@ -676,6 +676,8 @@ namespace ReportsCore.ViewModels {
 				}
 				return int.Parse(r);
 			}
+			else
+				return int.Parse(param);
 		}
 
 		private List<Comparator> CompareObject(NewGuardObjectHistory _old, NewGuardObjectHistory _new) {
