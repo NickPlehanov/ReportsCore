@@ -634,8 +634,30 @@ namespace ReportsCore.ViewModels {
 				if(SelectedReport.ReportID == Guid.Parse("B904A30B-16B1-4F59-A76D-BD981E18C930")) {
 					int CountRecords = Reports.Count;
 					var ChangeByUser = Reports.GroupBy(x => x.WhoChanged);
+					int PlusCounter = 0;
+					int MinusCounter = 0;
+					float PlusSum = 0;
+					float MinusSum = 0;
 					foreach(var item in ChangeByUser) {
-						MessageBox.Show(item.Key.ToString());
+						PlusCounter = 0;
+						MinusCounter = 0;
+						PlusSum = 0;
+						MinusSum = 0;
+						foreach(var i in item) {
+							if((float.Parse(i.After) - float.Parse(i.Before)) > 0) {
+								PlusCounter++;
+								PlusSum += (float.Parse(i.After) - float.Parse(i.Before));
+							}
+							else {
+								MinusCounter++;
+								MinusSum += (float.Parse(i.After) - float.Parse(i.Before));
+							}
+						}
+						MessageBox.Show(item.Key.ToString() + " Всего изменений: " + item.Count().ToString() + Environment.NewLine
+							+ "Положительных: " + PlusCounter.ToString() + " на сумму: " + PlusSum.ToString() + Environment.NewLine
+							+ "Отрицательных: " + MinusCounter.ToString() + " на сумму: " + MinusSum.ToString() + Environment.NewLine
+							+ "Изменение: " + (PlusSum - MinusSum).ToString()
+							) ;
 					}
 				}
 			},obj=>Reports.Count()>0);
