@@ -638,6 +638,8 @@ namespace ReportsCore.ViewModels {
 					int MinusCounter = 0;
 					float PlusSum = 0;
 					float MinusSum = 0;
+					//Todo: доделать общую сумму приходов/расходов/общую
+					float AllSum = 0;
 					foreach(var item in ChangeByUser) {
 						PlusCounter = 0;
 						MinusCounter = 0;
@@ -660,6 +662,7 @@ namespace ReportsCore.ViewModels {
 							) ;
 					}
 				}
+				if (SelectedReport.ReportID==Guid.Parse("fa4dd0a5 - 5b15 - 45b4 - a55a - 433267fa50ff")) { }
 			},obj=>Reports.Count()>0);
 		}
 
