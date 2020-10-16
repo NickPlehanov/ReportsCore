@@ -644,7 +644,7 @@ namespace ReportsCore.ViewModels {
 						PlusSum = 0;
 						MinusSum = 0;
 						foreach(var i in item) {
-							if((float.Parse(i.After) - float.Parse(i.Before)) > 0) {
+							if((ParseDigit(i.After) - ParseDigit(i.Before)) > 0) {
 								PlusCounter++;
 								PlusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
 							}
@@ -663,7 +663,7 @@ namespace ReportsCore.ViewModels {
 			},obj=>Reports.Count()>0);
 		}
 
-		private float ParseDigit(string param) {
+		private int ParseDigit(string param) {
 			string r = null;
 			if(string.IsNullOrEmpty(param))
 				return 0;
@@ -674,7 +674,7 @@ namespace ReportsCore.ViewModels {
 						r += item;
 					}
 				}
-				return float.Parse(r);
+				return int.Parse(r);
 			}
 		}
 
