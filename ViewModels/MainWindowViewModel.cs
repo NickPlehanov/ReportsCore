@@ -630,8 +630,15 @@ namespace ReportsCore.ViewModels {
 		private RelayCommand _ViewTotalCommand;
 		public RelayCommand ViewTotalCommand {
 			get => _ViewTotalCommand ??= new RelayCommand(obj => {
-
-			});
+				//изм. абонентской платы
+				if(SelectedReport.ReportID == Guid.Parse("B904A30B-16B1-4F59-A76D-BD981E18C930")) {
+					int CountRecords = Reports.Count;
+					var ChangeByUser = Reports.GroupBy(x => x.WhoChanged);
+					foreach(var item in ChangeByUser) {
+						MessageBox.Show(item.Key.ToString());
+					}
+				}
+			},obj=>Reports.Count()>0);
 		}
 
 		private List<Comparator> CompareObject(NewGuardObjectHistory _old, NewGuardObjectHistory _new) {

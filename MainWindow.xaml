@@ -40,7 +40,7 @@
         <mah:Flyout Position="Left" Header="Список отчётов" Width="250" AnimateOpacity="True" Panel.ZIndex="1" IsOpen="{Binding FlyoutMenuState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <StackPanel Margin="5">
                 <ComboBox SelectedItem="{Binding SelectedReport, Mode=TwoWay}" Text="Выберите отчёт" ItemsSource="{Binding ReportList}" DisplayMemberPath="ReportName" FontWeight="UltraLight" FontSize="16" />
-                <Button Content="Показывать итоги" Command="{Binding ViewTotalCommand}" Visibility="Collapsed"/>
+                <Button Content="Показывать итоги" Command="{Binding ViewTotalCommand}"/>
 
                 <!--<DataGrid Margin="5" ItemsSource="{Binding ReportList}" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
                     <DataGrid.Columns>
