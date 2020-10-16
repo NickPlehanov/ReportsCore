@@ -656,7 +656,7 @@ namespace ReportsCore.ViewModels {
 						MessageBox.Show(item.Key.ToString()+Environment.NewLine + " Всего изменений: " + item.Count().ToString() + Environment.NewLine
 							+ "Положительных: " + PlusCounter.ToString() + " на сумму: " + PlusSum.ToString() + Environment.NewLine
 							+ "Отрицательных: " + MinusCounter.ToString() + " на сумму: " + MinusSum.ToString() + Environment.NewLine
-							+ "Изменение: " + (PlusSum - MinusSum).ToString()
+							+ "Изменение: " + (PlusSum - MinusSum*(-1)).ToString()
 							) ;
 					}
 				}
@@ -673,6 +673,8 @@ namespace ReportsCore.ViewModels {
 					if(char.IsDigit(item)) {
 						r += item;
 					}
+					else if(char.IsPunctuation(item))
+						break;
 				}
 				return int.Parse(r);
 			}
