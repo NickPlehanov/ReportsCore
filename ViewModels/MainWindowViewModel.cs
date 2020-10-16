@@ -646,14 +646,14 @@ namespace ReportsCore.ViewModels {
 						foreach(var i in item) {
 							if((float.Parse(i.After) - float.Parse(i.Before)) > 0) {
 								PlusCounter++;
-								PlusSum += (float.Parse(i.After) - float.Parse(i.Before));
+								PlusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
 							}
 							else {
 								MinusCounter++;
-								MinusSum += (float.Parse(i.After) - float.Parse(i.Before));
+								MinusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
 							}
 						}
-						MessageBox.Show(item.Key.ToString() + " Всего изменений: " + item.Count().ToString() + Environment.NewLine
+						MessageBox.Show(item.Key.ToString()+Environment.NewLine + " Всего изменений: " + item.Count().ToString() + Environment.NewLine
 							+ "Положительных: " + PlusCounter.ToString() + " на сумму: " + PlusSum.ToString() + Environment.NewLine
 							+ "Отрицательных: " + MinusCounter.ToString() + " на сумму: " + MinusSum.ToString() + Environment.NewLine
 							+ "Изменение: " + (PlusSum - MinusSum).ToString()
@@ -661,6 +661,21 @@ namespace ReportsCore.ViewModels {
 					}
 				}
 			},obj=>Reports.Count()>0);
+		}
+
+		private float ParseDigit(string param) {
+			string r = null;
+			if(string.IsNullOrEmpty(param))
+				return 0;
+			else {
+				char[] arr = param.ToCharArray();
+				foreach(var item in arr) {
+					if(char.IsDigit(item)) {
+						r += item;
+					}
+				}
+				return float.Parse(r);
+			}
 		}
 
 		private List<Comparator> CompareObject(NewGuardObjectHistory _old, NewGuardObjectHistory _new) {
