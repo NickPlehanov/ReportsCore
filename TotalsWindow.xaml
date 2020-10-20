@@ -1,0 +1,28 @@
+﻿<mah:MetroWindow  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="ReportsCore.TotalsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ReportsCore" 
+                  xmlns:vm="clr-namespace:ReportsCore.ViewModels"
+                  mc:Ignorable="d"
+        Title="TotalsWindow" Height="450" Width="800" x:Name="Totals">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>        
+        <DataGrid Grid.Row="0" ItemsSource="{Binding TotalManagers}" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserDeleteRows="False" CanUserAddRows="False" CanUserResizeRows="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Имя" Binding="{Binding ManagerName}"/>
+                <DataGridTextColumn Header="Всего изменений" Binding="{Binding AllCountChanges}"/>
+                <DataGridTextColumn Header="Положительные (Кол-во)" Binding="{Binding MajorCountChanges}"/>
+                <DataGridTextColumn Header="Отрицательных (Кол-во)" Binding="{Binding MinorCountChanges}"/>
+                <DataGridTextColumn Header="Положительные (Сумма)" Binding="{Binding MajorSumChanges}"/>
+                <DataGridTextColumn Header="Отрицательные (Сумма)" Binding="{Binding MinorSumChanges}"/>
+                <DataGridTextColumn Header="Изменение" Binding="{Binding DeltaSum}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+    </Grid>
+</mah:MetroWindow>

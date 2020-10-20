@@ -1,10 +1,11 @@
 ﻿using MahApps.Metro.Controls;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Office.Interop.Word;
+//using Microsoft.Office.Interop.Word;
 using Microsoft.Win32;
 using ReportsCore.Context;
 using ReportsCore.Helpers;
 using ReportsCore.Models;
+using ReportsCore.Models.TotalModels;
 using ReportsCore.Properties;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ using System.Windows;
 using System.Windows.Threading;
 
 namespace ReportsCore.ViewModels {
-	class MainWindowViewModel : BaseViewModel {
+	public class MainWindowViewModel : BaseViewModel {
 
 		ObservableCollection<Report> FullReports = new ObservableCollection<Report>();
 
@@ -632,6 +633,7 @@ namespace ReportsCore.ViewModels {
 			get => _ViewTotalCommand ??= new RelayCommand(obj => {
 				//изм. абонентской платы
 				if(SelectedReport.ReportID == Guid.Parse("B904A30B-16B1-4F59-A76D-BD981E18C930")) {
+					TotalManagers = new ObservableCollection<TotalManagers>();
 					int CountRecords = Reports.Count;
 					var ChangeByUser = Reports.GroupBy(x => x.WhoChanged);
 					int PlusCounter = 0;
@@ -639,7 +641,7 @@ namespace ReportsCore.ViewModels {
 					float PlusSum = 0;
 					float MinusSum = 0;
 					//Todo: доделать общую сумму приходов/расходов/общую
-					float AllSum = 0;
+					//float AllSum = 0;
 					foreach(var item in ChangeByUser) {
 						PlusCounter = 0;
 						MinusCounter = 0;
@@ -655,14 +657,33 @@ namespace ReportsCore.ViewModels {
 								MinusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
 							}
 						}
-						MessageBox.Show(item.Key.ToString()+Environment.NewLine + " Всего изменений: " + item.Count().ToString() + Environment.NewLine
-							+ "Положительных: " + PlusCounter.ToString() + " на сумму: " + PlusSum.ToString() + Environment.NewLine
-							+ "Отрицательных: " + MinusCounter.ToString() + " на сумму: " + MinusSum.ToString() + Environment.NewLine
-							+ "Изменение: " + (PlusSum - MinusSum*(-1)).ToString()
-							) ;
+						TotalManagers.Add(new TotalManagers() {
+							ManagerName = item.Key.ToString(),
+							AllCountChanges = item.Count(),
+							MajorCountChanges = PlusCounter,
+							MinorCountChanges=MinusCounter,
+							MajorSumChanges=PlusSum,
+							MinorSumChanges=MinusSum,
+							DeltaSum= (PlusSum - MinusSum * (-1))
+						});
+						//TotalManagersChart.Add(new TotalManagersChart() {
+						//	MajorSumChanges = PlusSum,
+						//	MinorSumChanges = MinusSum
+						//});
+						//MessageBox.Show(item.Key.ToString()+Environment.NewLine + " Всего изменений: " + item.Count().ToString() + Environment.NewLine
+						//	+ "Положительных: " + PlusCounter.ToString() + " на сумму: " + PlusSum.ToString() + Environment.NewLine
+						//	+ "Отрицательных: " + MinusCounter.ToString() + " на сумму: " + MinusSum.ToString() + Environment.NewLine
+						//	+ "Изменение: " + (PlusSum - MinusSum*(-1)).ToString()
+						//	) ;
 					}
+					//var totals = new System.Windows.Window();
+					////totals.DataContext = MainWindowViewModel;
+					//totals.Show();
+					TotalsWindow totals = new TotalsWindow(this);
+					//totals.DataContext = new MainWindowViewModel();
+					totals.Show();
 				}
-				if (SelectedReport.ReportID==Guid.Parse("fa4dd0a5 - 5b15 - 45b4 - a55a - 433267fa50ff")) { }
+				if (SelectedReport.ReportID==Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) { }
 			},obj=>Reports.Count()>0);
 		}
 
@@ -714,6 +735,8 @@ namespace ReportsCore.ViewModels {
 		private ObservableCollection<ReportsList> _ReportList = new ObservableCollection<ReportsList>();
 		private ObservableCollection<DatePattern> _DatePatterns = new ObservableCollection<DatePattern>();
 		private ObservableCollection<Report> _Reports = new ObservableCollection<Report>();
+		private ObservableCollection<TotalManagers> _TotalManagers = new ObservableCollection<TotalManagers>();
+		private ObservableCollection<TotalManagersChart> _TotalManagersChart = new ObservableCollection<TotalManagersChart>();
 
 		public MainWindowViewModel() {
 			//ReportList.Add(new ReportsList() { ReportID = Guid.NewGuid(), ReportName = "Отчёт изменения стоимости абонентской платы" });
@@ -741,6 +764,10 @@ namespace ReportsCore.ViewModels {
 			//}	
 		}
 
+		//public MainWindowViewModel(TotalManagers totalManagers) {
+		//	TotalManagers = totalManagers;
+		//}
+
 		public ObservableCollection<ReportsList> ReportList {
 			get => _ReportList;
 			set {
@@ -764,6 +791,20 @@ namespace ReportsCore.ViewModels {
 				OnPropertyChanged("SelectedReport");
 			}
 		}
+		public ObservableCollection<TotalManagers> TotalManagers {
+			get => _TotalManagers;
+			set {
+				_TotalManagers = value;
+				OnPropertyChanged(nameof(TotalManagers));
+			}
+		}
+		public ObservableCollection<TotalManagersChart> TotalManagersChart {
+			get => _TotalManagersChart;
+			set {
+				_TotalManagersChart = value;
+				OnPropertyChanged(nameof(TotalManagersChart));
+			}
+		}
 
 		public ObservableCollection<DatePattern> DatePatterns {
 			get => _DatePatterns;
@@ -783,356 +824,356 @@ namespace ReportsCore.ViewModels {
 
 		private RelayCommand _CreateWordReport;
 		public RelayCommand CreateWordReport {
-			get => _CreateWordReport ??= new RelayCommand(async obj => {
+			get => _CreateWordReport ??= new RelayCommand(obj => {
 				createWordReport(Reports.OrderBy(x => x.Alarm));
 			},obj=>Reports.Count()>0);
 		}
-		string filename = null;
+		//string filename = null;
 		private void createWordReport(IEnumerable<Report> flo, bool late = false) {
-			BackgroundWorker bw = new BackgroundWorker();
-			bw.DoWork += (s, e) => {
-				Loading = true;
-				//Изменение стоимости абонентской платы
-				if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
-					try {
-						if(flo != null) {
-							if(flo.Any()) {
-								Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
-								SaveFileDialog saveFileDialog_word = new SaveFileDialog() {
-									//InitialDirectory = "c:\\",
-									Filter = "Word files (*.docx)|*.docx|All files (*.*)|*.*",
-									FilterIndex = 1
-								};
-								saveFileDialog_word.ShowDialog();
-								if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
-									string[] headers = Resources.HeaderReportWordChangeCost.Split(',');
-									filename = saveFileDialog_word.FileName;
-									object missing = Type.Missing;
-									Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
-										ref missing, ref missing, ref missing, ref missing);
-									var Paragraph = app.ActiveDocument.Paragraphs.Add();
-									var tableRange = Paragraph.Range;
-									tableRange.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
-									tableRange.PageSetup.LeftMargin = 20;
-									tableRange.PageSetup.RightMargin = 20;
-									tableRange.PageSetup.TopMargin = 28;
-									tableRange.PageSetup.BottomMargin = 28;
-									app.ActiveDocument.Tables.Add(tableRange, 1, headers.Length);
-									var table = app.ActiveDocument.Tables[app.ActiveDocument.Tables.Count];
-									table.set_Style("Сетка таблицы");
-									table.ApplyStyleHeadingRows = true;
-									table.ApplyStyleLastRow = false;
-									table.ApplyStyleFirstColumn = true;
-									table.ApplyStyleLastColumn = false;
-									table.ApplyStyleRowBands = true;
-									table.ApplyStyleColumnBands = false;
-									table.AllowAutoFit = true;
-									//table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitContent);
-									table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
+			//BackgroundWorker bw = new BackgroundWorker();
+			//bw.DoWork += (s, e) => {
+			//	Loading = true;
+			//	//Изменение стоимости абонентской платы
+			//	if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
+			//		try {
+			//			if(flo != null) {
+			//				if(flo.Any()) {
+			//					Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
+			//					SaveFileDialog saveFileDialog_word = new SaveFileDialog() {
+			//						//InitialDirectory = "c:\\",
+			//						Filter = "Word files (*.docx)|*.docx|All files (*.*)|*.*",
+			//						FilterIndex = 1
+			//					};
+			//					saveFileDialog_word.ShowDialog();
+			//					if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
+			//						string[] headers = Resources.HeaderReportWordChangeCost.Split(',');
+			//						filename = saveFileDialog_word.FileName;
+			//						object missing = Type.Missing;
+			//						Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
+			//							ref missing, ref missing, ref missing, ref missing);
+			//						var Paragraph = app.ActiveDocument.Paragraphs.Add();
+			//						var tableRange = Paragraph.Range;
+			//						tableRange.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+			//						tableRange.PageSetup.LeftMargin = 20;
+			//						tableRange.PageSetup.RightMargin = 20;
+			//						tableRange.PageSetup.TopMargin = 28;
+			//						tableRange.PageSetup.BottomMargin = 28;
+			//						app.ActiveDocument.Tables.Add(tableRange, 1, headers.Length);
+			//						var table = app.ActiveDocument.Tables[app.ActiveDocument.Tables.Count];
+			//						table.set_Style("Сетка таблицы");
+			//						table.ApplyStyleHeadingRows = true;
+			//						table.ApplyStyleLastRow = false;
+			//						table.ApplyStyleFirstColumn = true;
+			//						table.ApplyStyleLastColumn = false;
+			//						table.ApplyStyleRowBands = true;
+			//						table.ApplyStyleColumnBands = false;
+			//						table.AllowAutoFit = true;
+			//						//table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitContent);
+			//						table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
 
-									for(int i = 0; i < headers.Length; i++)
-										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Text = headers[i];
+			//						for(int i = 0; i < headers.Length; i++)
+			//							word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Text = headers[i];
 
-									for(int i = 0; i < headers.Length; i++) {
-										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
-										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
-									}
-									foreach(var item in flo.OrderBy(x => x.DateChanged).ThenBy(y => y.WhoChanged)) {
-										table.Rows.Add();
-										word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
-										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.DateStart.HasValue ? item.DateStart.Value.ToString() : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Curator;
-										word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.WhoChanged;
-										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.DateChanged.HasValue ? item.DateChanged.Value.ToString() : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Before;
-										word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.After;
-									}
-									object filename_local = saveFileDialog_word.FileName;
-									word_doc.SaveAs(ref filename_local, ref missing, ref missing,
-										ref missing, ref missing, ref missing, ref missing,
-										ref missing, ref missing, ref missing, ref missing,
-										ref missing, ref missing, ref missing, ref missing,
-										ref missing);
-									object save_changes = false;
-									word_doc.Close(ref save_changes, ref missing, ref missing);
-									app.Quit(ref save_changes, ref missing, ref missing);
-									//notify("Информация", "Отчёт сохранен. Открыть сейчас?", System.Windows.Forms.ToolTipIcon.Info, true);
-								}
-							}
-							else
-								//TaskBarIconVisibility = true;
-								MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-							//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
-						}
-						else
-							MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-						//TaskBarIconVisibility = true;
-						//MessageBox.Show("test");
-						//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
-					}
-					catch(Exception ex) {
-						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-						//TaskBarIconVisibility = true;
-						//MessageBox.Show("test");
-						//notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
-					}
-				}
-				//Акты
-				if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
-					try {
-						if(flo != null) {
-							if(flo.Any()) {
-								Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
-								SaveFileDialog saveFileDialog_word = new SaveFileDialog() {
-									//InitialDirectory = "c:\\",
-									Filter = "Word files (*.docx)|*.docx|All files (*.*)|*.*",
-									FilterIndex = 1
-								};
-								saveFileDialog_word.ShowDialog();
-								if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
-									string[] headers = Resources.HeaderReportWord.Split(',');
-									filename = saveFileDialog_word.FileName;
-									object missing = Type.Missing;
-									Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
-										ref missing, ref missing, ref missing, ref missing);
-									var Paragraph = app.ActiveDocument.Paragraphs.Add();
-									var tableRange = Paragraph.Range;
-									tableRange.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
-									tableRange.PageSetup.LeftMargin = 20;
-									tableRange.PageSetup.RightMargin = 20;
-									tableRange.PageSetup.TopMargin = 28;
-									tableRange.PageSetup.BottomMargin = 28;
-									app.ActiveDocument.Tables.Add(tableRange, 1, headers.Length);
-									var table = app.ActiveDocument.Tables[app.ActiveDocument.Tables.Count];
-									table.set_Style("Сетка таблицы");
-									table.ApplyStyleHeadingRows = true;
-									table.ApplyStyleLastRow = false;
-									table.ApplyStyleFirstColumn = true;
-									table.ApplyStyleLastColumn = false;
-									table.ApplyStyleRowBands = true;
-									table.ApplyStyleColumnBands = false;
-									table.AllowAutoFit = true;
-									//table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitContent);
-									table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
+			//						for(int i = 0; i < headers.Length; i++) {
+			//							word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
+			//							word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+			//						}
+			//						foreach(var item in flo.OrderBy(x => x.DateChanged).ThenBy(y => y.WhoChanged)) {
+			//							table.Rows.Add();
+			//							word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.DateStart.HasValue ? item.DateStart.Value.ToString() : "";
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Curator;
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.WhoChanged;
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.DateChanged.HasValue ? item.DateChanged.Value.ToString() : "";
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Before;
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.After;
+			//						}
+			//						object filename_local = saveFileDialog_word.FileName;
+			//						word_doc.SaveAs(ref filename_local, ref missing, ref missing,
+			//							ref missing, ref missing, ref missing, ref missing,
+			//							ref missing, ref missing, ref missing, ref missing,
+			//							ref missing, ref missing, ref missing, ref missing,
+			//							ref missing);
+			//						object save_changes = false;
+			//						word_doc.Close(ref save_changes, ref missing, ref missing);
+			//						app.Quit(ref save_changes, ref missing, ref missing);
+			//						//notify("Информация", "Отчёт сохранен. Открыть сейчас?", System.Windows.Forms.ToolTipIcon.Info, true);
+			//					}
+			//				}
+			//				else
+			//					//TaskBarIconVisibility = true;
+			//					MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+			//				//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+			//			}
+			//			else
+			//				MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+			//			//TaskBarIconVisibility = true;
+			//			//MessageBox.Show("test");
+			//			//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+			//		}
+			//		catch(Exception ex) {
+			//			MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+			//			//TaskBarIconVisibility = true;
+			//			//MessageBox.Show("test");
+			//			//notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
+			//		}
+			//	}
+			//	//Акты
+			//	if(SelectedReport.ReportID == Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) {
+			//		try {
+			//			if(flo != null) {
+			//				if(flo.Any()) {
+			//					Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
+			//					SaveFileDialog saveFileDialog_word = new SaveFileDialog() {
+			//						//InitialDirectory = "c:\\",
+			//						Filter = "Word files (*.docx)|*.docx|All files (*.*)|*.*",
+			//						FilterIndex = 1
+			//					};
+			//					saveFileDialog_word.ShowDialog();
+			//					if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
+			//						string[] headers = Resources.HeaderReportWord.Split(',');
+			//						filename = saveFileDialog_word.FileName;
+			//						object missing = Type.Missing;
+			//						Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
+			//							ref missing, ref missing, ref missing, ref missing);
+			//						var Paragraph = app.ActiveDocument.Paragraphs.Add();
+			//						var tableRange = Paragraph.Range;
+			//						tableRange.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+			//						tableRange.PageSetup.LeftMargin = 20;
+			//						tableRange.PageSetup.RightMargin = 20;
+			//						tableRange.PageSetup.TopMargin = 28;
+			//						tableRange.PageSetup.BottomMargin = 28;
+			//						app.ActiveDocument.Tables.Add(tableRange, 1, headers.Length);
+			//						var table = app.ActiveDocument.Tables[app.ActiveDocument.Tables.Count];
+			//						table.set_Style("Сетка таблицы");
+			//						table.ApplyStyleHeadingRows = true;
+			//						table.ApplyStyleLastRow = false;
+			//						table.ApplyStyleFirstColumn = true;
+			//						table.ApplyStyleLastColumn = false;
+			//						table.ApplyStyleRowBands = true;
+			//						table.ApplyStyleColumnBands = false;
+			//						table.AllowAutoFit = true;
+			//						//table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitContent);
+			//						table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
 
-									for(int i = 0; i < headers.Length; i++)
-										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Text = headers[i];
+			//						for(int i = 0; i < headers.Length; i++)
+			//							word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Text = headers[i];
 
-									for(int i = 0; i < headers.Length; i++) {
-										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
-										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
-									}
-									word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-
-
-
-									word_doc.Tables[1].Cell(table.Rows.Count, 1).SetWidth(54, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 4).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 5).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 6).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 7).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 8).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 9).SetWidth(92, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 10).SetWidth(92, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 11).SetWidth(92, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 12).SetWidth(36, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 13).SetWidth(100, WdRulerStyle.wdAdjustProportional);
-									//word_doc.Tables[1].Cell(table.Rows.Count, 14).SetWidth(100, WdRulerStyle.wdAdjustProportional);
-									foreach(var item in flo) {
-										table.Rows.Add();
-										word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
-										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.Os.Value ? "+" : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Ps.Value ? "+" : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.Trs.Value ? "+" : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.Group.ToString().Trim();
-										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Police.Value ? "+" : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.Alarm.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = item.Departure.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Arrival.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Cancel.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = item.Result.ToString();
-										//word_doc.Tables[1].Cell(table.Rows.Count, 14).Range.Text = item.Late.ToString();
-									}
-									word_doc.Tables[1].Cell(1, 4).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									word_doc.Tables[1].Cell(1, 5).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									word_doc.Tables[1].Cell(1, 6).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									word_doc.Tables[1].Cell(1, 7).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									word_doc.Tables[1].Cell(1, 8).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									object filename_local = saveFileDialog_word.FileName;
-									word_doc.SaveAs(ref filename_local, ref missing, ref missing,
-										ref missing, ref missing, ref missing, ref missing,
-										ref missing, ref missing, ref missing, ref missing,
-										ref missing, ref missing, ref missing, ref missing,
-										ref missing);
-									object save_changes = false;
-									word_doc.Close(ref save_changes, ref missing, ref missing);
-									app.Quit(ref save_changes, ref missing, ref missing);
-									//notify("Информация", "Отчёт сохранен. Открыть сейчас?", System.Windows.Forms.ToolTipIcon.Info, true);
-								}
-							}
-							else
-								//TaskBarIconVisibility = true;
-								MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-							//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
-						}
-						else
-							MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-						//TaskBarIconVisibility = true;
-						//MessageBox.Show("test");
-						//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
-					}
-					catch(Exception ex) {
-						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-						//TaskBarIconVisibility = true;
-						//MessageBox.Show("test");
-						//notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
-					}
-				}
-				//Опоздания
-				if(SelectedReport.ReportID == Guid.Parse("a35a2859-3e10-42f1-9e9b-5f29b5e953d9") || SelectedReport.ReportID == Guid.Parse("8a7e33df-e27d-413c-80d5-e3812b57853c")) {
-					try {
-						if(flo != null) {
-							if(flo.Any()) {
-								Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
-								SaveFileDialog saveFileDialog_word = new SaveFileDialog() {
-									//InitialDirectory = "c:\\",
-									Filter = "Word files (*.docx)|*.docx|All files (*.*)|*.*",
-									FilterIndex = 1
-								};
-								saveFileDialog_word.ShowDialog();
-								if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
-									string[] headers = Resources.HeaderReportWordWithLate.Split(',');
-									filename = saveFileDialog_word.FileName;
-									object missing = Type.Missing;
-									Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
-										ref missing, ref missing, ref missing, ref missing);
-									var Paragraph = app.ActiveDocument.Paragraphs.Add();
-									var tableRange = Paragraph.Range;
-									tableRange.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
-									tableRange.PageSetup.LeftMargin = 20;
-									tableRange.PageSetup.RightMargin = 20;
-									tableRange.PageSetup.TopMargin = 28;
-									tableRange.PageSetup.BottomMargin = 28;
-									app.ActiveDocument.Tables.Add(tableRange, 1, headers.Length);
-									var table = app.ActiveDocument.Tables[app.ActiveDocument.Tables.Count];
-									table.set_Style("Сетка таблицы");
-									table.ApplyStyleHeadingRows = true;
-									table.ApplyStyleLastRow = false;
-									table.ApplyStyleFirstColumn = true;
-									table.ApplyStyleLastColumn = false;
-									table.ApplyStyleRowBands = true;
-									table.ApplyStyleColumnBands = false;
-									table.AllowAutoFit = true;
-									//table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitContent);
-									table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
-
-									for(int i = 0; i < headers.Length; i++)
-										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Text = headers[i];
-
-									for(int i = 0; i < headers.Length; i++) {
-										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
-										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
-									}
-									word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
-									word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+			//						for(int i = 0; i < headers.Length; i++) {
+			//							word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
+			//							word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+			//						}
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
 
 
 
-									word_doc.Tables[1].Cell(table.Rows.Count, 1).SetWidth(54, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 4).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 5).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 6).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 7).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 8).SetWidth(17, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 9).SetWidth(92, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 10).SetWidth(92, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 11).SetWidth(92, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 12).SetWidth(36, WdRulerStyle.wdAdjustNone);
-									word_doc.Tables[1].Cell(table.Rows.Count, 13).SetWidth(100, WdRulerStyle.wdAdjustProportional);
-									word_doc.Tables[1].Cell(table.Rows.Count, 14).SetWidth(100, WdRulerStyle.wdAdjustProportional);
-									foreach(var item in flo) {
-										table.Rows.Add();
-										word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
-										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.Os.Value ? "+" : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Ps.Value ? "+" : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.Trs.Value ? "+" : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.Group.ToString().Trim();
-										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Police.Value ? "+" : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.Alarm.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = item.Departure.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Arrival.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Cancel.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = item.Result.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 14).Range.Text = item.Late.ToString();
-									}
-									word_doc.Tables[1].Cell(1, 4).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									word_doc.Tables[1].Cell(1, 5).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									word_doc.Tables[1].Cell(1, 6).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									word_doc.Tables[1].Cell(1, 7).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									word_doc.Tables[1].Cell(1, 8).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
-									object filename_local = saveFileDialog_word.FileName;
-									word_doc.SaveAs(ref filename_local, ref missing, ref missing,
-										ref missing, ref missing, ref missing, ref missing,
-										ref missing, ref missing, ref missing, ref missing,
-										ref missing, ref missing, ref missing, ref missing,
-										ref missing);
-									object save_changes = false;
-									word_doc.Close(ref save_changes, ref missing, ref missing);
-									app.Quit(ref save_changes, ref missing, ref missing);
-									//notify("Информация", "Отчёт сохранен. Открыть сейчас?", System.Windows.Forms.ToolTipIcon.Info, true);
-								}
-							}
-							else
-								//TaskBarIconVisibility = true;
-								MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-							//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
-						}
-						else
-							MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-						//TaskBarIconVisibility = true;
-						//MessageBox.Show("test");
-						//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
-					}
-					catch(Exception ex) {
-						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-						//TaskBarIconVisibility = true;
-						//MessageBox.Show("test");
-						//notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
-					}
-				}
-			};
-			bw.RunWorkerCompleted += (s, e) => {
-				try {
-					ProcessStartInfo processStartInfo = new ProcessStartInfo();
-					processStartInfo.FileName = filename;
-					processStartInfo.UseShellExecute = true;
-					Process.Start(processStartInfo);
-				}
-				catch {
-					MessageBox.Show("Не удалось открыть отчёт", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-				}
-				//MessageBox.Show("Отчёт успешно сохранен", "Информация", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
-				finally {
-					Loading = false;
-				}
-			};
-			bw.RunWorkerAsync();
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 1).SetWidth(54, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 4).SetWidth(17, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 5).SetWidth(17, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 6).SetWidth(17, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 7).SetWidth(17, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 8).SetWidth(17, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 9).SetWidth(92, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 10).SetWidth(92, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 11).SetWidth(92, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 12).SetWidth(36, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 13).SetWidth(100, WdRulerStyle.wdAdjustProportional);
+			//						//word_doc.Tables[1].Cell(table.Rows.Count, 14).SetWidth(100, WdRulerStyle.wdAdjustProportional);
+			//						foreach(var item in flo) {
+			//							table.Rows.Add();
+			//							word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.Os.Value ? "+" : "";
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Ps.Value ? "+" : "";
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.Trs.Value ? "+" : "";
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.Group.ToString().Trim();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Police.Value ? "+" : "";
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.Alarm.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = item.Departure.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Arrival.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Cancel.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = item.Result.ToString();
+			//							//word_doc.Tables[1].Cell(table.Rows.Count, 14).Range.Text = item.Late.ToString();
+			//						}
+			//						word_doc.Tables[1].Cell(1, 4).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+			//						word_doc.Tables[1].Cell(1, 5).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+			//						word_doc.Tables[1].Cell(1, 6).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+			//						word_doc.Tables[1].Cell(1, 7).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+			//						word_doc.Tables[1].Cell(1, 8).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+			//						object filename_local = saveFileDialog_word.FileName;
+			//						word_doc.SaveAs(ref filename_local, ref missing, ref missing,
+			//							ref missing, ref missing, ref missing, ref missing,
+			//							ref missing, ref missing, ref missing, ref missing,
+			//							ref missing, ref missing, ref missing, ref missing,
+			//							ref missing);
+			//						object save_changes = false;
+			//						word_doc.Close(ref save_changes, ref missing, ref missing);
+			//						app.Quit(ref save_changes, ref missing, ref missing);
+			//						//notify("Информация", "Отчёт сохранен. Открыть сейчас?", System.Windows.Forms.ToolTipIcon.Info, true);
+			//					}
+			//				}
+			//				else
+			//					//TaskBarIconVisibility = true;
+			//					MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+			//				//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+			//			}
+			//			else
+			//				MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+			//			//TaskBarIconVisibility = true;
+			//			//MessageBox.Show("test");
+			//			//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+			//		}
+			//		catch(Exception ex) {
+			//			MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+			//			//TaskBarIconVisibility = true;
+			//			//MessageBox.Show("test");
+			//			//notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
+			//		}
+			//	}
+			//	//Опоздания
+			//	if(SelectedReport.ReportID == Guid.Parse("a35a2859-3e10-42f1-9e9b-5f29b5e953d9") || SelectedReport.ReportID == Guid.Parse("8a7e33df-e27d-413c-80d5-e3812b57853c")) {
+			//		try {
+			//			if(flo != null) {
+			//				if(flo.Any()) {
+			//					Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
+			//					SaveFileDialog saveFileDialog_word = new SaveFileDialog() {
+			//						//InitialDirectory = "c:\\",
+			//						Filter = "Word files (*.docx)|*.docx|All files (*.*)|*.*",
+			//						FilterIndex = 1
+			//					};
+			//					saveFileDialog_word.ShowDialog();
+			//					if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
+			//						string[] headers = Resources.HeaderReportWordWithLate.Split(',');
+			//						filename = saveFileDialog_word.FileName;
+			//						object missing = Type.Missing;
+			//						Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
+			//							ref missing, ref missing, ref missing, ref missing);
+			//						var Paragraph = app.ActiveDocument.Paragraphs.Add();
+			//						var tableRange = Paragraph.Range;
+			//						tableRange.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+			//						tableRange.PageSetup.LeftMargin = 20;
+			//						tableRange.PageSetup.RightMargin = 20;
+			//						tableRange.PageSetup.TopMargin = 28;
+			//						tableRange.PageSetup.BottomMargin = 28;
+			//						app.ActiveDocument.Tables.Add(tableRange, 1, headers.Length);
+			//						var table = app.ActiveDocument.Tables[app.ActiveDocument.Tables.Count];
+			//						table.set_Style("Сетка таблицы");
+			//						table.ApplyStyleHeadingRows = true;
+			//						table.ApplyStyleLastRow = false;
+			//						table.ApplyStyleFirstColumn = true;
+			//						table.ApplyStyleLastColumn = false;
+			//						table.ApplyStyleRowBands = true;
+			//						table.ApplyStyleColumnBands = false;
+			//						table.AllowAutoFit = true;
+			//						//table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitContent);
+			//						table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
+
+			//						for(int i = 0; i < headers.Length; i++)
+			//							word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Text = headers[i];
+
+			//						for(int i = 0; i < headers.Length; i++) {
+			//							word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
+			//							word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+			//						}
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Orientation = WdTextOrientation.wdTextOrientationHorizontal;
+
+
+
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 1).SetWidth(54, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 4).SetWidth(17, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 5).SetWidth(17, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 6).SetWidth(17, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 7).SetWidth(17, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 8).SetWidth(17, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 9).SetWidth(92, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 10).SetWidth(92, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 11).SetWidth(92, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 12).SetWidth(36, WdRulerStyle.wdAdjustNone);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 13).SetWidth(100, WdRulerStyle.wdAdjustProportional);
+			//						word_doc.Tables[1].Cell(table.Rows.Count, 14).SetWidth(100, WdRulerStyle.wdAdjustProportional);
+			//						foreach(var item in flo) {
+			//							table.Rows.Add();
+			//							word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.Os.Value ? "+" : "";
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Ps.Value ? "+" : "";
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.Trs.Value ? "+" : "";
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.Group.ToString().Trim();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Police.Value ? "+" : "";
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.Alarm.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 10).Range.Text = item.Departure.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 11).Range.Text = item.Arrival.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 12).Range.Text = item.Cancel.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 13).Range.Text = item.Result.ToString();
+			//							word_doc.Tables[1].Cell(table.Rows.Count, 14).Range.Text = item.Late.ToString();
+			//						}
+			//						word_doc.Tables[1].Cell(1, 4).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+			//						word_doc.Tables[1].Cell(1, 5).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+			//						word_doc.Tables[1].Cell(1, 6).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+			//						word_doc.Tables[1].Cell(1, 7).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+			//						word_doc.Tables[1].Cell(1, 8).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+			//						object filename_local = saveFileDialog_word.FileName;
+			//						word_doc.SaveAs(ref filename_local, ref missing, ref missing,
+			//							ref missing, ref missing, ref missing, ref missing,
+			//							ref missing, ref missing, ref missing, ref missing,
+			//							ref missing, ref missing, ref missing, ref missing,
+			//							ref missing);
+			//						object save_changes = false;
+			//						word_doc.Close(ref save_changes, ref missing, ref missing);
+			//						app.Quit(ref save_changes, ref missing, ref missing);
+			//						//notify("Информация", "Отчёт сохранен. Открыть сейчас?", System.Windows.Forms.ToolTipIcon.Info, true);
+			//					}
+			//				}
+			//				else
+			//					//TaskBarIconVisibility = true;
+			//					MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+			//				//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+			//			}
+			//			else
+			//				MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+			//			//TaskBarIconVisibility = true;
+			//			//MessageBox.Show("test");
+			//			//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+			//		}
+			//		catch(Exception ex) {
+			//			MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+			//			//TaskBarIconVisibility = true;
+			//			//MessageBox.Show("test");
+			//			//notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
+			//		}
+			//	}
+			//};
+			//bw.RunWorkerCompleted += (s, e) => {
+			//	try {
+			//		ProcessStartInfo processStartInfo = new ProcessStartInfo();
+			//		processStartInfo.FileName = filename;
+			//		processStartInfo.UseShellExecute = true;
+			//		Process.Start(processStartInfo);
+			//	}
+			//	catch {
+			//		MessageBox.Show("Не удалось открыть отчёт", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+			//	}
+			//	//MessageBox.Show("Отчёт успешно сохранен", "Информация", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+			//	finally {
+			//		Loading = false;
+			//	}
+			//};
+			//bw.RunWorkerAsync();
 		}
 		//private void notify(string title, string msg, System.Windows.Forms.ToolTipIcon toolTipIcon, bool isClicked) {
 		//	NotifyIcon nIcon = new NotifyIcon();

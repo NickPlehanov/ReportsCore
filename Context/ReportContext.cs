@@ -20,7 +20,7 @@ namespace ReportsCore.Context {
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Data Source=192.168.1.28;Initial Catalog=ReportBase;Persist Security Info=True;User ID=sa;Password=Qwerty_12");
+                optionsBuilder.UseSqlServer("Server=192.168.1.28;Database=ReportBase;Persist Security Info=True;User ID=sa;Password=Qwerty_12");
             }
         }
 
