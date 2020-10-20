@@ -37,6 +37,13 @@
         <vm:MainWindowViewModel/>
     </mah:MetroWindow.DataContext>
     <Grid>
+        <Grid.Resources>
+            <CollectionViewSource x:Key="groups" Source="{Binding Reports}">
+                <CollectionViewSource.GroupDescriptions>
+                    <PropertyGroupDescription PropertyName="WhoChanged" />
+                </CollectionViewSource.GroupDescriptions>
+            </CollectionViewSource>
+        </Grid.Resources>
         <mah:Flyout Position="Left" Header="Список отчётов" Width="250" AnimateOpacity="True" Panel.ZIndex="1" IsOpen="{Binding FlyoutMenuState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <StackPanel Margin="5">
                 <ComboBox SelectedItem="{Binding SelectedReport, Mode=TwoWay}" Text="Выберите отчёт" ItemsSource="{Binding ReportList}" DisplayMemberPath="ReportName" FontWeight="UltraLight" FontSize="16" />
@@ -105,7 +112,39 @@
             <DataGrid ItemsSource="{Binding Columns}"/>
         </mah:Flyout>
         <!--<StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}">-->
-            <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" ItemsSource="{Binding Reports}" AutoGenerateColumns="False" CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
+            <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}" 
+                      CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" ItemsSource="{Binding Source={StaticResource groups}}" AutoGenerateColumns="False" 
+                      CanUserAddRows="False" HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Auto">
+            <DataGrid.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Margin" Value="0,0,0,5"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type GroupItem}">
+                                        <Expander IsExpanded="False" BorderThickness="1,1,1,5">
+                                            <Expander.Header>
+                                                    <TextBlock FontWeight="Bold" Text="{Binding Path=WhoChanged}" Margin="5,0,0,0"/>
+                                            </Expander.Header>
+                                            <!--<Expander.Content>-->
+                                                <ItemsPresenter />
+                                            <!--</Expander.Content>-->
+                                        </Expander>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+                <!--<GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock FontWeight="Bold" FontSize="16" Text="{Binding WhoChanged}"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>-->
+            </DataGrid.GroupStyle>
                 <DataGrid.Resources>
                     <!--Дата изменения-->
                     <DataTemplate x:Key="dt_DateChanged">
