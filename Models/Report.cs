@@ -35,7 +35,10 @@ namespace ReportsCore.Models {
 		//поля для отчёта по сработкам
 		public bool? Act { get; set; }
 		public bool? Police { get; set; }
-		public bool? Owner { get; set; }
+		public bool? Owner { get; set; }	
+		public string DateSort { get; set; }
+		public string HourSort { get; set; }
+
 		[NotMapped]
 		private DateTime? _Alarm;
 		public DateTime? Alarm {

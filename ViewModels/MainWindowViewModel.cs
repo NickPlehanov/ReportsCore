@@ -12,10 +12,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Threading;
 
 namespace ReportsCore.ViewModels {
@@ -263,6 +265,15 @@ namespace ReportsCore.ViewModels {
 			}
 		}
 
+		private Binding _GroupPropertyName;
+		public Binding GroupPropeprtyName {
+			get => _GroupPropertyName;
+			set {
+				_GroupPropertyName = value;
+				OnPropertyChanged(nameof(GroupPropeprtyName));
+			}
+		}
+
 		private bool _VisibleChangeCostMonthlyPay;
 		public bool VisibleChangeCostMonthlyPay {
 			get => _VisibleChangeCostMonthlyPay;
@@ -279,12 +290,21 @@ namespace ReportsCore.ViewModels {
 				OnPropertyChanged(nameof(VisibilityActs));
 			}
 		}
-		private bool _VisibilityLates;
-		public bool VisibilityLates {
-			get => _VisibilityLates;
+		private bool _VisibilityLatesGBR;
+		public bool VisibilityLatesGBR {
+			get => _VisibilityLatesGBR;
 			set {
-				_VisibilityLates = value;
-				OnPropertyChanged(nameof(VisibilityLates));
+				_VisibilityLatesGBR = value;
+				OnPropertyChanged(nameof(VisibilityLatesGBR));
+			}
+		}
+
+		private bool _VisibilityLatesPult;
+		public bool VisibilityLatesPult {
+			get => _VisibilityLatesPult;
+			set {
+				_VisibilityLatesPult = value;
+				OnPropertyChanged(nameof(VisibilityLatesPult));
 			}
 		}
 
@@ -356,7 +376,7 @@ namespace ReportsCore.ViewModels {
 			get => _FilterOpen ??= new RelayCommand(obj => {
 				FlyoutSettingVisibleState = FlyoutSettingVisibleState ? false : true;
 				//FlyoutMenuState = !FlyoutSettingVisibleState;
-			},obj=>SelectedReport!=null);
+			}, obj => SelectedReport != null);
 		}
 		private RelayCommand _Search;
 		public RelayCommand Search {
@@ -432,10 +452,13 @@ namespace ReportsCore.ViewModels {
 					Loading = true;
 					//Изменение стоимости Абонентской платы
 					if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
+						//Binding binding = new Binding("WhoChanged");
+						//GroupPropeprtyName = binding;
 						//TODO: переделать на отдельный метод					
 						VisibleChangeCostMonthlyPay = true;
 						VisibilityActs = false;
-						VisibilityLates = false;
+						VisibilityLatesGBR = false;
+						VisibilityLatesPult = false;
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							//TODO: Перенести в get
 							NewGuardObjectHistory before = null;
@@ -495,7 +518,8 @@ namespace ReportsCore.ViewModels {
 						//TODO: переделать на отдельный метод
 						VisibleChangeCostMonthlyPay = false;
 						VisibilityActs = true;
-						VisibilityLates = false;
+						VisibilityLatesGBR = false;
+						VisibilityLatesPult = false;
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
 							DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
@@ -521,7 +545,8 @@ namespace ReportsCore.ViewModels {
 													Result = item.NewName,
 													Owner = item.NewOwner,
 													Police = item.NewPolice,
-													Act = item.NewAct
+													Act = item.NewAct,
+													DateSort = item.NewAlarmDt.Value.Date.ToShortDateString()
 												});
 											});
 										}
@@ -534,7 +559,8 @@ namespace ReportsCore.ViewModels {
 						//TODO: переделать на отдельный метод
 						VisibleChangeCostMonthlyPay = false;
 						VisibilityActs = false;
-						VisibilityLates = true;
+						VisibilityLatesGBR = false;
+						VisibilityLatesPult = true;
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							DateTime start1 = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
 							DateTime end1 = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
@@ -563,7 +589,8 @@ namespace ReportsCore.ViewModels {
 															Owner = item1.NewOwner,
 															Police = item1.NewPolice,
 															Act = item1.NewAct,
-															Late = (item1.NewDeparture - item1.NewAlarmDt).Value.ToString()
+															Late = (item1.NewDeparture - item1.NewAlarmDt).Value.ToString(),
+															HourSort = item1.NewAlarmDt.Value.AddHours(5).Hour.ToString()
 														});
 													});
 												}
@@ -578,7 +605,8 @@ namespace ReportsCore.ViewModels {
 						//TODO: переделать на отдельный метод
 						VisibleChangeCostMonthlyPay = false;
 						VisibilityActs = false;
-						VisibilityLates = true;
+						VisibilityLatesGBR = true;
+						VisibilityLatesPult = false;
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							DateTime start2 = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
 							DateTime end2 = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
@@ -607,7 +635,8 @@ namespace ReportsCore.ViewModels {
 															Owner = item2.NewOwner,
 															Police = item2.NewPolice,
 															Act = item2.NewAct,
-															Late = (item2.NewArrival - item2.NewDeparture).Value.ToString()
+															Late = (item2.NewArrival - item2.NewDeparture).Value.ToString(),
+															HourSort = item2.NewAlarmDt.Value.AddHours(5).Hour.ToString()
 														});
 													});
 												}
@@ -633,58 +662,119 @@ namespace ReportsCore.ViewModels {
 			get => _ViewTotalCommand ??= new RelayCommand(obj => {
 				//изм. абонентской платы
 				if(SelectedReport.ReportID == Guid.Parse("B904A30B-16B1-4F59-A76D-BD981E18C930")) {
-					TotalManagers = new ObservableCollection<TotalManagers>();
-					int CountRecords = Reports.Count;
-					var ChangeByUser = Reports.GroupBy(x => x.WhoChanged);
-					int PlusCounter = 0;
-					int MinusCounter = 0;
-					float PlusSum = 0;
-					float MinusSum = 0;
-					//Todo: доделать общую сумму приходов/расходов/общую
-					//float AllSum = 0;
-					foreach(var item in ChangeByUser) {
-						PlusCounter = 0;
-						MinusCounter = 0;
-						PlusSum = 0;
-						MinusSum = 0;
-						foreach(var i in item) {
-							if((ParseDigit(i.After) - ParseDigit(i.Before)) > 0) {
+					if(obj == null) {
+						TotalManagers = new ObservableCollection<TotalManagers>();
+						int CountRecords = Reports.Count;
+						var ChangeByUser = Reports.GroupBy(x => x.WhoChanged);
+						int PlusCounter = 0;
+						int MinusCounter = 0;
+						float PlusSum = 0;
+						float MinusSum = 0;
+						//Todo: доделать общую сумму приходов/расходов/общую
+						//float AllSum = 0;
+						foreach(var item in ChangeByUser) {
+							PlusCounter = 0;
+							MinusCounter = 0;
+							PlusSum = 0;
+							MinusSum = 0;
+							foreach(var i in item) {
+								if((ParseDigit(i.After) - ParseDigit(i.Before)) > 0) {
+									PlusCounter++;
+									PlusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
+								}
+								else {
+									MinusCounter++;
+									MinusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
+								}
+							}
+							TotalManagers.Add(new TotalManagers() {
+								ManagerName = item.Key.ToString(),
+								AllCountChanges = item.Count(),
+								MajorCountChanges = PlusCounter,
+								MinorCountChanges = MinusCounter,
+								MajorSumChanges = PlusSum,
+								MinorSumChanges = MinusSum,
+								DeltaSum = (PlusSum - MinusSum * (-1))
+							});
+							//TotalManagersChart.Add(new TotalManagersChart() {
+							//	MajorSumChanges = PlusSum,
+							//	MinorSumChanges = MinusSum
+							//});
+							MessageBox.Show(item.Key.ToString() + Environment.NewLine
+								+ " Всего изменений: " + item.Count().ToString() + Environment.NewLine
+								+ "Положительных: " + PlusCounter.ToString() + " на сумму: " + PlusSum.ToString() + Environment.NewLine
+								+ "Отрицательных: " + MinusCounter.ToString() + " на сумму: " + MinusSum.ToString() + Environment.NewLine
+								+ "Изменение: " + (PlusSum - MinusSum * (-1)).ToString()
+								);
+						}
+						//var totals = new System.Windows.Window();
+						////totals.DataContext = MainWindowViewModel;
+						//totals.Show();
+						//TotalsWindow totals = new TotalsWindow(this);
+						//totals.Show();
+					}
+					else {
+						TotalManagers = new ObservableCollection<TotalManagers>();
+						int CountRecords = Reports.Count;
+						var ChangeByUser = Reports.Where(x => x.WhoChanged == obj.ToString()).ToList();
+						int PlusCounter = 0;
+						int MinusCounter = 0;
+						float PlusSum = 0;
+						float MinusSum = 0;
+						//Todo: доделать общую сумму приходов/расходов/общую
+						//float AllSum = 0;
+						foreach(var item in ChangeByUser) {
+							//PlusCounter = 0;
+							//MinusCounter = 0;
+							//PlusSum = 0;
+							//MinusSum = 0;
+							if((ParseDigit(item.After) - ParseDigit(item.Before)) > 0) {
 								PlusCounter++;
-								PlusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
+								PlusSum += (ParseDigit(item.After) - ParseDigit(item.Before));
 							}
 							else {
 								MinusCounter++;
-								MinusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
+								MinusSum += (ParseDigit(item.After) - ParseDigit(item.Before));
 							}
 						}
-						TotalManagers.Add(new TotalManagers() {
-							ManagerName = item.Key.ToString(),
-							AllCountChanges = item.Count(),
-							MajorCountChanges = PlusCounter,
-							MinorCountChanges=MinusCounter,
-							MajorSumChanges=PlusSum,
-							MinorSumChanges=MinusSum,
-							DeltaSum= (PlusSum - MinusSum * (-1))
-						});
+						//foreach(var i in item) {
+						//	if((ParseDigit(i.After) - ParseDigit(i.Before)) > 0) {
+						//		PlusCounter++;
+						//		PlusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
+						//	}
+						//	else {
+						//		MinusCounter++;
+						//		MinusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
+						//	}
+						//}
+						//TotalManagers.Add(new TotalManagers() {
+						//		ManagerName = item.Key.ToString(),
+						//		AllCountChanges = item.Count(),
+						//		MajorCountChanges = PlusCounter,
+						//		MinorCountChanges = MinusCounter,
+						//		MajorSumChanges = PlusSum,
+						//		MinorSumChanges = MinusSum,
+						//		DeltaSum = (PlusSum - MinusSum * (-1))
+						//	});
 						//TotalManagersChart.Add(new TotalManagersChart() {
 						//	MajorSumChanges = PlusSum,
 						//	MinorSumChanges = MinusSum
 						//});
-						//MessageBox.Show(item.Key.ToString()+Environment.NewLine + " Всего изменений: " + item.Count().ToString() + Environment.NewLine
-						//	+ "Положительных: " + PlusCounter.ToString() + " на сумму: " + PlusSum.ToString() + Environment.NewLine
-						//	+ "Отрицательных: " + MinusCounter.ToString() + " на сумму: " + MinusSum.ToString() + Environment.NewLine
-						//	+ "Изменение: " + (PlusSum - MinusSum*(-1)).ToString()
-						//	) ;
+						MessageBox.Show(obj.ToString() + Environment.NewLine
+							+ "Всего изменений: " + ChangeByUser.Count.ToString() + Environment.NewLine
+							+ "Положительных: " + PlusCounter.ToString() + " на сумму: " + PlusSum.ToString() + Environment.NewLine
+							+ "Отрицательных: " + MinusCounter.ToString() + " на сумму: " + MinusSum.ToString() + Environment.NewLine
+							+ "Разница: " + (PlusSum - MinusSum * (-1)).ToString()
+							);
 					}
 					//var totals = new System.Windows.Window();
 					////totals.DataContext = MainWindowViewModel;
 					//totals.Show();
-					TotalsWindow totals = new TotalsWindow(this);
-					//totals.DataContext = new MainWindowViewModel();
-					totals.Show();
+					//TotalsWindow totals = new TotalsWindow(this);
+					//totals.Show();
 				}
-				if (SelectedReport.ReportID==Guid.Parse("fa4dd0a5-5b15-45b4-a55a-433267fa50ff")) { }
-			},obj=>Reports.Count()>0);
+
+			}, obj => Reports.Count() > 0);
 		}
 
 		private int ParseDigit(string param) {
@@ -826,7 +916,7 @@ namespace ReportsCore.ViewModels {
 		public RelayCommand CreateWordReport {
 			get => _CreateWordReport ??= new RelayCommand(obj => {
 				createWordReport(Reports.OrderBy(x => x.Alarm));
-			},obj=>Reports.Count()>0);
+			}, obj => Reports.Count() > 0);
 		}
 		string filename = null;
 		private void createWordReport(IEnumerable<Report> flo, bool late = false) {
