@@ -42,6 +42,9 @@
                 <CollectionViewSource.GroupDescriptions>
                     <PropertyGroupDescription PropertyName="WhoChanged"/>
                 </CollectionViewSource.GroupDescriptions>
+                <CollectionViewSource.SortDescriptions>
+                    <scm:SortDescription PropertyName="DateStart"/>
+                </CollectionViewSource.SortDescriptions>
             </CollectionViewSource>
             <CollectionViewSource x:Key="Acts" Source="{Binding Reports}">
                 <CollectionViewSource.GroupDescriptions>

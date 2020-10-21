@@ -696,10 +696,6 @@ namespace ReportsCore.ViewModels {
 								MinorSumChanges = MinusSum,
 								DeltaSum = (PlusSum - MinusSum * (-1))
 							});
-							//TotalManagersChart.Add(new TotalManagersChart() {
-							//	MajorSumChanges = PlusSum,
-							//	MinorSumChanges = MinusSum
-							//});
 							MessageBox.Show(item.Key.ToString() + Environment.NewLine
 								+ " Всего изменений: " + item.Count().ToString() + Environment.NewLine
 								+ "Положительных: " + PlusCounter.ToString() + " на сумму: " + PlusSum.ToString() + Environment.NewLine
@@ -707,11 +703,6 @@ namespace ReportsCore.ViewModels {
 								+ "Изменение: " + (PlusSum - MinusSum * (-1)).ToString()
 								);
 						}
-						//var totals = new System.Windows.Window();
-						////totals.DataContext = MainWindowViewModel;
-						//totals.Show();
-						//TotalsWindow totals = new TotalsWindow(this);
-						//totals.Show();
 					}
 					else {
 						TotalManagers = new ObservableCollection<TotalManagers>();
@@ -737,29 +728,6 @@ namespace ReportsCore.ViewModels {
 								MinusSum += (ParseDigit(item.After) - ParseDigit(item.Before));
 							}
 						}
-						//foreach(var i in item) {
-						//	if((ParseDigit(i.After) - ParseDigit(i.Before)) > 0) {
-						//		PlusCounter++;
-						//		PlusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
-						//	}
-						//	else {
-						//		MinusCounter++;
-						//		MinusSum += (ParseDigit(i.After) - ParseDigit(i.Before));
-						//	}
-						//}
-						//TotalManagers.Add(new TotalManagers() {
-						//		ManagerName = item.Key.ToString(),
-						//		AllCountChanges = item.Count(),
-						//		MajorCountChanges = PlusCounter,
-						//		MinorCountChanges = MinusCounter,
-						//		MajorSumChanges = PlusSum,
-						//		MinorSumChanges = MinusSum,
-						//		DeltaSum = (PlusSum - MinusSum * (-1))
-						//	});
-						//TotalManagersChart.Add(new TotalManagersChart() {
-						//	MajorSumChanges = PlusSum,
-						//	MinorSumChanges = MinusSum
-						//});
 						MessageBox.Show(obj.ToString() + Environment.NewLine
 							+ "Всего изменений: " + ChangeByUser.Count.ToString() + Environment.NewLine
 							+ "Положительных: " + PlusCounter.ToString() + " на сумму: " + PlusSum.ToString() + Environment.NewLine
@@ -767,11 +735,6 @@ namespace ReportsCore.ViewModels {
 							+ "Разница: " + (PlusSum - MinusSum * (-1)).ToString()
 							);
 					}
-					//var totals = new System.Windows.Window();
-					////totals.DataContext = MainWindowViewModel;
-					//totals.Show();
-					//TotalsWindow totals = new TotalsWindow(this);
-					//totals.Show();
 				}
 
 			}, obj => Reports.Count() > 0);
@@ -968,12 +931,13 @@ namespace ReportsCore.ViewModels {
 										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
 										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
 									}
-									foreach(var item in flo.OrderBy(x => x.DateChanged).ThenBy(y => y.WhoChanged)) {
+									foreach(var item in flo) {
+									//foreach(var item in flo.OrderBy(x => x.DateChanged).ThenBy(y => y.WhoChanged)) {
 										table.Rows.Add();
 										word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
-										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName.ToString();
-										word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress.ToString();
+										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.HasValue ? item.ObjectNumber.ToString() : "";
+										word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName ?? "";
+										word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress ?? "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.DateStart.HasValue ? item.DateStart.Value.ToString() : "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Curator;
 										word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.WhoChanged;
