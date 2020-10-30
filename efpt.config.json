@@ -5,8 +5,8 @@
    "FilterSchemas": false,
    "IncludeConnectionString": true,
    "ModelNamespace": null,
-   "OutputContextPath": "ReportContext",
-   "OutputPath": "ReportBaseModels",
+   "OutputContextPath": "Vityaz_MSCRMContext",
+   "OutputPath": "Models",
    "ProjectRootNamespace": "ReportsCore",
    "Schemas": null,
    "SelectedHandlebarsLanguage": 0,
@@ -14,11 +14,67 @@
    "Tables": [
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[Reports]"
+         "Name": "[dbo].[AccountBase]"
       },
       {
          "HasPrimaryKey": true,
-         "Name": "[dbo].[UsersReports]"
+         "Name": "[dbo].[AccountExtensionBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_agreementBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_agreementExtensionBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_alarmBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_alarmExtensionBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_andromedaBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_andromedaExtensionBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_dogovor_typeBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_dogovor_typeExtensionBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_guard_object_History]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_guard_objectBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[New_guard_objectExtensionBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[new_new_agreement_new_guard_objectBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[SystemUserBase]"
+      },
+      {
+         "HasPrimaryKey": true,
+         "Name": "[dbo].[SystemUserExtensionBase]"
       }
    ],
    "UseDatabaseNames": false,

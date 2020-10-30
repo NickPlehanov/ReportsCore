@@ -11,7 +11,9 @@ namespace ReportsCore.Models
     {
         public NewGuardObjectBase()
         {
+            NewAgreementExtensionBase = new HashSet<NewAgreementExtensionBase>();
             NewGuardObjectExtensionBaseNewCuratorMountNavigation = new HashSet<NewGuardObjectExtensionBase>();
+            NewNewAgreementNewGuardObjectBase = new HashSet<NewNewAgreementNewGuardObjectBase>();
         }
 
         public Guid? CreatedBy { get; set; }
@@ -46,7 +48,11 @@ namespace ReportsCore.Models
         public virtual SystemUserBase OwningUserNavigation { get; set; }
         [InverseProperty(nameof(NewGuardObjectExtensionBase.NewGuardObject))]
         public virtual NewGuardObjectExtensionBase NewGuardObjectExtensionBaseNewGuardObject { get; set; }
+        [InverseProperty("NewAgreementNavigation")]
+        public virtual ICollection<NewAgreementExtensionBase> NewAgreementExtensionBase { get; set; }
         [InverseProperty(nameof(NewGuardObjectExtensionBase.NewCuratorMountNavigation))]
         public virtual ICollection<NewGuardObjectExtensionBase> NewGuardObjectExtensionBaseNewCuratorMountNavigation { get; set; }
+        [InverseProperty("NewGuardObject")]
+        public virtual ICollection<NewNewAgreementNewGuardObjectBase> NewNewAgreementNewGuardObjectBase { get; set; }
     }
 }

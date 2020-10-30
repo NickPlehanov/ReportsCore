@@ -10,7 +10,11 @@ namespace ReportsCore.Models
     {
         public SystemUserBase()
         {
+            AccountBaseOwningUserNavigation = new HashSet<AccountBase>();
+            AccountBasePreferredSystemUser = new HashSet<AccountBase>();
+            AccountExtensionBase = new HashSet<AccountExtensionBase>();
             InverseParentSystemUser = new HashSet<SystemUserBase>();
+            NewAgreementBase = new HashSet<NewAgreementBase>();
             NewAndromedaBase = new HashSet<NewAndromedaBase>();
             NewGuardObjectBase = new HashSet<NewGuardObjectBase>();
             NewGuardObjectExtensionBaseNewCuratorNavigation = new HashSet<NewGuardObjectExtensionBase>();
@@ -113,8 +117,16 @@ namespace ReportsCore.Models
         [ForeignKey(nameof(ParentSystemUserId))]
         [InverseProperty(nameof(SystemUserBase.InverseParentSystemUser))]
         public virtual SystemUserBase ParentSystemUser { get; set; }
+        [InverseProperty(nameof(AccountBase.OwningUserNavigation))]
+        public virtual ICollection<AccountBase> AccountBaseOwningUserNavigation { get; set; }
+        [InverseProperty(nameof(AccountBase.PreferredSystemUser))]
+        public virtual ICollection<AccountBase> AccountBasePreferredSystemUser { get; set; }
+        [InverseProperty("NewDebitorOwnerNavigation")]
+        public virtual ICollection<AccountExtensionBase> AccountExtensionBase { get; set; }
         [InverseProperty(nameof(SystemUserBase.ParentSystemUser))]
         public virtual ICollection<SystemUserBase> InverseParentSystemUser { get; set; }
+        [InverseProperty("OwningUserNavigation")]
+        public virtual ICollection<NewAgreementBase> NewAgreementBase { get; set; }
         [InverseProperty("OwningUserNavigation")]
         public virtual ICollection<NewAndromedaBase> NewAndromedaBase { get; set; }
         [InverseProperty("OwningUserNavigation")]

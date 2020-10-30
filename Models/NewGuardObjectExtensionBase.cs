@@ -437,6 +437,12 @@ namespace ReportsCore.Models
         [Column("New_result_to_ps")]
         public int? NewResultToPs { get; set; }
 
+        [ForeignKey(nameof(NewAccountAgent))]
+        [InverseProperty(nameof(AccountBase.NewGuardObjectExtensionBaseNewAccountAgentNavigation))]
+        public virtual AccountBase NewAccountAgentNavigation { get; set; }
+        [ForeignKey(nameof(NewAccount))]
+        [InverseProperty(nameof(AccountBase.NewGuardObjectExtensionBaseNewAccountNavigation))]
+        public virtual AccountBase NewAccountNavigation { get; set; }
         [ForeignKey(nameof(NewCuratorMount))]
         [InverseProperty(nameof(NewGuardObjectBase.NewGuardObjectExtensionBaseNewCuratorMountNavigation))]
         public virtual NewGuardObjectBase NewCuratorMountNavigation { get; set; }
@@ -452,8 +458,17 @@ namespace ReportsCore.Models
         [ForeignKey(nameof(NewInspector))]
         [InverseProperty(nameof(SystemUserBase.NewGuardObjectExtensionBaseNewInspectorNavigation))]
         public virtual SystemUserBase NewInspectorNavigation { get; set; }
+        [ForeignKey(nameof(NewReactionAccount))]
+        [InverseProperty(nameof(AccountBase.NewGuardObjectExtensionBaseNewReactionAccountNavigation))]
+        public virtual AccountBase NewReactionAccountNavigation { get; set; }
         [ForeignKey(nameof(NewRetention))]
         [InverseProperty(nameof(SystemUserBase.NewGuardObjectExtensionBaseNewRetentionNavigation))]
         public virtual SystemUserBase NewRetentionNavigation { get; set; }
+        [ForeignKey(nameof(NewTechserviceAccount))]
+        [InverseProperty(nameof(AccountBase.NewGuardObjectExtensionBaseNewTechserviceAccountNavigation))]
+        public virtual AccountBase NewTechserviceAccountNavigation { get; set; }
+        [ForeignKey(nameof(NewUvoUnit))]
+        [InverseProperty(nameof(AccountBase.NewGuardObjectExtensionBaseNewUvoUnitNavigation))]
+        public virtual AccountBase NewUvoUnitNavigation { get; set; }
     }
 }

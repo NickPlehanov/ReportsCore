@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Office.Interop.Word;
 using Microsoft.Win32;
-using ReportsCore.Context;
 using ReportsCore.Helpers;
 using ReportsCore.Models;
 using ReportsCore.Models.TotalModels;
@@ -16,6 +15,7 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
+using System.Threading.Tasks.Dataflow;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Threading;
@@ -735,7 +735,18 @@ namespace ReportsCore.ViewModels {
 								}
 							}
 							#endregion
-							context.
+							foreach(var item in rr) {
+								//var DogovorTechService = context.NewDogovorTypeExtensionBase.Where(x => x.NewTechService == true);
+								if(item.NewObjectNumber == 4724) {
+										var agreementGuardObject = context.AccountBase.FirstOrDefault(x => x.AccountId == item.NewAccount);
+										List<NewAgreementExtensionBase> ageb = new List<NewAgreementExtensionBase>();
+										foreach(NewDogovorTypeExtensionBase DogovorType in context.NewDogovorTypeExtensionBase.Where(x => x.NewTechService == true))
+
+										using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) 
+											ageb = context.NewAgreementExtensionBase.Where(x => x.NewBpAgreement == agreementGuardObject.AccountId && x.NewDogovorTypeAgreement==DogovorType.NewDogovorTypeId).ToList();
+									}
+								
+							}
 						}
 					}
 

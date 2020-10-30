@@ -47,6 +47,7 @@
 
   <ItemGroup>
     <Folder Include="ReportContext\" />
+    <Folder Include="Vityaz_MSCRMContext\" />
   </ItemGroup>
 
 </Project>
