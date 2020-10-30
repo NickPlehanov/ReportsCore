@@ -81,6 +81,11 @@ namespace ReportsCore.Models {
 		public bool? Trs { get; set; }
 		public int? Group { get; set; }
 		public string Late { get; set; }
+		public bool? RrEveryMonth { get; set; }
+		public bool? RrOS { get; set; }
+		public bool? RrPS { get; set; }
+		public bool? RrVideo { get; set; }
+		public bool? RrSkud { get; set; }
 		//private string _StringLate;
 		//public string StringLate {
 		//	get => _StringLate;

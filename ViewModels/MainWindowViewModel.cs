@@ -308,6 +308,15 @@ namespace ReportsCore.ViewModels {
 			}
 		}
 
+		private bool _VisibilityReglamentWorks;
+		public bool VisibilityReglamentWorks {
+			get => _VisibilityReglamentWorks;
+			set {
+				_VisibilityReglamentWorks = value;
+				OnPropertyChanged(nameof(VisibilityReglamentWorks));
+			}
+		}
+
 		//private bool _VisibleAlarmActs;
 		//public bool VisibleAlarmActs {
 		//	get => _VisibleAlarmActs;
@@ -459,6 +468,7 @@ namespace ReportsCore.ViewModels {
 						VisibilityActs = false;
 						VisibilityLatesGBR = false;
 						VisibilityLatesPult = false;
+						VisibilityReglamentWorks = false;
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							//TODO: Перенести в get
 							NewGuardObjectHistory before = null;
@@ -477,7 +487,7 @@ namespace ReportsCore.ViewModels {
 										after = i;
 								List<Comparator> t = CompareObject(before, after);
 								if(t != null)
-									if(t.Any()) {
+									foreach(var compr in t.Where(x => x.FieldName.Equals("NewMonthlypay"))) {
 										string WhoChanged = context.SystemUserBase.FirstOrDefault(x => x.SystemUserId == after.ModifiedBy).FullName;
 										Guid? CuratorId = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId).NewCurator;
 										string curatorName = null;
@@ -488,18 +498,18 @@ namespace ReportsCore.ViewModels {
 											}
 										}
 										DateTime? WhenChanged = after.ModifiedOn;
-										string oldValue = null;
-										string newValue = null;
-										foreach(Comparator c in t) {
-											oldValue = c.OldValue;
-											newValue = c.NewValue;
-										}
+										//object oldValue = null;
+										//object newValue = null;
+										//foreach(Comparator c in t) {
+										//	oldValue = c.OldValue;
+										//	newValue = c.NewValue;
+										//}
 										NewGuardObjectExtensionBase objectExtensionBase = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId);
 										if(objectExtensionBase != null)
 											App.Current.Dispatcher.Invoke((System.Action)delegate {
 												Reports.Add(new Report() {
-													Before = oldValue,
-													After = newValue,
+													Before = compr.OldValue.ToString(),
+													After = compr.NewValue.ToString(),
 													Curator = curatorName,
 													DateChanged = WhenChanged,
 													DateStart = objectExtensionBase.NewDateStart,
@@ -510,6 +520,10 @@ namespace ReportsCore.ViewModels {
 												});
 											});
 									}
+								//if(t != null)
+								//	if(t.Any()) {
+
+								//	}
 							}
 						}
 					}
@@ -520,6 +534,7 @@ namespace ReportsCore.ViewModels {
 						VisibilityActs = true;
 						VisibilityLatesGBR = false;
 						VisibilityLatesPult = false;
+						VisibilityReglamentWorks = false;
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
 							DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
@@ -561,6 +576,7 @@ namespace ReportsCore.ViewModels {
 						VisibilityActs = false;
 						VisibilityLatesGBR = false;
 						VisibilityLatesPult = true;
+						VisibilityReglamentWorks = false;
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							DateTime start1 = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
 							DateTime end1 = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
@@ -607,6 +623,7 @@ namespace ReportsCore.ViewModels {
 						VisibilityActs = false;
 						VisibilityLatesGBR = true;
 						VisibilityLatesPult = false;
+						VisibilityReglamentWorks = false;
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							DateTime start2 = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
 							DateTime end2 = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
@@ -645,6 +662,83 @@ namespace ReportsCore.ViewModels {
 								}
 						}
 					}
+					//регламентные работы
+					if(SelectedReport.ReportID == Guid.Parse("7C9C1F49-6218-4C9A-8F17-126626E5D1D3")) {
+						//Binding binding = new Binding("WhoChanged");
+						//GroupPropeprtyName = binding;
+						//TODO: переделать на отдельный метод					
+						VisibleChangeCostMonthlyPay = false;
+						VisibilityActs = false;
+						VisibilityLatesGBR = false;
+						VisibilityLatesPult = false;
+						VisibilityReglamentWorks = true;
+						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
+							var rr = context.NewGuardObjectExtensionBase.Where(x => x.NewRrOnOff == true || x.NewRrOs == true || x.NewRrPs == true || x.NewRrVideo == true || x.NewRrSkud == true);
+							if(rr != null)
+								foreach(var item in rr) {
+									App.Current.Dispatcher.Invoke((System.Action)delegate {
+										Reports.Add(new Report() {
+											ObjectNumber = item.NewObjectNumber,
+											ObjectName = item.NewName,
+											ObjectAddress = item.NewAddress,
+											RrEveryMonth = item.NewRrOnOff,
+											RrOS = item.NewRrOs,
+											RrPS = item.NewRrPs,
+											RrVideo = item.NewRrVideo,
+											RrSkud = item.NewRrSkud
+										});
+									});
+								}
+
+							#region данным кодом мы можем получить историю изменений  по галочкам
+							////TODO: Перенести в get
+							NewGuardObjectHistory before = null;
+							NewGuardObjectHistory after = null;
+							DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
+							DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
+							List<NewGuardObjectHistory> history = context.NewGuardObjectHistory.Where(x => x.ModifiedOn >= start && x.ModifiedOn <= end).ToList<NewGuardObjectHistory>();
+							if(history.Where(x => x.NewRrOnOff != null || x.NewRrOs != null || x.NewRrPs != null || x.NewRrSkud != null || x.NewRrVideo != null).Count() > 0) {
+								var r = history.GroupBy(a => new { a.NewGuardObjectId, a.ModifiedBy, DateTime = DateTime.Parse(a.ModifiedOn.ToString()) }).ToList();
+								foreach(var item in r) {
+									before = null;
+									after = null;
+									foreach(var i in item)
+										if(i.HistoryState == "Старый")
+											before = i;
+										else
+											after = i;
+									List<Comparator> t = CompareObject(before, after);
+									if(t != null)
+										foreach(var compr in t.Where(x => x.FieldName.Equals("NewRrOnOff") || x.FieldName.Equals("NewRrOs") || x.FieldName.Equals("NewRrPs") || x.FieldName.Equals("NewRrVideo") || x.FieldName.Equals("NewRrSkud"))) {
+											string WhoChanged = context.SystemUserBase.FirstOrDefault(x => x.SystemUserId == after.ModifiedBy).FullName;
+											Guid? CuratorId = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId).NewCurator;
+											string curatorName = null;
+											if(CuratorId.HasValue) {
+												Guid _id = Guid.Empty;
+												if(Guid.TryParse(CuratorId.Value.ToString(), out _id)) {
+													curatorName = context.SystemUserBase.FirstOrDefault(x => x.SystemUserId == CuratorId).FullName;
+												}
+											}
+											DateTime? WhenChanged = after.ModifiedOn;
+											NewGuardObjectExtensionBase objectExtensionBase = context.NewGuardObjectExtensionBase.FirstOrDefault(x => x.NewGuardObjectId == after.NewGuardObjectId);
+											if(objectExtensionBase != null)
+												App.Current.Dispatcher.Invoke((System.Action)delegate {
+													ReglamentWorksDetailCollection.Add(new ReglamentWorksDetail() {
+														UserChanged = WhoChanged,
+														DateChanged = WhenChanged,
+														FieldChanged = compr.FieldName,
+														BeforeChanged = compr.OldValue.ToString(),
+														AfterChanged = compr.NewValue.ToString()
+													});
+												});
+										}
+								}
+							}
+							#endregion
+							context.
+						}
+					}
+
 					FlyoutMenuState = false;
 					FlyoutSettingVisibleState = false;
 					FullReports = Reports;
@@ -771,25 +865,36 @@ namespace ReportsCore.ViewModels {
 						if(oldValue.Equals(newValue))
 							continue;
 						else
-						if(item.Name.ToString().Equals("NewMonthlypay"))
-							comparator.Add(new Comparator() {
-								FieldName = item.Name,
-								OldValue = _old.GetType().GetProperty(item.Name).GetValue(_old) == null ? null : _old.GetType().GetProperty(item.Name).GetValue(_old).ToString(),
-								NewValue = _new.GetType().GetProperty(item.Name).GetValue(_new) == null ? null : _new.GetType().GetProperty(item.Name).GetValue(_new).ToString()
-							});
-						else
-							continue;
+								//foreach(var property in _old.GetType().GetProperties()) {
+								if(_old.GetType().GetProperty(item.Name).GetValue(_old) != null && _new.GetType().GetProperty(item.Name).GetValue(_new) != null)
+							if(!_old.GetType().GetProperty(item.Name).GetValue(_old).Equals(_new.GetType().GetProperty(item.Name).GetValue(_new))) {
+								comparator.Add(new Comparator() {
+									FieldName = item.Name,
+									OldValue = (_old.GetType().GetProperty(item.Name).GetValue(_old) ?? ""),
+									NewValue = (_new.GetType().GetProperty(item.Name).GetValue(_new) ?? ""),
+
+								});
+								//}
+							}
+							//if(item.Name.ToString().Equals("NewMonthlypay"))
+							//	comparator.Add(new Comparator() {
+							//		FieldName = item.Name,
+							//		OldValue = _old.GetType().GetProperty(item.Name).GetValue(_old) == null ? null : _old.GetType().GetProperty(item.Name).GetValue(_old).ToString(),
+							//		NewValue = _new.GetType().GetProperty(item.Name).GetValue(_new) == null ? null : _new.GetType().GetProperty(item.Name).GetValue(_new).ToString()
+							//	});
+							else
+								continue;
 				}
 				return comparator;
 			}
 		}
-
 
 		private ObservableCollection<ReportsList> _ReportList = new ObservableCollection<ReportsList>();
 		private ObservableCollection<DatePattern> _DatePatterns = new ObservableCollection<DatePattern>();
 		private ObservableCollection<Report> _Reports = new ObservableCollection<Report>();
 		private ObservableCollection<TotalManagers> _TotalManagers = new ObservableCollection<TotalManagers>();
 		private ObservableCollection<TotalManagersChart> _TotalManagersChart = new ObservableCollection<TotalManagersChart>();
+		private ObservableCollection<ReglamentWorksDetail> _ReglamentWorksDetailCollection = new ObservableCollection<ReglamentWorksDetail>();
 
 		public MainWindowViewModel() {
 			//ReportList.Add(new ReportsList() { ReportID = Guid.NewGuid(), ReportName = "Отчёт изменения стоимости абонентской платы" });
@@ -826,6 +931,14 @@ namespace ReportsCore.ViewModels {
 			set {
 				_ReportList = value;
 				OnPropertyChanged("ReportList");
+			}
+		}
+
+		public ObservableCollection<ReglamentWorksDetail> ReglamentWorksDetailCollection {
+			get => _ReglamentWorksDetailCollection;
+			set {
+				_ReglamentWorksDetailCollection = value;
+				OnPropertyChanged(nameof(ReglamentWorksDetailCollection));
 			}
 		}
 
@@ -932,7 +1045,7 @@ namespace ReportsCore.ViewModels {
 										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
 									}
 									foreach(var item in flo) {
-									//foreach(var item in flo.OrderBy(x => x.DateChanged).ThenBy(y => y.WhoChanged)) {
+										//foreach(var item in flo.OrderBy(x => x.DateChanged).ThenBy(y => y.WhoChanged)) {
 										table.Rows.Add();
 										word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
 										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.HasValue ? item.ObjectNumber.ToString() : "";
@@ -1181,6 +1294,95 @@ namespace ReportsCore.ViewModels {
 									word_doc.Tables[1].Cell(1, 6).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
 									word_doc.Tables[1].Cell(1, 7).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
 									word_doc.Tables[1].Cell(1, 8).Range.Orientation = WdTextOrientation.wdTextOrientationVerticalFarEast;
+									object filename_local = saveFileDialog_word.FileName;
+									word_doc.SaveAs(ref filename_local, ref missing, ref missing,
+										ref missing, ref missing, ref missing, ref missing,
+										ref missing, ref missing, ref missing, ref missing,
+										ref missing, ref missing, ref missing, ref missing,
+										ref missing);
+									object save_changes = false;
+									word_doc.Close(ref save_changes, ref missing, ref missing);
+									app.Quit(ref save_changes, ref missing, ref missing);
+									//notify("Информация", "Отчёт сохранен. Открыть сейчас?", System.Windows.Forms.ToolTipIcon.Info, true);
+								}
+							}
+							else
+								//TaskBarIconVisibility = true;
+								MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+							//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+						}
+						else
+							MessageBox.Show("Данных для построения отчёта не обнаружено", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+						//TaskBarIconVisibility = true;
+						//MessageBox.Show("test");
+						//notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
+					}
+					catch(Exception ex) {
+						MessageBox.Show(ex.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
+						//TaskBarIconVisibility = true;
+						//MessageBox.Show("test");
+						//notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
+					}
+				}
+				//регламентные работы 
+				if(SelectedReport.ReportID == Guid.Parse("7C9C1F49-6218-4C9A-8F17-126626E5D1D3")) {
+					try {
+						if(flo != null) {
+							if(flo.Any()) {
+								Microsoft.Office.Interop.Word.Application app = new Microsoft.Office.Interop.Word.Application();
+								SaveFileDialog saveFileDialog_word = new SaveFileDialog() {
+									//InitialDirectory = "c:\\",
+									Filter = "Word files (*.docx)|*.docx|All files (*.*)|*.*",
+									FilterIndex = 1
+								};
+								saveFileDialog_word.ShowDialog();
+								if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
+									string[] headers = Resources.HeaderReportWordChangeCost.Split(',');
+									filename = saveFileDialog_word.FileName;
+									object missing = Type.Missing;
+									Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
+										ref missing, ref missing, ref missing, ref missing);
+									var Paragraph = app.ActiveDocument.Paragraphs.Add();
+									var tableRange = Paragraph.Range;
+									tableRange.PageSetup.Orientation = WdOrientation.wdOrientLandscape;
+									tableRange.PageSetup.LeftMargin = 20;
+									tableRange.PageSetup.RightMargin = 20;
+									tableRange.PageSetup.TopMargin = 28;
+									tableRange.PageSetup.BottomMargin = 28;
+									app.ActiveDocument.Tables.Add(tableRange, 1, headers.Length);
+									var table = app.ActiveDocument.Tables[app.ActiveDocument.Tables.Count];
+									table.set_Style("Сетка таблицы");
+									table.ApplyStyleHeadingRows = true;
+									table.ApplyStyleLastRow = false;
+									table.ApplyStyleFirstColumn = true;
+									table.ApplyStyleLastColumn = false;
+									table.ApplyStyleRowBands = true;
+									table.ApplyStyleColumnBands = false;
+									table.AllowAutoFit = true;
+									//table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitContent);
+									table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
+
+									for(int i = 0; i < headers.Length; i++)
+										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Text = headers[i];
+
+									for(int i = 0; i < headers.Length; i++) {
+										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.Bold = 1;
+										word_doc.Tables[1].Cell(table.Rows.Count, i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
+									}
+									foreach(var item in flo) {
+										//foreach(var item in flo.OrderBy(x => x.DateChanged).ThenBy(y => y.WhoChanged)) {
+										table.Rows.Add();
+										word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
+										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.HasValue ? item.ObjectNumber.ToString() : "";
+										word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName ?? "";
+										word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress ?? "";
+										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.DateStart.HasValue ? item.DateStart.Value.ToString() : "";
+										word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Curator;
+										word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.WhoChanged;
+										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.DateChanged.HasValue ? item.DateChanged.Value.ToString() : "";
+										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Before;
+										word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.After;
+									}
 									object filename_local = saveFileDialog_word.FileName;
 									word_doc.SaveAs(ref filename_local, ref missing, ref missing,
 										ref missing, ref missing, ref missing, ref missing,
