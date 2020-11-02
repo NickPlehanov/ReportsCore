@@ -685,7 +685,8 @@ namespace ReportsCore.ViewModels {
 											RrOS = item.NewRrOs,
 											RrPS = item.NewRrPs,
 											RrVideo = item.NewRrVideo,
-											RrSkud = item.NewRrSkud
+											RrSkud = item.NewRrSkud,
+											ObjectID=item.NewGuardObjectId
 										});
 									});
 								}
@@ -735,18 +736,6 @@ namespace ReportsCore.ViewModels {
 								}
 							}
 							#endregion
-							foreach(var item in rr) {
-								//var DogovorTechService = context.NewDogovorTypeExtensionBase.Where(x => x.NewTechService == true);
-								if(item.NewObjectNumber == 4724) {
-										var agreementGuardObject = context.AccountBase.FirstOrDefault(x => x.AccountId == item.NewAccount);
-										List<NewAgreementExtensionBase> ageb = new List<NewAgreementExtensionBase>();
-										foreach(NewDogovorTypeExtensionBase DogovorType in context.NewDogovorTypeExtensionBase.Where(x => x.NewTechService == true))
-
-										using(Vityaz_MSCRMContext context1 = new Vityaz_MSCRMContext()) 
-											ageb = context.NewAgreementExtensionBase.Where(x => x.NewBpAgreement == agreementGuardObject.AccountId && x.NewDogovorTypeAgreement==DogovorType.NewDogovorTypeId).ToList();
-									}
-								
-							}
 						}
 					}
 
@@ -759,6 +748,43 @@ namespace ReportsCore.ViewModels {
 				};
 				bw.RunWorkerAsync();
 				//});
+			});
+		}
+
+		
+		public ObservableCollection<AgreementDetailModel> AgreementDetail {
+			get => _AgreementDetail;
+			set {
+				_AgreementDetail = value;
+				OnPropertyChanged(nameof(AgreementDetail));
+			}
+		}
+
+		private RelayCommand _DetailCommand;
+		public RelayCommand DetailCommand {
+			get => _DetailCommand ??= new RelayCommand(obj => {
+				if(AgreementDetail != null)
+					AgreementDetail.Clear();
+				if(obj != null) {
+					var Agreement = obj as Report;
+					if(Agreement != null) {
+						if(AgreementDetail!=null) 
+							AgreementDetail.Clear();
+						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
+							var agreements = from goeb in context.NewGuardObjectExtensionBase
+											 join ab in context.AccountBase on goeb.NewAccount equals ab.AccountId
+											 join ageb in context.NewAgreementExtensionBase on ab.AccountId equals ageb.NewBpAgreement
+											 join eeb in context.NewExecutorExtensionBase on ageb.NewExecutorAgreement equals eeb.NewExecutorId
+											 join dteb in context.NewDogovorTypeExtensionBase on ageb.NewDogovorTypeAgreement equals dteb.NewDogovorTypeId
+											 where goeb.NewGuardObjectId == Agreement.ObjectID && dteb.NewTechService == true
+											 select new { AgreementNumber = ageb.NewNumber, AgreementExecutor = eeb.NewName, AgreementDate = ageb.NewDate, AgreementType = dteb.NewName };
+							foreach(var item in agreements)
+								App.Current.Dispatcher.Invoke((System.Action)delegate {
+									AgreementDetail.Add(new AgreementDetailModel(item.AgreementNumber, item.AgreementExecutor, item.AgreementDate, item.AgreementType));
+								});
+						}
+				}
+				}
 			});
 		}
 
@@ -906,6 +932,7 @@ namespace ReportsCore.ViewModels {
 		private ObservableCollection<TotalManagers> _TotalManagers = new ObservableCollection<TotalManagers>();
 		private ObservableCollection<TotalManagersChart> _TotalManagersChart = new ObservableCollection<TotalManagersChart>();
 		private ObservableCollection<ReglamentWorksDetail> _ReglamentWorksDetailCollection = new ObservableCollection<ReglamentWorksDetail>();
+		private ObservableCollection<AgreementDetailModel> _AgreementDetail = new ObservableCollection<AgreementDetailModel>();
 
 		public MainWindowViewModel() {
 			//ReportList.Add(new ReportsList() { ReportID = Guid.NewGuid(), ReportName = "Отчёт изменения стоимости абонентской платы" });
@@ -966,6 +993,21 @@ namespace ReportsCore.ViewModels {
 				FlyoutMenuState = false;
 				FlyoutSettingVisibleState = true;
 				OnPropertyChanged("SelectedReport");
+			}
+		}
+
+		private Reports _SelectedReportData;
+		public Reports SelectedReportData {
+			get {
+				if(AgreementDetail != null)
+					AgreementDetail.Clear();
+				return _SelectedReportData;
+			}
+			set {
+				if(AgreementDetail != null)
+					AgreementDetail.Clear();
+				_SelectedReportData = value;
+				OnPropertyChanged(nameof(SelectedReportData));
 			}
 		}
 		public ObservableCollection<TotalManagers> TotalManagers {

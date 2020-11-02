@@ -6,6 +6,7 @@ namespace ReportsCore.Models {
 	public class Report {
 		public Report() {
 		}
+		public Guid? ObjectID { get; set; }
 		public int? ObjectNumber { get; set; }
 		public string ObjectName { get; set; }
 		public string ObjectAddress { get; set; }

@@ -27,6 +27,7 @@ namespace ReportsCore
         public virtual DbSet<NewAndromedaExtensionBase> NewAndromedaExtensionBase { get; set; }
         public virtual DbSet<NewDogovorTypeBase> NewDogovorTypeBase { get; set; }
         public virtual DbSet<NewDogovorTypeExtensionBase> NewDogovorTypeExtensionBase { get; set; }
+        public virtual DbSet<NewExecutorExtensionBase> NewExecutorExtensionBase { get; set; }
         public virtual DbSet<NewGuardObjectBase> NewGuardObjectBase { get; set; }
         public virtual DbSet<NewGuardObjectExtensionBase> NewGuardObjectExtensionBase { get; set; }
         public virtual DbSet<NewGuardObjectHistory> NewGuardObjectHistory { get; set; }
@@ -39,7 +40,7 @@ namespace ReportsCore
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Data Source=sql-service;Initial Catalog=vityaz_MSCRM;Persist Security Info=True;User ID=admin;Password=111111");
+                optionsBuilder.UseSqlServer("Data Source=sql-service;Initial Catalog=vityaz_MSCRM;Persist Security Info=True;User ID=admin;Password=111111;MultipleActiveResultSets=true");
             }
         }
 
@@ -329,6 +330,11 @@ namespace ReportsCore
                     .HasForeignKey<NewDogovorTypeExtensionBase>(d => d.NewDogovorTypeId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_New_dogovor_typeExtensionBase_New_dogovor_typeBase");
+            });
+
+            modelBuilder.Entity<NewExecutorExtensionBase>(entity =>
+            {
+                entity.Property(e => e.NewExecutorId).ValueGeneratedNever();
             });
 
             modelBuilder.Entity<NewGuardObjectBase>(entity =>

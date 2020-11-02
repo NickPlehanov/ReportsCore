@@ -8,7 +8,7 @@
                   xmlns:vm="clr-namespace:ReportsCore.ViewModels" 
                   xmlns:helpers="clr-namespace:ReportsCore.Helpers" 
                   xmlns:mah1="http://schemas.microsoft.com/netfx/2009/xaml/presentation" 
-                  xmlns:converters="clr-namespace:ReportsCore.Helpers.Converters" xmlns:tb="http://www.hardcodet.net/taskbar" xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+                  xmlns:converters="clr-namespace:ReportsCore.Helpers.Converters" xmlns:tb="http://www.hardcodet.net/taskbar" xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase" xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
                   mc:Ignorable="d"
         Title="Reports" Height="450" Width="800" x:Name="MainW" >
     <mah:MetroWindow.LeftWindowCommands>
@@ -72,13 +72,14 @@
                     <scm:SortDescription PropertyName="Alarm"/>
                 </CollectionViewSource.SortDescriptions>
             </CollectionViewSource>
-            <CollectionViewSource x:Key="ReglamentWorks" Source="{Binding Reports}">
-                <!--<CollectionViewSource.GroupDescriptions>
-                    <PropertyGroupDescription PropertyName="Group"/>
-                    <PropertyGroupDescription PropertyName="HourSort"/>
-                </CollectionViewSource.GroupDescriptions>-->
+            <CollectionViewSource x:Key="ReglamentWorks" Source="{Binding Reports}" >
                 <CollectionViewSource.SortDescriptions >
                     <scm:SortDescription PropertyName="ObjectNumber"/>
+                </CollectionViewSource.SortDescriptions>
+            </CollectionViewSource>
+            <CollectionViewSource x:Key="AgreementDetail" Source="{Binding AgreementDetail}" mah:MultiSelectorHelper.SelectedItems="{Binding SelectedReportData}">
+                <CollectionViewSource.SortDescriptions >
+                    <scm:SortDescription PropertyName="AgreementDate"/>
                 </CollectionViewSource.SortDescriptions>
             </CollectionViewSource>
         </Grid.Resources>
@@ -426,8 +427,17 @@
                 <DataGridTextColumn Header="Опоздание" Binding="{Binding Late}" Width="{Binding ResultWidth}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibilityReglamentWorks, Converter={StaticResource BooleanToVisibilityConverter}}" 
+        <DataGrid IsReadOnly="True" SelectedItem="{Binding SelectedReportData}" x:Name="dgReglamentWorks" Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibilityReglamentWorks, Converter={StaticResource BooleanToVisibilityConverter}}" 
                   ItemsSource="{Binding Source={StaticResource ReglamentWorks}}" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <!--<b:Interaction.Triggers>
+                <b:EventTrigger EventName="MouseDoubleClick">
+                    <b:InvokeCommandAction Command="{Binding DetailCommand}" CommandParameter="{Binding ElementName=dgReglamentWorks, Path=SelectedReportData}"/>
+                </b:EventTrigger>
+            </b:Interaction.Triggers>-->
+            <DataGrid.InputBindings>
+                <MouseBinding MouseAction="LeftClick" Command="{Binding Path=DetailCommand}" CommandParameter="{Binding ElementName=dgReglamentWorks, Path=SelectedItem}"/>
+                <!--Command="{Binding DetailCommand}" CommandParameter="{Binding SelectedReportData}"/>-->
+            </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Номер объекта" Binding="{Binding ObjectNumber}" Visibility="{Binding ObjectNumberVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <DataGridTextColumn Header="Название объекта" Binding="{Binding ObjectName}" Visibility="{Binding ObjectNameVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
@@ -440,15 +450,35 @@
             </DataGrid.Columns>
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
-                    <DataGrid Margin="5" ItemsSource="{Binding ReglamentWorksDetailCollection}" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserDeleteRows="False" AutoGenerateColumns="false" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                        <DataGrid.Columns>
-                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding UserChanged}"/>
-                            <DataGridTextColumn Header="Дата изменения" Binding="{Binding DateChanged}"/>
-                            <DataGridTextColumn Header="Наименование поля" Binding="{Binding FieldChanged}"/>
-                            <DataGridTextColumn Header="Было" Binding="{Binding BeforeChanged}"/>
-                            <DataGridTextColumn Header="Стало" Binding="{Binding AfterChanged}"/>
-                        </DataGrid.Columns>
-                    </DataGrid>
+                    <StackPanel>
+                        <DataGrid Margin="5" ItemsSource="{Binding Source={StaticResource AgreementDetail}}" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserDeleteRows="False" CanUserAddRows="False" 
+                                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                            <DataGrid.Resources>
+                                <DataTemplate x:Key="dt_AgreementDate">
+                                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=AgreementDate,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                                <DataTemplate x:Key="edt_AgreementDate">
+                                    <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=AgreementDate,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
+                                </DataTemplate>
+                            </DataGrid.Resources>
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="№ договора" Binding="{Binding AgreementNumber}"/>
+                                <DataGridTextColumn Header="Исполнитель" Binding="{Binding AgreementExecutor}"/>
+                                <!--<DataGridTextColumn Header="Дата подписания" Binding="{Binding AgreementDate}"/>-->
+                                <DataGridTemplateColumn CellTemplate="{StaticResource dt_AgreementDate}" CellEditingTemplate="{StaticResource edt_AgreementDate}" Header="Дата подписания"/>
+                                <DataGridTextColumn Header="Тип договора" Binding="{Binding AgreementType}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <DataGrid Margin="5" ItemsSource="{Binding ReglamentWorksDetailCollection}" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserDeleteRows="False" AutoGenerateColumns="false" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Сотрудник" Binding="{Binding UserChanged}"/>
+                                <DataGridTextColumn Header="Дата изменения" Binding="{Binding DateChanged}"/>
+                                <DataGridTextColumn Header="Наименование поля" Binding="{Binding FieldChanged}"/>
+                                <DataGridTextColumn Header="Было" Binding="{Binding BeforeChanged}"/>
+                                <DataGridTextColumn Header="Стало" Binding="{Binding AfterChanged}"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>

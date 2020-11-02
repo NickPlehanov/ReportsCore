@@ -54,6 +54,10 @@
       },
       {
          "HasPrimaryKey": true,
+         "Name": "[dbo].[New_executorExtensionBase]"
+      },
+      {
+         "HasPrimaryKey": true,
          "Name": "[dbo].[New_guard_object_History]"
       },
       {
