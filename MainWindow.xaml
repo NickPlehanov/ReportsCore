@@ -436,7 +436,6 @@
             </b:Interaction.Triggers>-->
             <DataGrid.InputBindings>
                 <MouseBinding MouseAction="LeftClick" Command="{Binding Path=DetailCommand}" CommandParameter="{Binding ElementName=dgReglamentWorks, Path=SelectedItem}"/>
-                <!--Command="{Binding DetailCommand}" CommandParameter="{Binding SelectedReportData}"/>-->
             </DataGrid.InputBindings>
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Номер объекта" Binding="{Binding ObjectNumber}" Visibility="{Binding ObjectNumberVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
@@ -451,7 +450,7 @@
             <DataGrid.RowDetailsTemplate>
                 <DataTemplate>
                     <StackPanel>
-                        <DataGrid Margin="5" ItemsSource="{Binding Source={StaticResource AgreementDetail}}" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserDeleteRows="False" CanUserAddRows="False" 
+                        <DataGrid x:Name="dg_agreement" Margin="5" ItemsSource="{Binding Source={StaticResource AgreementDetail}}" AutoGenerateColumns="False" CanUserReorderColumns="True" CanUserDeleteRows="False" CanUserAddRows="False" 
                                   HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                             <DataGrid.Resources>
                                 <DataTemplate x:Key="dt_AgreementDate">
@@ -469,7 +468,7 @@
                                 <DataGridTextColumn Header="Тип договора" Binding="{Binding AgreementType}"/>
                             </DataGrid.Columns>
                         </DataGrid>
-                        <DataGrid Margin="5" ItemsSource="{Binding ReglamentWorksDetailCollection}" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserDeleteRows="False" AutoGenerateColumns="false" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                        <!--<DataGrid Margin="5" ItemsSource="{Binding ReglamentWorksDetailCollection}" CanUserAddRows="False" CanUserReorderColumns="True" CanUserResizeColumns="True" CanUserSortColumns="True" CanUserDeleteRows="False" AutoGenerateColumns="false" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Сотрудник" Binding="{Binding UserChanged}"/>
                                 <DataGridTextColumn Header="Дата изменения" Binding="{Binding DateChanged}"/>
@@ -477,8 +476,13 @@
                                 <DataGridTextColumn Header="Было" Binding="{Binding BeforeChanged}"/>
                                 <DataGridTextColumn Header="Стало" Binding="{Binding AfterChanged}"/>
                             </DataGrid.Columns>
-                        </DataGrid>
+                        </DataGrid>-->
                     </StackPanel>
+                    <!--<DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" Value="True">
+                            <Setter TargetName="dg_agreement"/>
+                        </DataTrigger>
+                    </DataTemplate.Triggers>-->
                 </DataTemplate>
             </DataGrid.RowDetailsTemplate>
         </DataGrid>

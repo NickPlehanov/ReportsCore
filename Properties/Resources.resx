@@ -123,6 +123,9 @@
   <data name="HeaderReportWordChangeCost" xml:space="preserve">
     <value>№ объекта,Объект,Адрес,Дата подключения,Куратор,Кем изменено,Дата изменения,Было,Стало</value>
   </data>
+  <data name="HeaderReportWordReglamentWorks" xml:space="preserve">
+    <value>№,Объект,Адрес, Ежемес. РР, ОС РР, ПС РР,Скуд РР, Видео РР</value>
+  </data>
   <data name="HeaderReportWordWithLate" xml:space="preserve">
     <value>№ объекта,Объект,Адрес, ОС, ПС,ТРС,Маршрут,Полиция,Сработка,Отправка,Прибытие,Отмена,Результат,Опоздание</value>
   </data>

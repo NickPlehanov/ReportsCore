@@ -768,8 +768,6 @@ namespace ReportsCore.ViewModels {
 				if(obj != null) {
 					var Agreement = obj as Report;
 					if(Agreement != null) {
-						if(AgreementDetail!=null) 
-							AgreementDetail.Clear();
 						using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
 							var agreements = from goeb in context.NewGuardObjectExtensionBase
 											 join ab in context.AccountBase on goeb.NewAccount equals ab.AccountId
@@ -1390,7 +1388,7 @@ namespace ReportsCore.ViewModels {
 								};
 								saveFileDialog_word.ShowDialog();
 								if(!string.IsNullOrEmpty(saveFileDialog_word.FileName)) {
-									string[] headers = Resources.HeaderReportWordChangeCost.Split(',');
+									string[] headers = Resources.HeaderReportWordReglamentWorks.Split(',');
 									filename = saveFileDialog_word.FileName;
 									object missing = Type.Missing;
 									Microsoft.Office.Interop.Word._Document word_doc = app.Documents.Add(
@@ -1429,12 +1427,11 @@ namespace ReportsCore.ViewModels {
 										word_doc.Tables[1].Cell(table.Rows.Count, 1).Range.Text = item.ObjectNumber.HasValue ? item.ObjectNumber.ToString() : "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 2).Range.Text = item.ObjectName ?? "";
 										word_doc.Tables[1].Cell(table.Rows.Count, 3).Range.Text = item.ObjectAddress ?? "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.DateStart.HasValue ? item.DateStart.Value.ToString() : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.Curator;
-										word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.WhoChanged;
-										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.DateChanged.HasValue ? item.DateChanged.Value.ToString() : "";
-										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.Before;
-										word_doc.Tables[1].Cell(table.Rows.Count, 9).Range.Text = item.After;
+										word_doc.Tables[1].Cell(table.Rows.Count, 4).Range.Text = item.RrEveryMonth.HasValue ? item.RrEveryMonth.Value==true ? "+" : "-" : "-";
+										word_doc.Tables[1].Cell(table.Rows.Count, 5).Range.Text = item.RrOS.HasValue ? item.RrOS.Value == true ? "+" : "-" : "-";
+										word_doc.Tables[1].Cell(table.Rows.Count, 6).Range.Text = item.RrPS.HasValue ? item.RrPS.Value == true ? "+" : "-" : "-";
+										word_doc.Tables[1].Cell(table.Rows.Count, 7).Range.Text = item.RrSkud.HasValue ? item.RrSkud.Value == true ? "+" : "-" : "-";
+										word_doc.Tables[1].Cell(table.Rows.Count, 8).Range.Text = item.RrVideo.HasValue ? item.RrVideo.Value == true ? "+" : "-" : "-";
 									}
 									object filename_local = saveFileDialog_word.FileName;
 									word_doc.SaveAs(ref filename_local, ref missing, ref missing,
