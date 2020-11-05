@@ -14,13 +14,16 @@
     <mah:MetroWindow.LeftWindowCommands>
         <mah:WindowCommands>
             <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding MenuOpen}">
-                <iconPacks:PackIconMaterialDesign Kind="Menu"/>
+                <iconPacks:BootstrapIcons Kind="MenuApp"/>
             </Button>
             <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding FilterOpen}">
-                <iconPacks:PackIconMaterialDesign Kind="FilterList"/>
+                <iconPacks:BootstrapIcons Kind="Filter"/>
             </Button>
             <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding CreateWordReport}">
-                <iconPacks:PackIconMaterialDesign Kind="Print"/>
+                <iconPacks:BootstrapIcons Kind="Printer"/>
+            </Button>
+            <Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding CreatePdfReport}">
+                <iconPacks:BootstrapIcons Kind="PrinterFill"/>
             </Button>
             <!--<Button Foreground="White" BorderThickness="0" Width="35" Command="{Binding Test}">
                 <iconPacks:PackIconMaterialDesign Kind="_3dRotation"/>
