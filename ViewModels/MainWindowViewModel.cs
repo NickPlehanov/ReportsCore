@@ -1,7 +1,6 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using MahApps.Metro.Controls;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Office.Interop.Word;
 using Microsoft.Win32;
 using ReportsCore.Helpers;
@@ -13,15 +12,10 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks.Dataflow;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Threading;
 
 namespace ReportsCore.ViewModels {
     public class MainWindowViewModel : BaseViewModel {
@@ -703,7 +697,7 @@ namespace ReportsCore.ViewModels {
                                 NewGuardObjectHistory after = null;
                                 DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
                                 DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
-                                List<NewGuardObjectHistory> history = context.NewGuardObjectHistory.Where(x => x.ModifiedOn >= start && x.ModifiedOn <= end).ToList<NewGuardObjectHistory>();
+                                List<NewGuardObjectHistory> history = context.NewGuardObjectHistory.Where(x => x.ModifiedOn >= start && x.ModifiedOn <= end && x.NewObjectNumber==15).ToList<NewGuardObjectHistory>();
                                 if(history.Where(x => x.NewRrOnOff != null || x.NewRrOs != null || x.NewRrPs != null || x.NewRrSkud != null || x.NewRrVideo != null).Count() > 0) {
                                     var r = history.GroupBy(a => new { a.NewGuardObjectId,a.ModifiedBy,DateTime = DateTime.Parse(a.ModifiedOn.ToString()) }).ToList();
                                     foreach(var item in r) {
@@ -1411,7 +1405,6 @@ namespace ReportsCore.ViewModels {
                                     table.ApplyStyleRowBands = true;
                                     table.ApplyStyleColumnBands = false;
                                     table.AllowAutoFit = true;
-                                    //table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitContent);
                                     table.AutoFitBehavior(WdAutoFitBehavior.wdAutoFitWindow);
 
                                     for(int i = 0; i < headers.Length; i++)
@@ -1422,7 +1415,6 @@ namespace ReportsCore.ViewModels {
                                         word_doc.Tables[1].Cell(table.Rows.Count,i + 1).Range.ParagraphFormat.Alignment = WdParagraphAlignment.wdAlignParagraphCenter;
                                     }
                                     foreach(var item in flo) {
-                                        //foreach(var item in flo.OrderBy(x => x.DateChanged).ThenBy(y => y.WhoChanged)) {
                                         table.Rows.Add();
                                         word_doc.Tables[1].Rows[table.Rows.Count].Range.Bold = 0;
                                         word_doc.Tables[1].Cell(table.Rows.Count,1).Range.Text = item.ObjectNumber.HasValue ? item.ObjectNumber.ToString() : "";
@@ -1443,25 +1435,16 @@ namespace ReportsCore.ViewModels {
                                     object save_changes = false;
                                     word_doc.Close(ref save_changes,ref missing,ref missing);
                                     app.Quit(ref save_changes,ref missing,ref missing);
-                                    //notify("Информация", "Отчёт сохранен. Открыть сейчас?", System.Windows.Forms.ToolTipIcon.Info, true);
                                 }
                             }
                             else
-                                //TaskBarIconVisibility = true;
                                 MessageBox.Show("Данных для построения отчёта не обнаружено","Ошибка",MessageBoxButton.OK,MessageBoxImage.Error,MessageBoxResult.OK,MessageBoxOptions.RightAlign);
-                            //notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
                         }
                         else
                             MessageBox.Show("Данных для построения отчёта не обнаружено","Ошибка",MessageBoxButton.OK,MessageBoxImage.Error,MessageBoxResult.OK,MessageBoxOptions.RightAlign);
-                        //TaskBarIconVisibility = true;
-                        //MessageBox.Show("test");
-                        //notify("Ошибка", "Данных для построения отчёта не обнаружено", System.Windows.Forms.ToolTipIcon.Error, false);
                     }
                     catch(Exception ex) {
                         MessageBox.Show(ex.Message,"Ошибка",MessageBoxButton.OK,MessageBoxImage.Error,MessageBoxResult.OK,MessageBoxOptions.RightAlign);
-                        //TaskBarIconVisibility = true;
-                        //MessageBox.Show("test");
-                        //notify("Ошибка", ex.Message, System.Windows.Forms.ToolTipIcon.Error, false);
                     }
                 }
             };
@@ -1475,7 +1458,6 @@ namespace ReportsCore.ViewModels {
                 catch {
                     MessageBox.Show("Не удалось открыть отчёт","Ошибка",MessageBoxButton.OK,MessageBoxImage.Error,MessageBoxResult.OK,MessageBoxOptions.RightAlign);
                 }
-                //MessageBox.Show("Отчёт успешно сохранен", "Информация", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, MessageBoxOptions.RightAlign);
                 finally {
                     Loading = false;
                 }
@@ -1504,7 +1486,6 @@ namespace ReportsCore.ViewModels {
                                     Title = "Выберите путь для сохранения отчёта"
                                 };
                                 saveFileDialog_pdf.ShowDialog();
-                                //saveFileDialog_pdf.FileName = filename;
                                 if(!string.IsNullOrEmpty(saveFileDialog_pdf.FileName)) {
                                     string[] headers = Resources.HeaderReportWordChangeCost.Split(',');
                                     filename = saveFileDialog_pdf.FileName;
@@ -1603,12 +1584,12 @@ namespace ReportsCore.ViewModels {
                                                 table.AddCell(new Phrase(item.Os.HasValue ? item.Os.Value == true ? "+" : "-" : "-",font));
                                                 table.AddCell(new Phrase(item.Ps.HasValue ? item.Ps.Value == true ? "+" : "-" : "-",font));
                                                 table.AddCell(new Phrase(item.Trs.HasValue ? item.Trs.Value == true ? "+" : "-" : "-",font));
-                                                table.AddCell(new Phrase(item.Group.HasValue ? item.Group.ToString():"",font));
+                                                table.AddCell(new Phrase(item.Group.HasValue ? item.Group.ToString() : "",font));
                                                 table.AddCell(new Phrase(item.Police.HasValue ? item.Police.Value == true ? "+" : "-" : "-",font));
-                                                table.AddCell(new Phrase(item.Alarm.HasValue ? item.Alarm.Value.ToString():"",font));
-                                                table.AddCell(new Phrase(item.Departure.HasValue ? item.Departure.Value.ToString():"",font));
-                                                table.AddCell(new Phrase(item.Arrival.HasValue ? item.Arrival.Value.ToString():"",font));
-                                                table.AddCell(new Phrase(item.Cancel.HasValue ? item.Cancel.Value.ToString():"",font));
+                                                table.AddCell(new Phrase(item.Alarm.HasValue ? item.Alarm.Value.ToString() : "",font));
+                                                table.AddCell(new Phrase(item.Departure.HasValue ? item.Departure.Value.ToString() : "",font));
+                                                table.AddCell(new Phrase(item.Arrival.HasValue ? item.Arrival.Value.ToString() : "",font));
+                                                table.AddCell(new Phrase(item.Cancel.HasValue ? item.Cancel.Value.ToString() : "",font));
                                                 table.AddCell(new Phrase(item.Result,font));
                                             }
                                         else {

@@ -16,7 +16,8 @@ namespace ReportsCore.ReportContext {
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             if(!optionsBuilder.IsConfigured) {
-                optionsBuilder.UseSqlServer("Server=192.168.1.28;Database=ReportBase;Persist Security Info=True;User ID=sa;Password=Qwerty_12");
+                //optionsBuilder.UseSqlServer("Server=192.168.1.28;Database=ReportBase;Persist Security Info=True;User ID=sa;Password=Qwerty_12");
+                optionsBuilder.UseSqlServer("Server=sql-service;Database=ReportBase;Persist Security Info=True;User ID=admin;Password=111111");
             }
         }
 

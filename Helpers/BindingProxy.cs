@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
+﻿using System.Windows;
 
 namespace ReportsCore.Helpers {
-	public class BindingProxy : Freezable {
+    public class BindingProxy : Freezable {
         #region Overrides of Freezable
 
         protected override Freezable CreateInstanceCore() {
@@ -15,11 +12,11 @@ namespace ReportsCore.Helpers {
 
         public object Data {
             get { return (object)GetValue(DataProperty); }
-            set { SetValue(DataProperty, value); }
+            set { SetValue(DataProperty,value); }
         }
 
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register("Data", typeof(object),
+            DependencyProperty.Register("Data",typeof(object),
                                          typeof(BindingProxy));
     }
 }

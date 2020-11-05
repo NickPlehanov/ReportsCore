@@ -8,7 +8,7 @@
                   xmlns:vm="clr-namespace:ReportsCore.ViewModels" 
                   xmlns:helpers="clr-namespace:ReportsCore.Helpers" 
                   xmlns:mah1="http://schemas.microsoft.com/netfx/2009/xaml/presentation" 
-                  xmlns:converters="clr-namespace:ReportsCore.Helpers.Converters" xmlns:tb="http://www.hardcodet.net/taskbar" xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase" xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                  xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase" 
                   mc:Ignorable="d"
         Title="Reports" Height="450" Width="800" x:Name="MainW" >
     <mah:MetroWindow.LeftWindowCommands>

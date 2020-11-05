@@ -3,14 +3,14 @@ using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace ReportsCore.Helpers {
-	public class DataGridExtension {
+    public class DataGridExtension {
         public static readonly DependencyProperty RowLoadedCommandProperty = DependencyProperty.RegisterAttached(
             "RowLoadedCommand",
             typeof(ICommand),
             typeof(DataGridExtension),
-            new PropertyMetadata(null, OnRowLoadedcommandChanged));
+            new PropertyMetadata(null,OnRowLoadedcommandChanged));
 
-        private static void OnRowLoadedcommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        private static void OnRowLoadedcommandChanged(DependencyObject d,DependencyPropertyChangedEventArgs e) {
             DataGrid dataGrid = d as DataGrid;
             if(dataGrid == null)
                 return;
@@ -19,7 +19,7 @@ namespace ReportsCore.Helpers {
                 dataGrid.LoadingRow += DataGridOnLoadingRow;
             }
         }
-        private static void OnRowDetailVisibilityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+        private static void OnRowDetailVisibilityChanged(DependencyObject d,DependencyPropertyChangedEventArgs e) {
             DataGrid dataGrid = d as DataGrid;
             if(dataGrid == null)
                 return;
@@ -29,7 +29,7 @@ namespace ReportsCore.Helpers {
             }
         }
 
-        private static void DataGridOnLoadingRow(object sender, DataGridRowEventArgs e) {
+        private static void DataGridOnLoadingRow(object sender,DataGridRowEventArgs e) {
             DataGrid dataGrid = sender as DataGrid;
             if(dataGrid == null)
                 return;
@@ -39,7 +39,7 @@ namespace ReportsCore.Helpers {
             rowLoadedCommand.Execute(e.Row.Item);
             // you can also pass the complete row. Or you move your complete ui-logic here to this attached property.
         }
-        private static void DataGridRowDetailVisibility(object sender, DataGridRowEventArgs e) {
+        private static void DataGridRowDetailVisibility(object sender,DataGridRowEventArgs e) {
             DataGrid dataGrid = sender as DataGrid;
             if(dataGrid == null)
                 return;
@@ -50,8 +50,8 @@ namespace ReportsCore.Helpers {
             // you can also pass the complete row. Or you move your complete ui-logic here to this attached property.
         }
 
-        public static void SetRowLoadedCommand(DependencyObject element, ICommand value) {
-            element.SetValue(RowLoadedCommandProperty, value);
+        public static void SetRowLoadedCommand(DependencyObject element,ICommand value) {
+            element.SetValue(RowLoadedCommandProperty,value);
         }
 
         public static ICommand GetRowLoadedCommand(DependencyObject element) {
