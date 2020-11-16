@@ -678,7 +678,7 @@ namespace ReportsCore.ViewModels {
                                          join gob in context.NewGuardObjectBase on goeb.NewGuardObjectId equals gob.NewGuardObjectId
                                          where gob.Statecode == 0 && gob.Statuscode == 1 && gob.DeletionStateCode == 0
                                             && goeb.NewRemoveDate == null && goeb.NewPriostDate == null && goeb.NewObjDeleteDate == null &&
-                                            (goeb.NewRrOnOff == true || goeb.NewRrOs == true || goeb.NewRrPs == true || goeb.NewRrVideo == true || goeb.NewRrSkud == true)
+                                            goeb.NewRrOnOff == true && ( goeb.NewRrOs == true || goeb.NewRrPs == true || goeb.NewRrVideo == true || goeb.NewRrSkud == true)
                                          select new {
                                              NewObjectNumber = goeb.NewObjectNumber,
                                              NewName = goeb.NewName,
