@@ -76,16 +76,64 @@ namespace ReportsCore.Models {
             }
         }
         public string Result { get; set; }
-        public bool? Os { get; set; }
-        public bool? Ps { get; set; }
-        public bool? Trs { get; set; }
+        private bool? _Os { get; set; }
+        public bool? Os {
+            get => _Os;
+            set {
+                _Os = value.HasValue ? value : false;
+            }
+        }
+        private bool? _Ps { get; set; }
+        public bool? Ps {
+            get => _Ps;
+            set {
+                _Ps = value.HasValue ? value : false;
+            }
+        }
+        private bool? _Trs { get; set; }
+        public bool? Trs {
+            get => _Trs;
+            set {
+                _Trs = value.HasValue ? value : false;
+            }
+        }
         public int? Group { get; set; }
         public string Late { get; set; }
-        public bool? RrEveryMonth { get; set; }
-        public bool? RrOS { get; set; }
-        public bool? RrPS { get; set; }
-        public bool? RrVideo { get; set; }
-        public bool? RrSkud { get; set; }
+        private bool? _RrEveryMonth { get; set; }
+        public bool? RrEveryMonth {
+            get => _RrEveryMonth;
+            set {
+                _RrEveryMonth = value.HasValue ? value : false;
+            }
+        }
+        private bool? _RrOS { get; set; }
+        public bool? RrOS {
+            get => _RrOS;
+            set {
+                _RrOS = value.HasValue ? value : false;
+            }
+        }
+        private bool? _RrPS { get; set; }
+        public bool? RrPS {
+            get => _RrPS;
+            set {
+                _RrPS = value.HasValue ? value : false;
+            }
+        }
+        private bool? _RrVideo { get; set; }
+        public bool? RrVideo {
+            get => _RrVideo;
+            set {
+                _RrVideo = value.HasValue ? value : false;
+            }
+        }
+        private bool? _RrSkud { get; set; }
+        public bool? RrSkud {
+            get => _RrSkud;
+            set {
+                _RrSkud = value.HasValue ? value : false;
+            }
+        }
         //private string _StringLate;
         //public string StringLate {
         //	get => _StringLate;

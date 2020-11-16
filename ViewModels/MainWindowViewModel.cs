@@ -673,7 +673,23 @@ namespace ReportsCore.ViewModels {
                             VisibilityLatesPult = false;
                             VisibilityReglamentWorks = true;
                             using(Vityaz_MSCRMContext context = new Vityaz_MSCRMContext()) {
-                                var rr = context.NewGuardObjectExtensionBase.Where(x => x.NewRrOnOff == true || x.NewRrOs == true || x.NewRrPs == true || x.NewRrVideo == true || x.NewRrSkud == true);
+                                //var rr = context.NewGuardObjectExtensionBase.Where(y=>y.NewRemoveDate==null && y.NewPriostDate==null && y.NewObjDeleteDate==null).Where(x => x.NewRrOnOff == true || x.NewRrOs == true || x.NewRrPs == true || x.NewRrVideo == true || x.NewRrSkud == true);
+                                var rr = from goeb in context.NewGuardObjectExtensionBase
+                                         join gob in context.NewGuardObjectBase on goeb.NewGuardObjectId equals gob.NewGuardObjectId
+                                         where gob.Statecode == 0 && gob.Statuscode == 1 && gob.DeletionStateCode == 0
+                                            && goeb.NewRemoveDate == null && goeb.NewPriostDate == null && goeb.NewObjDeleteDate == null &&
+                                            (goeb.NewRrOnOff == true || goeb.NewRrOs == true || goeb.NewRrPs == true || goeb.NewRrVideo == true || goeb.NewRrSkud == true)
+                                         select new {
+                                             NewObjectNumber = goeb.NewObjectNumber,
+                                             NewName = goeb.NewName,
+                                             NewAddress = goeb.NewAddress,
+                                             NewRrOnOff = goeb.NewRrOnOff,
+                                             NewRrOs = goeb.NewRrOs,
+                                             NewRrPs = goeb.NewRrPs,
+                                             NewRrVideo = goeb.NewRrVideo,
+                                             NewRrSkud = goeb.NewRrSkud,
+                                             NewGuardObjectId = goeb.NewGuardObjectId
+                                         };
                                 if(rr != null)
                                     foreach(var item in rr) {
                                         App.Current.Dispatcher.Invoke((System.Action)delegate {
@@ -697,7 +713,7 @@ namespace ReportsCore.ViewModels {
                                 NewGuardObjectHistory after = null;
                                 DateTime start = DateTime.Parse(DateStart.ToShortDateString()).AddHours(-5);
                                 DateTime end = DateTime.Parse(DateEnd.ToShortDateString()).AddHours(-5);
-                                List<NewGuardObjectHistory> history = context.NewGuardObjectHistory.Where(x => x.ModifiedOn >= start && x.ModifiedOn <= end && x.NewObjectNumber==15).ToList<NewGuardObjectHistory>();
+                                List<NewGuardObjectHistory> history = context.NewGuardObjectHistory.Where(x => x.ModifiedOn >= start && x.ModifiedOn <= end).ToList<NewGuardObjectHistory>();
                                 if(history.Where(x => x.NewRrOnOff != null || x.NewRrOs != null || x.NewRrPs != null || x.NewRrSkud != null || x.NewRrVideo != null).Count() > 0) {
                                     var r = history.GroupBy(a => new { a.NewGuardObjectId,a.ModifiedBy,DateTime = DateTime.Parse(a.ModifiedOn.ToString()) }).ToList();
                                     foreach(var item in r) {
@@ -772,9 +788,12 @@ namespace ReportsCore.ViewModels {
                             var agreements = from goeb in context.NewGuardObjectExtensionBase
                                              join ab in context.AccountBase on goeb.NewAccount equals ab.AccountId
                                              join ageb in context.NewAgreementExtensionBase on ab.AccountId equals ageb.NewBpAgreement
+                                             join agb in context.NewAgreementBase on ageb.NewAgreementId equals agb.NewAgreementId
                                              join eeb in context.NewExecutorExtensionBase on ageb.NewExecutorAgreement equals eeb.NewExecutorId
                                              join dteb in context.NewDogovorTypeExtensionBase on ageb.NewDogovorTypeAgreement equals dteb.NewDogovorTypeId
-                                             where goeb.NewGuardObjectId == Agreement.ObjectID && dteb.NewTechService == true
+                                             where goeb.NewGuardObjectId == Agreement.ObjectID && dteb.NewTechService == true 
+                                             && agb.Statecode == 0 && agb.Statuscode==1 && agb.DeletionStateCode==0
+                                             && ageb.NewDeleteDate==null
                                              select new { AgreementNumber = ageb.NewNumber,AgreementExecutor = eeb.NewName,AgreementDate = ageb.NewDate,AgreementType = dteb.NewName };
                             foreach(var item in agreements)
                                 App.Current.Dispatcher.Invoke((System.Action)delegate {

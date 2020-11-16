@@ -438,6 +438,7 @@
                 </b:EventTrigger>
             </b:Interaction.Triggers>-->
             <DataGrid.InputBindings>
+                <KeyBinding Key="F2" Command="{Binding Path=DetailCommand}" CommandParameter="{Binding ElementName=dgReglamentWorks, Path=SelectedItem}"/>
                 <MouseBinding MouseAction="LeftClick" Command="{Binding Path=DetailCommand}" CommandParameter="{Binding ElementName=dgReglamentWorks, Path=SelectedItem}"/>
             </DataGrid.InputBindings>
             <DataGrid.Columns>
