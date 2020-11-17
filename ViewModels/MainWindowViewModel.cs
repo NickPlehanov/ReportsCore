@@ -96,6 +96,15 @@ namespace ReportsCore.ViewModels {
             }
         }
 
+        private bool _RrEveryMonthVisibility;
+        public bool RrEveryMonthVisibility {
+            get => _RrEveryMonthVisibility;
+            set {
+                _RrEveryMonthVisibility = value;
+                OnPropertyChanged(nameof(RrEveryMonthVisibility));
+            }
+        }
+
         private bool _BeforeVisibility;
         public bool BeforeVisibility {
             get => _BeforeVisibility;
@@ -463,7 +472,7 @@ namespace ReportsCore.ViewModels {
                         if(SelectedReport.ReportID == Guid.Parse("b904a30b-16b1-4f59-a76d-bd981e18c930")) {
                             //Binding binding = new Binding("WhoChanged");
                             //GroupPropeprtyName = binding;
-                            //TODO: переделать на отдельный метод					
+                            //TODO: переделать на отдельный метод
                             VisibleChangeCostMonthlyPay = true;
                             VisibilityActs = false;
                             VisibilityLatesGBR = false;
@@ -678,7 +687,7 @@ namespace ReportsCore.ViewModels {
                                          join gob in context.NewGuardObjectBase on goeb.NewGuardObjectId equals gob.NewGuardObjectId
                                          where gob.Statecode == 0 && gob.Statuscode == 1 && gob.DeletionStateCode == 0
                                             && goeb.NewRemoveDate == null && goeb.NewPriostDate == null && goeb.NewObjDeleteDate == null &&
-                                            goeb.NewRrOnOff == true && ( goeb.NewRrOs == true || goeb.NewRrPs == true || goeb.NewRrVideo == true || goeb.NewRrSkud == true)
+                                            goeb.NewRrOnOff == true /*&& ( goeb.NewRrOs == true || goeb.NewRrPs == true || goeb.NewRrVideo == true || goeb.NewRrSkud == true)*/
                                          select new {
                                              NewObjectNumber = goeb.NewObjectNumber,
                                              NewName = goeb.NewName,

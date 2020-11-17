@@ -7,7 +7,6 @@ namespace ReportsCore.Helpers {
         protected override Freezable CreateInstanceCore() {
             return new BindingProxy();
         }
-
         #endregion
 
         public object Data {
@@ -16,7 +15,7 @@ namespace ReportsCore.Helpers {
         }
 
         public static readonly DependencyProperty DataProperty =
-            DependencyProperty.Register("Data",typeof(object),
+            DependencyProperty.Register("_Data",typeof(object),
                                          typeof(BindingProxy));
     }
 }

@@ -184,6 +184,7 @@
                 </GroupStyle>
             </DataGrid.GroupStyle>
             <DataGrid.Resources>
+                <!--<helpers:BindingProxy x:Key="proxy" Data="{Binding}"/>-->
                 <!--Дата изменения-->
                 <DataTemplate x:Key="dt_DateChanged">
                     <mah:DateTimePicker IsEnabled="False" Culture="ru-RU" SelectedDateTime="{Binding Mode=TwoWay, Path=DateChanged,StringFormat=\{0:dd.MM.yyyy HH:mm:ss\}, UpdateSourceTrigger=PropertyChanged}"/>
@@ -210,7 +211,7 @@
                 <DataGridTextColumn Header="Стало" Binding="{Binding After}" Visibility="{Binding AfterVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <!--<DataGridTextColumn Header="Дата подключения" Binding="{Binding DateStart}" Visibility="{Binding DateStartVisibility}"/>-->
                 <DataGridTemplateColumn Header="Дата подключения" CellTemplate="{StaticResource dt_DateStart}" CellEditingTemplate="{StaticResource edt_DateStart}" IsReadOnly="True" Visibility="{Binding DateStartVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                <DataGridTextColumn Header="Куратор" Binding="{Binding Curator}" Visibility="{Binding CuratorVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <DataGridTextColumn Header="Куратор" Binding="{Binding Curator}" Visibility="{Binding CuratorVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>                
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}" 
