@@ -1,11 +1,12 @@
 ﻿{
-   "ContextClassName": "Vityaz_MSCRMContext",
+   "CodeGenerationMode": 0,
+   "ContextClassName": "A28Context",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
    "IncludeConnectionString": true,
    "ModelNamespace": null,
-   "OutputContextPath": "Vityaz_MSCRMContext",
+   "OutputContextPath": "Data",
    "OutputPath": "Models",
    "ProjectRootNamespace": "ReportsCore",
    "Schemas": null,
@@ -13,81 +14,25 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[AccountBase]"
+         "Name": "[dbo].[Object]",
+         "ObjectType": 0
       },
       {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[AccountExtensionBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_agreementBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_agreementExtensionBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_alarmBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_alarmExtensionBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_andromedaBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_andromedaExtensionBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_dogovor_typeBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_dogovor_typeExtensionBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_executorExtensionBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_guard_object_History]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_guard_objectBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[New_guard_objectExtensionBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[new_new_agreement_new_guard_objectBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[SystemUserBase]"
-      },
-      {
-         "HasPrimaryKey": true,
-         "Name": "[dbo].[SystemUserExtensionBase]"
+         "Name": "[dbo].[ObjType]",
+         "ObjectType": 0
       }
    ],
+   "UiHint": "ANDROMEDACENTR2\\ANDROMEDA.A28",
+   "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDbContextSplitting": false,
    "UseFluentApiOnly": false,
    "UseHandleBars": false,
    "UseInflector": false,
    "UseLegacyPluralizer": false,
+   "UseNoConstructor": false,
+   "UseNoNavigations": false,
    "UseNodaTime": false,
-   "UseSpatial": false,
-   "UseStoredProcedures": false
+   "UseNullableReferences": false,
+   "UseSpatial": false
 }

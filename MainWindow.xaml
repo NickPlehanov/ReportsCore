@@ -3,12 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:gmaps="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
         xmlns:local="clr-namespace:ReportsCore" 
                   xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
                   xmlns:vm="clr-namespace:ReportsCore.ViewModels" 
                   xmlns:helpers="clr-namespace:ReportsCore.Helpers" 
                   xmlns:mah1="http://schemas.microsoft.com/netfx/2009/xaml/presentation" 
-                  xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase" 
+                  xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
                   mc:Ignorable="d"
         Title="Reports" Height="450" Width="800" x:Name="MainW" >
     <mah:MetroWindow.LeftWindowCommands>
@@ -89,7 +90,7 @@
         <mah:Flyout Position="Left" Header="Список отчётов" Width="250" AnimateOpacity="True" Panel.ZIndex="1" IsOpen="{Binding FlyoutMenuState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <StackPanel Margin="5">
                 <ComboBox SelectedItem="{Binding SelectedReport, Mode=TwoWay}" Text="Выберите отчёт" ItemsSource="{Binding ReportList}" DisplayMemberPath="ReportName" FontWeight="UltraLight" FontSize="16" />
-                <Button Content="Показывать итоги" Visibility="Collapsed" Margin="5" Command="{Binding ViewTotalCommand}"/>
+                <!--<Button Content="Показывать итоги" Visibility="Collapsed" Margin="5" Command="{Binding ViewTotalCommand}"/>-->
 
                 <!--<DataGrid Margin="5" ItemsSource="{Binding ReportList}" CanUserAddRows="False" CanUserDeleteRows="False" AutoGenerateColumns="False">
                     <DataGrid.Columns>
@@ -110,7 +111,7 @@
         <mah:Flyout Position="Top" IsModal="True" AnimateOpacity="True" Panel.ZIndex="1" IsOpen="{Binding FlyoutSettingVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
             <StackPanel>
                 <!--Изменение стоимости абонентской платы-->
-                <Grid >
+                <Grid Visibility="{Binding CommonSettingsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -133,25 +134,22 @@
                     <StackPanel>
 
                     </StackPanel>
-                </Grid>
-                <!--Отчёт по актам-->
-                <!--<Grid Visibility="{Binding VisibleAlarmActs, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <mah1:DatePicker Margin="5" SelectedDateFormat="Short" SelectedDate="{Binding DateStart, StringFormat=\{0:dd.MM.yyyy\}}"/>
-                        <mah1:DatePicker Margin="5" SelectedDateFormat="Short" SelectedDate="{Binding DateEnd, StringFormat=\{0:dd.MM.yyyy\}}"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Button Content="Обновить" Command="{Binding GetData}"/>
-                    </StackPanel>
-                </Grid>-->
+                </Grid>                
             </StackPanel>
         </mah:Flyout>
-        <mah:Flyout Position="Right" IsModal="True" AnimateOpacity="True" Panel.ZIndex="1" IsOpen="{Binding FlyoutSettingColumnsVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
-            <DataGrid ItemsSource="{Binding Columns}"/>
+        <mah:Flyout Width="150" Position="Right" IsModal="True" AnimateOpacity="True" Panel.ZIndex="1" IsOpen="{Binding FlyoutSettingMapsVisibleState}" mah:HeaderedControlHelper.HeaderFontWeight="UltraLight">
+            <StackPanel Visibility="{Binding GuardObjectOnMapVisibility, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ListBox ItemsSource="{Binding GroupsList, Mode=TwoWay}" BorderThickness="1" Margin="5" SelectionMode="Single" >
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <WrapPanel>
+                                <CheckBox Content="{Binding ObjTypeName}" Tag="{Binding ObjTypeId}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                                      Command="{Binding DataContext.SelectGroupCommand, RelativeSource={RelativeSource AncestorType=ListBox}}" IsChecked="{Binding IsChecked}"/>
+                            </WrapPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </StackPanel>
         </mah:Flyout>
         <!--<StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}">-->
         <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}" 
@@ -211,7 +209,7 @@
                 <DataGridTextColumn Header="Стало" Binding="{Binding After}" Visibility="{Binding AfterVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <!--<DataGridTextColumn Header="Дата подключения" Binding="{Binding DateStart}" Visibility="{Binding DateStartVisibility}"/>-->
                 <DataGridTemplateColumn Header="Дата подключения" CellTemplate="{StaticResource dt_DateStart}" CellEditingTemplate="{StaticResource edt_DateStart}" IsReadOnly="True" Visibility="{Binding DateStartVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                <DataGridTextColumn Header="Куратор" Binding="{Binding Curator}" Visibility="{Binding CuratorVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>                
+                <DataGridTextColumn Header="Куратор" Binding="{Binding Curator}" Visibility="{Binding CuratorVisibility, Converter={StaticResource BooleanToVisibilityConverter}}"/>
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibilityActs, Converter={StaticResource BooleanToVisibilityConverter}}" 
@@ -494,6 +492,10 @@
         <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Background="#35100110" Panel.ZIndex="2" Width="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding Loading, Converter={StaticResource BooleanToVisibilityConverter}}" Height="{Binding ActualHeight, ElementName=MainW}" Grid.ColumnSpan="3">
             <mah:ProgressRing IsActive="{Binding Loading}"/>
         </Grid>
+        <Grid Visibility="{Binding GuardObjectsOnMapsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <!--<gmaps:GMapControl  Margin="5" Grid.Row="1" x:Name="gmaps" Loaded="mapView_Loaded" x:Uid="gm"/>-->
+            <!--<Label Content="{Binding GroupId}" x:Name="groupid"/>-->
+            <UserControl Content="{Binding gmaps_contol}"/>
+        </Grid>
     </Grid>
-
 </mah:MetroWindow>
