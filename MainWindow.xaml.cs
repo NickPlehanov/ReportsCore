@@ -3,6 +3,7 @@ using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using MahApps.Metro.Controls;
 using System;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -58,6 +59,12 @@ namespace ReportsCore {
             //gmaps.Overlays.Add(markersOverlay);
             //gmaps.MapPoint = new System.Windows.Point(55.1863870,61.3350213);
             //gmaps.Position = PointLatLng.Add(new PointLatLng(55.186391,61.334740),new SizeLatLng());
+        }
+
+        private void UserControl_MouseMove(object sender, MouseEventArgs e) {
+            if (e.RightButton == MouseButtonState.Pressed) {
+                Point p = e.GetPosition((IInputElement)sender);
+            }
         }
 
         //void gmaps_mouseButton(object sender, MouseButtonEventArgs e) {

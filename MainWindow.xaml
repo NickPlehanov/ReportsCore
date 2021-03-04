@@ -6,10 +6,11 @@
                   xmlns:gmaps="clr-namespace:GMap.NET.WindowsPresentation;assembly=GMap.NET.WindowsPresentation"
         xmlns:local="clr-namespace:ReportsCore" 
                   xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks" 
-                  xmlns:vm="clr-namespace:ReportsCore.ViewModels" 
                   xmlns:helpers="clr-namespace:ReportsCore.Helpers" 
                   xmlns:mah1="http://schemas.microsoft.com/netfx/2009/xaml/presentation" 
-                  xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+                  xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase" 
+                  xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+                  xmlns:command="http://www.galasoft.ch/mvvmlight" xmlns:vm="clr-namespace:ReportsCore.ViewModels" xmlns:oxy="http://oxyplot.org/wpf"
                   mc:Ignorable="d"
         Title="Reports" Height="450" Width="800" x:Name="MainW" >
     <mah:MetroWindow.LeftWindowCommands>
@@ -149,7 +150,11 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                <Button Margin="5" Content="Расчет" Command="{Binding CalculateRoute}"/>
             </StackPanel>
+        </mah:Flyout>
+        <mah:Flyout Position="Bottom" IsModal="True" Height="250" Panel.ZIndex="1" IsOpen="{Binding ChartVisibility}">
+            <oxy:PlotView Model="{Binding PieModel}"/>
         </mah:Flyout>
         <!--<StackPanel Height="{Binding ActualWidth, ElementName=MainW}" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}">-->
         <DataGrid Panel.ZIndex="0" FontWeight="UltraLight" Visibility="{Binding VisibleChangeCostMonthlyPay, Converter={StaticResource BooleanToVisibilityConverter}}" 
@@ -495,7 +500,13 @@
         <Grid Visibility="{Binding GuardObjectsOnMapsVisibility, Converter={StaticResource BooleanToVisibilityConverter}}">
             <!--<gmaps:GMapControl  Margin="5" Grid.Row="1" x:Name="gmaps" Loaded="mapView_Loaded" x:Uid="gm"/>-->
             <!--<Label Content="{Binding GroupId}" x:Name="groupid"/>-->
-            <UserControl Content="{Binding gmaps_contol}"/>
+            <UserControl Content="{Binding gmaps_contol}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="MouseRightButtonDown">
+                        <command:EventToCommand Command="{Binding Mode=OneWay, Path=MouseRightButtonDownCommand}" PassEventArgsToCommand="True"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </UserControl>
         </Grid>
     </Grid>
 </mah:MetroWindow>

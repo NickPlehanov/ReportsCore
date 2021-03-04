@@ -36,6 +36,8 @@ namespace ReportsCore.Models {
                 return System.Drawing.Color.FromArgb((byte)255, (byte)255, (byte)255, (byte)255);
             }
         }
+        [NotMapped]
+        public bool IsShowOnMap { get; set; }
         //public bool IsChecked { get; set; }
 
         //private Color _ObjTypeColor { get; set; }

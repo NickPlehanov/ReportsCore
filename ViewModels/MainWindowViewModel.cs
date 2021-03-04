@@ -1,10 +1,15 @@
 ﻿using GMap.NET;
+using GMap.NET.MapProviders;
 using GMap.NET.WindowsPresentation;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using MahApps.Metro.Controls;
 using Microsoft.Office.Interop.Word;
 using Microsoft.Win32;
+using Newtonsoft.Json;
+using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Series;
 using ReportsCore.Context;
 using ReportsCore.Helpers;
 using ReportsCore.Models;
@@ -17,8 +22,10 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -494,7 +501,7 @@ namespace ReportsCore.ViewModels {
         public RelayCommand SelectDatePattern {
             get => _SelectDatePattern ??= new RelayCommand(obj => {
                 DropDownButton o = obj as DropDownButton;
-                System.Windows.MessageBox.Show(o.Items.CurrentItem.ToString());
+                MessageBox.Show(o.Items.CurrentItem.ToString());
             });
         }
         private RelayCommand _GetData;
@@ -1056,9 +1063,8 @@ namespace ReportsCore.ViewModels {
                 if (cm.Count <= 0) {
                     chck.IsChecked = false;
                     WPFMessageBoxService service = new WPFMessageBoxService();
-                    service.ShowMessage("Достигнуто ограничение по количество отображаемых объектов", "Ошибка");
+                    service.ShowMessage("Достигнуто ограничение по количеству отображаемых объектов", "Ошибка");
                 }
-
 
                 if (chck != null) {
                     //надо рисовать маркеры
@@ -1074,15 +1080,19 @@ namespace ReportsCore.ViewModels {
                                             Height = 12,
                                             Stroke = cm.First().Color,
                                             StrokeThickness = 7.5,
-                                            ToolTip = Convert.ToString(item.ObjectNumber, 16)+" ("+ chck.Content + ")" + Environment.NewLine + item.Name
+                                            ToolTip = Convert.ToString(item.ObjectNumber, 16)+" ("+ chck.Content + ")" + Environment.NewLine + item.Name,
+                                            AllowDrop=true
                                         }
                                     };
                                     marker.Tag = chck.Tag;
+                                    marker.PropertyChanged += Marker_PropertyChanged;
                                     gmaps_contol.Markers.Add(marker);
+                                    //GeoCoderStatusCode status;
+                                    //GMapProviders.GoogleMap.GetPlacemark(marker.Position, out status);
                                 }
                                 ColorList.First(x => x.Color == cm.First().Color).Isfree = false;
                                 ColorList.First(x => x.Color == cm.First().Color).ObjTypeId = chck.Tag.ToString();
-                                //GroupsList.First(x => x.ObjTypeId == Int16.Parse(chck.Tag.ToString())).ObjTypeBrush = cm.First().Color;
+                                GroupsList.First(x => x.ObjTypeId == Int16.Parse(chck.Tag.ToString())).IsShowOnMap=true;
                             }
                         }
                     }
@@ -1091,6 +1101,7 @@ namespace ReportsCore.ViewModels {
                         foreach (GMapMarker item in markers) {
                             gmaps_contol.Markers.Remove(item);
                         }
+                        GroupsList.First(x => x.ObjTypeId == Int16.Parse(chck.Tag.ToString())).IsShowOnMap = false;
                         if (ColorList.Where(x => x.Isfree == true).ToList().Count > 0) 
                             ColorList.First(x => x.ObjTypeId == chck.Tag.ToString()).Isfree = true;
                     }
@@ -1120,6 +1131,9 @@ namespace ReportsCore.ViewModels {
             });
         }
 
+        private void Marker_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+            //throw new NotImplementedException();
+        }
         public MainWindowViewModel() {
             //ReportList.Add(new ReportsList() { ReportID = Guid.NewGuid(), ReportName = "Отчёт изменения стоимости абонентской платы" });
             using (ReportContext.ReportContext context = new ReportContext.ReportContext()) {
@@ -2011,5 +2025,157 @@ namespace ReportsCore.ViewModels {
             bw.RunWorkerAsync();
         }
 
+
+        private RelayCommand _MouseRightButtonDownCommand;
+        public RelayCommand MouseRightButtonDownCommand {
+            get => _MouseRightButtonDownCommand ??= new RelayCommand(async obj => {
+                MouseEventArgs mouseEventArgs = obj as MouseEventArgs;
+                if (mouseEventArgs.RightButton == MouseButtonState.Pressed) {
+                    if (GroupsList.Count(x => x.IsShowOnMap == true) == 1) {
+                        if (gmaps_contol.Markers.Count(x => x.Tag == "ГБР") == 0) {
+                            System.Windows.Point p = mouseEventArgs.GetPosition((IInputElement)mouseEventArgs.Source);
+
+                            GMapMarker marker = new GMapMarker(new PointLatLng()) {
+                                Shape = new Ellipse {
+                                    Width = 20,
+                                    Height = 20,
+                                    Stroke = Brushes.Chocolate,
+                                    StrokeThickness = 7.5,
+                                    ToolTip = "ГБР",
+                                    AllowDrop = true
+                                }
+                            };
+                            marker.Position = gmaps_contol.FromLocalToLatLng((int)p.X, (int)p.Y);
+                            marker.Tag = "ГБР";
+                            gmaps_contol.Markers.Add(marker);
+                        }
+                        else if (gmaps_contol.Markers.Count(x => x.Tag == "ГБР") > 0) {
+                            WPFMessageBoxService service = new WPFMessageBoxService();
+                            service.ShowMessage("Нельзя добавить расположение экипажа на карту. Экипаж уже был добавлен", "Ошибка");
+                        }
+                    }
+                    else if (GroupsList.Count(x => x.IsShowOnMap == true)<=0) {
+                        WPFMessageBoxService service = new WPFMessageBoxService();
+                        service.ShowMessage("Нельзя добавить расположение экипажа на карту. Не выбраны объекты для отображения", "Ошибка");
+                    }
+                    else if (GroupsList.Count(x => x.IsShowOnMap == true) >1) {
+                        WPFMessageBoxService service = new WPFMessageBoxService();
+                        service.ShowMessage("Нельзя добавить расположение экипажа на карту. Выбраны объекты разных маршрутов", "Ошибка");
+                    }
+                }
+            });
+        }
+        //private PlotModel PieModel;
+
+        private PlotModel _PieModel;
+        public PlotModel PieModel {
+            get => _PieModel;
+            set {
+                _PieModel = value;
+                OnPropertyChanged(nameof(PieModel));
+            }
+        }
+
+        private bool _ChartVisibility;
+        public bool ChartVisibility {
+            get => _ChartVisibility;
+            set {
+                _ChartVisibility = value;
+                OnPropertyChanged(nameof(ChartVisibility));
+            }
+        }
+        private RelayCommand _CalculateRoute;
+        public RelayCommand CalculateRoute {
+            get => _CalculateRoute ??= new RelayCommand(async obj => {
+                var gbr = gmaps_contol.Markers.FirstOrDefault(x => x.Tag == "ГБР");
+                var objects = gmaps_contol.Markers.Where(x => x.Tag != "ГБР").ToList();
+                List<MatrixTotals> matrix = new List<MatrixTotals>();
+
+                if (gbr!=null && objects!=null)
+                    if (objects.Count > 0) {
+                        //using (HttpClient client = new HttpClient()) {
+                        //    foreach (var item in objects) {
+                        //        string resp = @"https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&language=ru&origins=" + gbr.Position.Lat.ToString().Replace(',', '.') + "," + gbr.Position.Lng.ToString().Replace(',', '.') +
+                        //            "&destinations=" + item.Position.Lat.ToString().Replace(',','.') + "," + item.Position.Lng.ToString().Replace(',', '.') + "&key=AIzaSyCDXENAPVyVN2TddfuGUuPR6wAV2RL7Dh4";
+                        //        HttpResponseMessage response = await client.GetAsync(resp);
+                        //        var GoogleMatrixDistance = JsonConvert.DeserializeObject<GoogleMatrixDistanceModel>(response.Content.ReadAsStringAsync().Result);
+                        //        if (GoogleMatrixDistance != null) {
+                        //            matrix.Add( new MatrixTotals() { Duration=  GoogleMatrixDistance.rows[0].elements[0].duration.value });
+                        //        }
+                        //    }
+                        //}
+                        //string msg = "Прибытие более 15 минут: " + matrix.Count(x => x.Duration > 900).ToString() + "(" + Math.Round((double)matrix.Count(x => x.Duration > 900)/objects.Count*100, 0) + "%)" + Environment.NewLine +
+                        //"Прибытие 12-15 минут: " + matrix.Count(x => x.Duration >= 720 && x.Duration < 900).ToString() + "(" + Math.Round((double)matrix.Count(x => x.Duration >= 720 && x.Duration < 900) / objects.Count * 100, 0) + "%)" + Environment.NewLine +
+                        //"Прибытие 7-12 минут: " + matrix.Count(x => x.Duration >= 420 && x.Duration < 720).ToString() + "(" + Math.Round((double)matrix.Count(x => x.Duration >= 420 && x.Duration < 720) / objects.Count * 100, 0) + "%)" + Environment.NewLine +
+                        //"Прибытие 5-7 минут: " + matrix.Count(x => x.Duration >= 300 && x.Duration < 420).ToString() + "(" + Math.Round((double)matrix.Count(x => x.Duration >= 300 && x.Duration < 420) / objects.Count * 100, 0) + "%)" + Environment.NewLine +
+                        //"Менее 5 минут: " + matrix.Count(x => x.Duration < 300).ToString() + "(" + Math.Round((double)matrix.Count(x => x.Duration < 300) / objects.Count * 100,0) + "%)" + Environment.NewLine;
+                        //WPFMessageBoxService service = new WPFMessageBoxService();
+                        //service.ShowMessage(msg, "Информация");
+
+                        //PieModel = new PlotModel { Title = "Chart Sample1" };
+                        //var barseries = new BarSeries() {
+                        //    ItemsSource = new List<BarItem>(new[] {
+                        //        //new BarItem {Value=matrix.Count(x => x.Duration > 900) },
+                        //        //new BarItem {Value=matrix.Count(x => x.Duration >= 720 && x.Duration < 900) },
+                        //        //new BarItem {Value=matrix.Count(x => x.Duration >= 420 && x.Duration < 720) },
+                        //        //new BarItem {Value=matrix.Count(x => x.Duration >= 300 && x.Duration < 420) },
+                        //        //new BarItem {Value=matrix.Count(x => x.Duration < 300) }
+                        //        new BarItem {Value=2 },
+                        //        new BarItem {Value=1 },
+                        //        new BarItem {Value=46 },
+                        //        new BarItem {Value=122 },
+                        //        new BarItem {Value=167 }
+                        //    }),
+                        //    LabelPlacement = LabelPlacement.Outside
+                        //};
+                        //PieModel.Series.Add(barseries);
+
+                        //PieModel.Axes.Add(new CategoryAxis {
+                        //    Position = AxisPosition.Left,
+                        //    ItemsSource = new[]
+                        //    {
+                        //        ">15",
+                        //        "12-15",
+                        //        "7-12",
+                        //        "5-7",
+                        //        "<5"
+                        //    }
+                        //});
+
+
+
+                        PieModel = new PlotModel {
+                            Title = "Время прибытия экипажа от места стоянки до объектов (в минутах)"
+                        };
+                        var barseries = new BarSeries() {
+                            ItemsSource = new List<BarItem>(new[] {
+                new BarItem {Value=2 },
+                new BarItem {Value=46 },
+                new BarItem {Value=122 },
+                new BarItem {Value=167 },
+                new BarItem {Value=1 }
+            }),
+                            LabelPlacement = LabelPlacement.Outside,
+                            LabelFormatString = "{#:0.0}",
+                        };
+                        PieModel.Series.Add(barseries);
+
+                        PieModel.Axes.Add(new CategoryAxis {
+                            Position = AxisPosition.Left,
+                            ItemsSource = new[]
+                            {
+                     ">15",
+                                "12-15",
+                                "7-12",
+                                "5-7",
+                                "<5"
+                }
+                        });
+
+                        //PieModel.Series.Add(seriesP1);
+                        ChartVisibility = true;
+                    }
+            });
+        }
     }
 }
